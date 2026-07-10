@@ -145,5 +145,10 @@ wiring), the survey→manifest scaffolder, first profiles.
   appends its sources to the bibliography. Complements kit-v1's
   GOVERNANCE.md config-review idea ("when new models resolve constraints,
   delete old guardrails") — deleting stale doctrine is an explicit output,
-  not just adding. Can run manually before automation exists; first
-  scheduled run worth wiring once P0's watchdog/cron plumbing lands.
+  not just adding. **Deployment recommendation (2026-07-10): a scheduled
+  CLOUD routine, independent of P0 plumbing** — its inputs are web + this
+  GitHub repo only, and its output is a PR (the propose-only staging buffer,
+  mechanically enforced). Boundary rule for all routines: cloud for
+  web+GitHub-input work; local cron for anything touching the local project
+  tree (audit loop, distillery sweeps, dispatch collection). Run zero:
+  2026-07-10 (this repo's founding research; bibliography is the ledger).
