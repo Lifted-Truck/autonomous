@@ -256,8 +256,14 @@ by **reversibility of the change**, not trust in the model.
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
 | [loops/](loops/) | Memory loops (leaf here; audit loop → [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)) | current |
 | [governor/](governor/) | Watchdog · curator · coherence critic | **to build** (P0–P4) |
+| [integrations/](integrations/) | Intake channel — one dir per consumer (briefs from `distillery`, `dispatch`) | live |
 | [research/](research/) | The evidence base, citations preserved | current |
 | [archive/kit-v1/](archive/kit-v1/) | Kit v1, frozen | archived |
+
+**Sibling execution tracks** (own repos, sequenced in ROADMAP → Ecosystem
+tracks): [`~/Documents/Claude/distillery/`](../distillery/) (global memory:
+stream + analyst + distilled pool) · [`~/Documents/Claude/dispatch/`](../dispatch/)
+(daily progress publishing). This repo governs; they execute.
 
 ## 8. Maintenance
 

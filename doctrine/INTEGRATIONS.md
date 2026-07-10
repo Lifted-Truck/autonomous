@@ -61,6 +61,13 @@ does not run the resident harness (hooks, CLAUDE.md, verify gates, knowledge
 loop), so its commits bypass the local immune system. A consumer wanting a
 provider change files a brief; the provider's residents implement it.
 
+*The mailbox exception:* the provider's `integrations/<consumer>/` directory
+is that consumer's designated intake slot — a consumer's residents may write
+there (filing briefs, ratifying responses) and nowhere else in the provider's
+tree. Across git remotes this is a PR touching only `integrations/<consumer>/`;
+same-machine, a direct write to that path. Exchange files are the one
+artifact designed to cross the boundary.
+
 ### The ball: every exchange step has exactly one accountable side
 Exchange files carry frontmatter: `id`, `status`, `ball`, `respond-by`.
 The exchange is a state machine — at no state do both (or neither) sides own

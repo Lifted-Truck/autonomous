@@ -34,6 +34,54 @@
   incident (injected oscillation, injected gate-weakening) is caught and
   halted without human detection.*
 
+## Ecosystem tracks (parallel development across repos)
+
+The broader structure the phases above serve. Each track is a separate repo
+with its own ROADMAP; this section owns only the cross-track sequencing and
+seams. Exchanges between tracks go through `integrations/` per the
+INTEGRATIONS policy.
+
+- **Track A — autonomous (this repo): standards + kit + governor.**
+  Phases C0/P0–P4 above and kit v2. Provides: doctrine, kit core (incl. the
+  STATUS surface and LIBRARY entry schema — briefs dispatch-001 /
+  distillery-001, both ball: provider, respond-by 2026-07-24), the sweep/SCAN
+  primitive extraction, harness profiles.
+- **Track B — distillery (`~/Documents/Claude/distillery/`): global memory.**
+  The two-pool system (Decision 11): append-only stream + analyst + distilled
+  pool. Phases D0–D4 in its ROADMAP. Seams: consumes LIBRARY schema + sweep
+  primitive (Track A); autonomous P3 down-propagation consumes its distilled
+  pool (gates implemented there, spec canonical here — per distillery-001).
+- **Track C — dispatch (`~/Documents/Claude/dispatch/`): progress publishing.**
+  Deterministic collector → FACTS → styled digest → fenced AI narration →
+  human-gated publish. Phases E0–E4 in its ROADMAP. Seams: consumes the
+  STATUS surface (Track A; degrades visibly until it ships); later consumes
+  distillery lesson-highlights (needs D4).
+- **Track D — landscape audit (no repo; runs against Track A).** Monthly
+  propose-only research pass over the external field (see Deferred);
+  bibliography is its ledger.
+
+**Cross-track ordering constraints (the only ones):**
+1. Kit v2 core's STATUS + LIBRARY-schema artifacts unblock dispatch E1
+   (fully) and distillery D1 (validation half) — answer both briefs early.
+2. The sweep primitive should be extracted ONCE (Track A, from
+   agent-knowledge-loop's SCAN) before D1/E1 build their own — or D1/E1
+   build minimal local versions behind the same interface and swap in
+   (degrade-visibly rule applies to internal seams too).
+3. autonomous P3 must NOT build a second distilled pool — it consumes
+   Track B's (D4).
+4. Everything else proceeds in parallel without coordination.
+
+**Ecosystem-lead milestone (decision-in-principle, gated).** Once distillery
+D4 + autonomous P3 are green, evaluate promoting **distillery to operational
+lead** of the ecosystem — the analyst is the natural seed of the
+ecosystem-level curator/governor, and the operator should be a separate
+entity from the standards body (separation of powers: the repo that defines
+gates shouldn't be the one operating under them day-to-day). autonomous
+remains the doctrine/kit/protocol home either way. Gate for the handoff: the
+distillery analyst has produced ≥N ratified promotions with zero poisoning
+incidents, and the governor's curator role runs against distillery pools in
+a full simulated cycle.
+
 ## Parallel track — Kit v2 ("the harness factory")
 
 Built alongside P0–P2, since the phases consume its profiles as they emerge.

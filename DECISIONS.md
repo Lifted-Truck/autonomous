@@ -72,3 +72,16 @@ history; supersede with a new numbered entry.
     top of the existing audit-loop hierarchy, entered only through its
     promotion gates. Heavy machinery (audit threads, fleets, governor)
     remains earned; the loop itself is not.
+12. **Two execution projects opened as ecosystem tracks: `distillery`
+    (global memory) and `dispatch` (progress publishing)** (2026-07-10).
+    Scaffolded with the Generic Agent Harness, provisional manifests
+    (human ratifies at D0/E0 gates), and intake briefs filed here through
+    the integrations channel (dispatch-001, distillery-001 — first live use
+    of the protocol, incl. the mailbox exception now written into
+    INTEGRATIONS §3). Decision-in-principle, gated post-D4/P3: distillery
+    becomes the ecosystem's OPERATIONAL lead (the analyst seeds the
+    ecosystem curator/governor) while autonomous remains the standards/
+    doctrine/kit home — separation of powers between the body that defines
+    gates and the entity operating under them. Rejected: autonomous as
+    operational lead (conflates standards with operation; its residency is
+    meta-level by design).
