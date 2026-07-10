@@ -152,3 +152,8 @@ wiring), the survey→manifest scaffolder, first profiles.
   web+GitHub-input work; local cron for anything touching the local project
   tree (audit loop, distillery sweeps, dispatch collection). Run zero:
   2026-07-10 (this repo's founding research; bibliography is the ledger).
+  **SCHEDULED 2026-07-10:** routine `monthly-landscape-audit` (Claude
+  scheduled task, 9am on the 10th monthly; first run 2026-08-10). Output:
+  branch `landscape-audit/<YYYY-MM>` → PR with
+  `research/proposals/<date>.proposal.md` (DELETIONS section required) +
+  bibliography append. Propose-only; the PR is never merged by the routine.
