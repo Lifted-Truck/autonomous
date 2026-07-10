@@ -45,3 +45,14 @@ history; supersede with a new numbered entry.
    user mandate). Human-orientable without reading code; freshness maintained
    on a loop; staleness visible, never hidden. A possible global daily
    README-refresh agent is parked in ROADMAP deferred, not decided.
+10. **Kit v2 opens with a standard spin-up survey → committed manifest →
+    deterministic scaffolding** (2026-07-10, user proposal, adopted). A fixed
+    repeatable question list captures project scope; answers land in
+    `project.manifest.json`; deterministic code applies templates from the
+    manifest. Rationale: MAST found ~42% of multi-agent failures are
+    specification failures — the survey moves spec capture to the cheapest
+    possible moment (before any code exists), and answers-as-data makes
+    scaffolding idempotent, diffable, and re-runnable. Rejected: free-form
+    setup conversations (unrepeatable, answers evaporate) and fully-auto
+    detection (guesses exactly the things only the human knows — "reduce,
+    never invent").
