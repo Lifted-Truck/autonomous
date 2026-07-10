@@ -248,6 +248,7 @@ by **reversibility of the change**, not trust in the model.
 
 | Path | What | Status |
 |---|---|---|
+| [ONBOARDING.md](ONBOARDING.md) | Replication + arrival guide (human and agent) — start here on a new machine | current |
 | [DESIGN.md](DESIGN.md) | The full research-backed design | current |
 | [ROADMAP.md](ROADMAP.md) | Phase gates (C0 current → P0…P4); single source of direction | current |
 | [DECISIONS.md](DECISIONS.md) | Append-only decision log (10 on record) | current |

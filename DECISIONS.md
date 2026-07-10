@@ -85,3 +85,11 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+13. **Replication/onboarding instructions live in this repo (ONBOARDING.md),
+    not a separate overview repo** (2026-07-10). An overview repo would have
+    to describe this repo's content — duplication, hence drift — and the
+    other machine's first step is already "clone autonomous"
+    (INSTALL-GLOBAL.md). Rejected: separate repo; docs inside distillery/
+    dispatch (they're execution tracks, not the front door). Noted
+    dependency: replicating the execution tracks on another machine requires
+    them to get remotes first (pending user's visibility call).
