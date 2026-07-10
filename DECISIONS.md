@@ -35,3 +35,13 @@ history; supersede with a new numbered entry.
 7. **Research reports are preserved verbatim in `research/`** (2026-07-10),
    as the citable evidence base for kit v2's INSIGHTS and future design
    arguments. Summaries live in DESIGN.md; the reports are the source.
+8. **Multi-agent is a visible option at project structuring, never the
+   default** (2026-07-10, user mandate). Kit v2's scaffold opens with an
+   explicit architecture menu (single thread / thread + subagents / organ
+   fleet), each rung earned by project shape. Rejected: fleet-by-default —
+   contradicts the token economics and the harness-outranks-head-count
+   evidence.
+9. **Clarity standard: every system keeps a living README** (2026-07-10,
+   user mandate). Human-orientable without reading code; freshness maintained
+   on a loop; staleness visible, never hidden. A possible global daily
+   README-refresh agent is parked in ROADMAP deferred, not decided.

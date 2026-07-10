@@ -48,6 +48,24 @@ backend seams (prefer engine, fall back locally). Safety by construction
 When behavior is ambiguous, ask rather than guess, and record the resolution
 in the decision log. A "reasonable guess" is a signal to ask.
 
+## Right-size the agent architecture (multi-agent is an option, never a default)
+At project structuring time, the architecture menu is presented explicitly and
+chosen deliberately: (1) single-threaded agent, (2) single thread + read-only
+subagents / fresh-context verifier, (3) organ fleet (the full autonomous
+paradigm). Each rung is *earned* by the project's shape — parallelizable
+verifiable work, genuine seam count, value that justifies the ~15× token
+multiplier — never assumed. Escalate a rung only when the current one is the
+demonstrated bottleneck; the evidence base says harness quality outranks
+head-count (research/2026-07-10-multiagent-systems-survey.md, lessons 9–10).
+
+## Clarity standard (living README)
+Every system keeps a current, human-readable README: what it is, the map, the
+status — sufficient for a human to orient WITHOUT reading code or history.
+README freshness is maintained on a loop (curator duty where a curator runs;
+session-end discipline otherwise), and staleness is visible, never hidden —
+a dated "last verified" line beats silent rot. A repo whose README lies about
+it is a bug of the same severity as a failing test.
+
 ## Cross-project interaction
 All cross-project/cross-repo development follows the integrations policy in
 [INTEGRATIONS.md](INTEGRATIONS.md) — including the commit/PR responsibility

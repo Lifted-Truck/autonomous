@@ -7,6 +7,12 @@ Shape: **one core + composable agent-type profiles**, where
 `scaffold <profile> <target>` is runnable by a human OR by an agent
 bootstrapping its own type.
 
+**The scaffold's first question is the architecture menu** (doctrine:
+right-size the agent architecture): single-threaded agent → thread +
+subagents/verifier → organ fleet. Each rung states what earns it; the fleet
+is a visible option at the outset, never the default. Profiles beyond `organ`
+install only on the rung that needs them.
+
 - **Core layer** (every installation): layered CLAUDE.md + CODEMAP +
   .claudeignore; doctrine block + four-knowledge-systems firewall (from
   [scaffold-agentic-harness.prompt.md](scaffold-agentic-harness.prompt.md),

@@ -62,3 +62,9 @@ Spec: DESIGN.md §6. First profiles needed: `organ`, `watchdog`, `conductor`
 - **Relocating the leaf knowledge-loop prompt into the agent-knowledge-loop
   repo** (it is that system's Level 0) — pending user decision; canonical here
   until then.
+- **Global daily README-refresh loop** — a second global agent (cron,
+  audit-loop-style: hash-ledgered, skip-unchanged, propose-or-apply) that
+  sweeps repos whose content changed and refreshes their READMEs per the
+  clarity standard. User floated 2026-07-10; deliberately parked — overlaps
+  the curator's README duty (DESIGN §4b), so decide after P3 whether it's
+  the curator generalized across repos or a separate lightweight sweeper.
