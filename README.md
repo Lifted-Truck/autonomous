@@ -259,6 +259,7 @@ by **reversibility of the change**, not trust in the model.
 | [governor/](governor/) | Watchdog · curator · coherence critic | **to build** (P0–P4) |
 | [integrations/](integrations/) | Intake channel — one dir per consumer (briefs from `distillery`, `dispatch`) | live |
 | [registry.json](registry.json) | Canonical sweep/watch allowlist for ecosystem processes (Decision 14) | live |
+| [routines/](routines/) | Versioned prompts for recurring routines (landscape audit: local task + cloud variant) | live |
 | [research/](research/) | The evidence base, citations preserved | current |
 | [archive/kit-v1/](archive/kit-v1/) | Kit v1, frozen | archived |
 
