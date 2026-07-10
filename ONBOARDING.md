@@ -16,8 +16,8 @@ them are files, not conversations.
 |---|---|---|
 | **autonomous** (this repo) | Standards: doctrine, integrations policy, harness kit, governor spec, ecosystem roadmap | github.com/Lifted-Truck/autonomous |
 | **agent-knowledge-loop** | The cross-project audit loop (promote-up memory) | github.com/Lifted-Truck/agent-knowledge-loop |
-| **distillery** | Global memory: append-only stream + analyst + distilled pool | ⚠ local-only (`~/Documents/Claude/distillery/`) — remote pending |
-| **dispatch** | Daily progress publishing: collector → FACTS → digest → gated publish | ⚠ local-only (`~/Documents/Claude/dispatch/`) — remote pending |
+| **distillery** | Global memory: append-only stream + analyst + distilled pool | github.com/Lifted-Truck/distillery |
+| **dispatch** | Daily progress publishing: collector → FACTS → digest → gated publish | github.com/Lifted-Truck/dispatch |
 
 Cross-repo sequencing: [ROADMAP.md → Ecosystem tracks](ROADMAP.md).
 The design and its evidence: [DESIGN.md](DESIGN.md), [research/](research/).
@@ -42,11 +42,10 @@ The full orientation to layers/protocols/cycles: [README.md](README.md).
    ```bash
    git clone https://github.com/Lifted-Truck/agent-knowledge-loop.git ~/Documents/Claude/agent-knowledge-loop
    ```
-4. **Clone the execution tracks** (⚠ once they have remotes — see table
-   above; until then they exist only on the original machine):
+4. **Clone the execution tracks:**
    ```bash
-   git clone <distillery-remote> ~/Documents/Claude/distillery
-   git clone <dispatch-remote>   ~/Documents/Claude/dispatch
+   git clone https://github.com/Lifted-Truck/distillery.git ~/Documents/Claude/distillery
+   git clone https://github.com/Lifted-Truck/dispatch.git   ~/Documents/Claude/dispatch
    ```
 5. **Optional — the weekly audit-loop cron.** Copy
    `agent-knowledge-loop/audit-loop.config.example` →

@@ -93,3 +93,17 @@ history; supersede with a new numbered entry.
     dispatch (they're execution tracks, not the front door). Noted
     dependency: replicating the execution tracks on another machine requires
     them to get remotes first (pending user's visibility call).
+    [Resolved 2026-07-10: remotes created — github.com/Lifted-Truck/
+    distillery and /dispatch, both pushed.]
+14. **Ecosystem sweep/watch allowlist is canonical in `registry.json`**
+    (2026-07-10, user-specified). Scope: `~/Documents/Claude` immediate
+    children minus `Projects`, with `synthetic-worlds` as a GROUP (its ~16
+    children are each independent projects); plus `~/Documents/Tonality`,
+    `tonality-core`, `tonality-Live`, `substack2pdf`, `ableton-wrangle`.
+    Rule-based (self-maintaining as folders are added), not enumerated.
+    Harness/loop status is DERIVED at sweep time, never hand-maintained —
+    un-normalized projects are swept-and-marked, so normalization is an
+    incremental visible retrofit, never a sweep blocker. Per-consumer flags
+    (dispatch `public:`) layer in consumer configs. Rejected: per-consumer
+    duplicate rosters (drift) and hand-maintained status fields (stale by
+    construction).

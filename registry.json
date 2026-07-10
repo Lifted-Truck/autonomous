@@ -1,0 +1,24 @@
+{
+  "schema": "ecosystem-registry.0",
+  "updated": "2026-07-10",
+  "decision": "autonomous DECISIONS.md #14 — user-specified allowlist, 2026-07-10",
+  "purpose": "Canonical roster of directories in scope for ecosystem-wide processes (distillery sweeps, dispatch watching, README sweeps, retrofits). Consumers read this; per-consumer metadata (e.g. dispatch's public flags) layers in the consumer's own config, never here.",
+  "rules": [
+    {
+      "root": "~/Documents/Claude",
+      "include": "immediate-children",
+      "exclude": ["Projects"],
+      "groups": ["synthetic-worlds"]
+    },
+    { "project": "~/Documents/Tonality" },
+    { "project": "~/Documents/tonality-core" },
+    { "project": "~/Documents/tonality-Live" },
+    { "project": "~/Documents/substack2pdf" },
+    { "project": "~/Documents/ableton-wrangle" }
+  ],
+  "semantics": {
+    "group": "A directory whose immediate children are each independent projects needing their own upkeep (synthetic-worlds: 16 children, 13 loop-enabled as of 2026-07-10, hosts its own parent-scope audit loop). Consumers recurse exactly one level into groups and treat each child as a project.",
+    "derived_status": "Harness/loop presence (CLAUDE.md, ./verify, LIBRARY.md, traces/) is DERIVED by consumers at sweep time, never hand-maintained in this file. Un-normalized projects are swept anyway and their facts marked inferred-vs-declared (dispatch) or quarantined-not-rejected (distillery) — normalization is a visible, incremental retrofit chore, never a blocker.",
+    "paths": "~ is the user home directory; identical layout is assumed across machines (ONBOARDING.md)."
+  }
+}
