@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# verify — oracle dispatcher. The harness's only interface to project QC.
+# Usage: ./verify fast | full | report
+# Contract: exit 0 = green, nonzero = red. Writes .harness/last-verify.json.
+set -uo pipefail
+
+TARGET="${1:-fast}"
+HARNESS_DIR=".harness"
+mkdir -p "$HARNESS_DIR"
+
+record() { # record <target> <exit_code>
+  local git_hash; git_hash=$(git rev-parse --short HEAD 2>/dev/null || echo "no-git")
+  printf '{"target":"%s","exit":%d,"git":"%s","ts":"%s"}\n' \
+    "$1" "$2" "$git_hash" "$(date -u +%FT%TZ)" > "$HARNESS_DIR/last-verify.json"
+  rm -f "$HARNESS_DIR/dirty"
+  return "$2"
+}
+
+fast() {
+  # ---- Layer-0: seconds, not minutes. CI-blocking. -------------------------
+  # PROJECT IMPLEMENTS. Examples:
+  #   ruff check . && mypy src/ && pytest -q tests/unit
+  #   cmake --build build --target unit_tests && ./build/unit_tests
+  echo "verify[fast]: NOT IMPLEMENTED — edit ./verify" >&2
+  return 1
+}
+
+full() {
+  fast || return $?
+  # ---- Layer-E: the whole gate. Run before closing a queue item. -----------
+  # PROJECT IMPLEMENTS. Examples:
+  #   pytest -q tests/integration && python evals/run_golden.py --strict
+  #   python evals/perceptual_diversity.py --min-score 0.85
+  echo "verify[full]: NOT IMPLEMENTED — edit ./verify" >&2
+  return 1
+}
+
+case "$TARGET" in
+  fast)   fast;  record fast  $? ;;
+  full)   full;  record full  $? ;;
+  report) cat "$HARNESS_DIR/last-verify.json" 2>/dev/null || { echo '{"target":null,"exit":null}'; exit 1; } ;;
+  *)      echo "usage: ./verify fast|full|report" >&2; exit 64 ;;
+esac
