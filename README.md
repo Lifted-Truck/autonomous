@@ -253,7 +253,7 @@ by **reversibility of the change**, not trust in the model.
 | [ROADMAP.md](ROADMAP.md) | Phase gates (C0 current → P0…P4); single source of direction | current |
 | [DECISIONS.md](DECISIONS.md) | Append-only decision log (10 on record) | current |
 | [doctrine/](doctrine/) | Doctrine + integrations policy + global-install guide | current |
-| [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **to build** |
+| [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`) + sweep primitive shipped |
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
 | [loops/](loops/) | Memory loops (leaf here; audit loop → [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)) | current |
 | [governor/](governor/) | Watchdog · curator · coherence critic | **to build** (P0–P4) |

@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# verify — oracle dispatcher for the autonomous repo itself.
+# Usage: ./verify fast | full | report
+# Contract: exit 0 = green, nonzero = red. Writes .harness/last-verify.json.
+set -uo pipefail
+cd "$(dirname "$0")"
+
+TARGET="${1:-fast}"
+HARNESS_DIR=".harness"
+mkdir -p "$HARNESS_DIR"
+
+record() { # record <target> <exit_code>
+  local git_hash; git_hash=$(git rev-parse --short HEAD 2>/dev/null || echo "no-git")
+  printf '{"target":"%s","exit":%d,"git":"%s","ts":"%s"}\n' \
+    "$1" "$2" "$git_hash" "$(date -u +%FT%TZ)" > "$HARNESS_DIR/last-verify.json"
+  return "$2"
+}
+
+fast() {
+  # ---- Layer-0: seconds. CI-blocking. --------------------------------------
+  local ok=0
+  # 1. Sweep primitive unit tests
+  (cd kit/sweep && python3 -m unittest discover -q .) \
+    || { echo "verify[fast]: sweep tests red" >&2; ok=1; }
+  # 2. Machine-readable artifacts parse
+  python3 - <<'EOF' || ok=1
+import json, sys
+for p in ("registry.json",):
+    try:
+        json.load(open(p))
+    except Exception as e:
+        print(f"verify[fast]: {p} invalid: {e}", file=sys.stderr); sys.exit(1)
+EOF
+  # 3. Structure: canonical files present
+  for f in README.md DESIGN.md ROADMAP.md DECISIONS.md ONBOARDING.md \
+           doctrine/DOCTRINE.md doctrine/INTEGRATIONS.md; do
+    [ -f "$f" ] || { echo "verify[fast]: missing $f" >&2; ok=1; }
+  done
+  return $ok
+}
+
+full() {
+  fast || return $?
+  # ---- Layer-E additions ----------------------------------------------------
+  # Sweep smoke against the real registry: must resolve >0 projects.
+  local n
+  n=$(python3 kit/sweep/sweep.py --registry registry.json list | python3 -c "import json,sys;print(len(json.load(sys.stdin)))") \
+    || { echo "verify[full]: sweep smoke failed" >&2; return 1; }
+  [ "$n" -gt 0 ] || { echo "verify[full]: registry resolved 0 projects" >&2; return 1; }
+  echo "verify[full]: registry resolves $n projects"
+  return 0
+}
+
+case "$TARGET" in
+  fast)   fast;  record fast  $? ;;
+  full)   full;  record full  $? ;;
+  report) cat "$HARNESS_DIR/last-verify.json" 2>/dev/null || { echo '{"target":null,"exit":null}'; exit 1; } ;;
+  *)      echo "usage: ./verify fast|full|report" >&2; exit 64 ;;
+esac

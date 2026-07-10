@@ -107,3 +107,14 @@ history; supersede with a new numbered entry.
     (dispatch `public:`) layer in consumer configs. Rejected: per-consumer
     duplicate rosters (drift) and hand-maintained status fields (stale by
     construction).
+15. **First kit-v2 contracts shipped: `library-entry.1` and `status.1`, plus
+    the sweep primitive** (2026-07-10, answering briefs distillery-001 and
+    dispatch-001; both balls returned to consumers). Contracts live in
+    `kit/contracts/` (one canonical home; loop prompts stay canonical for
+    behavior); sweep lives in `kit/sweep/` (stdlib-only, tested, registry-
+    driven, consumer-owned ledgers). `public:` deliberately excluded from
+    STATUS — publishability is consumer policy (a project can't flag itself
+    into a publication). This repo now runs its own `./verify` (fast: sweep
+    tests + artifact parsing + structure; full: +live-registry smoke — 42
+    projects resolve). D0/E0 manifests treated as ratified per user
+    go-ahead; D1/E1 are the open fronts.

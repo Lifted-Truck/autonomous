@@ -90,6 +90,12 @@ Spec: DESIGN.md §6. First profiles needed: `organ`, `watchdog`, `conductor`
 (P4). Kit v2 ships INSIGHTS v2: every prescription cites its evidence in
 `research/`.
 
+**Shipped so far** (2026-07-10, answering distillery-001 + dispatch-001):
+`kit/contracts/library-entry.md` (v1), `kit/contracts/status.md` (v1),
+`kit/sweep/` (the shared SCAN primitive, tested, wired into this repo's
+`./verify`). Next kit items: the STATUS writer (`write-status` + hook
+wiring), the survey→manifest scaffolder, first profiles.
+
 ## Target consumers / applications
 
 - The user's first target project (shape TBD — organ count and CI choices to
