@@ -1,0 +1,12 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.idea/
+.vscode/
+
+# This repo ships dotfiles as TEMPLATES — make sure they stay tracked.
+# (Explicit negations in case a broader rule is ever added above.)
+!templates/.claudeignore
+!templates/claude/.mcp.json

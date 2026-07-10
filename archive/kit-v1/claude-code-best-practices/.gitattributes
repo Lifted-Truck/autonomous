@@ -1,0 +1,9 @@
+# Shell scripts MUST stay LF or bash breaks on the shebang/line parsing.
+*.sh text eol=lf
+
+# PowerShell is fine either way, but normalize for consistency.
+*.ps1 text
+
+# Treat docs/config as text with normalized LF in the repo.
+*.md   text eol=lf
+*.json text eol=lf

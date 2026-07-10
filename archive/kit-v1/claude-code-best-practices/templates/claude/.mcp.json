@@ -1,0 +1,21 @@
+{
+  "$comment": "MCP server config. Connect Claude to your internal tools — docs, ticketing, search, analytics. Version-controlled so the team shares the same servers. Each new server should get a security review (it runs with your privileges). Delete the examples and add your real ones; remove this file if you have no MCP servers yet.",
+  "mcpServers": {
+    "internal-docs-EXAMPLE": {
+      "$note": "A structured-search tool over internal docs is the article's canonical first MCP. Replace command/args/env with your server.",
+      "command": "npx",
+      "args": ["-y", "@your-org/docs-mcp-server"],
+      "env": {
+        "DOCS_API_TOKEN": "${DOCS_API_TOKEN}"
+      }
+    },
+    "tickets-EXAMPLE": {
+      "$note": "Connect your issue tracker so Claude can read tickets directly.",
+      "command": "npx",
+      "args": ["-y", "@your-org/tickets-mcp-server"],
+      "env": {
+        "TRACKER_TOKEN": "${TRACKER_TOKEN}"
+      }
+    }
+  }
+}

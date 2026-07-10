@@ -1,0 +1,59 @@
+# .claudeignore — version-controlled so every developer gets a consistent setup.
+# Exclude generated files and artifacts so they don't pollute Claude's context.
+# Tighten this to your repo: the goal is "signal only".
+
+# Dependencies / vendored
+node_modules/
+vendor/
+.venv/
+venv/
+__pycache__/
+target/
+.cargo/
+
+# Build output & artifacts
+dist/
+build/
+out/
+bin/
+obj/
+*.o
+*.so
+*.dll
+*.exe
+*.class
+*.pyc
+
+# Generated code (add your own gen dirs)
+gen/
+generated/
+*.pb.go
+*_pb2.py
+
+# Lockfiles & large machine files (read rarely, cost context)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+poetry.lock
+Cargo.lock
+
+# Logs, caches, coverage
+*.log
+.cache/
+coverage/
+.pytest_cache/
+.mypy_cache/
+
+# Big binary / media fixtures
+*.zip
+*.tar.gz
+*.png
+*.jpg
+*.mp4
+*.wav
+
+# Secrets (never want these in context)
+.env
+.env.*
+*.pem
+*.key
