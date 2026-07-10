@@ -68,3 +68,17 @@ Spec: DESIGN.md §6. First profiles needed: `organ`, `watchdog`, `conductor`
   clarity standard. User floated 2026-07-10; deliberately parked — overlaps
   the curator's README duty (DESIGN §4b), so decide after P3 whether it's
   the curator generalized across repos or a separate lightweight sweeper.
+- **Landscape audit (meta-audit of the protocol itself)** — a scheduled
+  research pass (recommend monthly, not weekly: consensus moves slowly and
+  research fan-outs are expensive) that re-surveys the external landscape and
+  recommends protocol changes. Shape: the audit loop's mechanics pointed
+  outward — a ledger in research/BIBLIOGRAPHY.md of per-topic last-checked
+  dates; fan-out research agents, one per doctrine tenet / protocol area;
+  diff findings against doctrine/ + DESIGN.md; output a dated
+  `research/proposals/<date>.proposal.md` (propose-only — doctrine changes
+  are NEVER auto-applied; human ratifies, DECISIONS records). Each run
+  appends its sources to the bibliography. Complements kit-v1's
+  GOVERNANCE.md config-review idea ("when new models resolve constraints,
+  delete old guardrails") — deleting stale doctrine is an explicit output,
+  not just adding. Can run manually before automation exists; first
+  scheduled run worth wiring once P0's watchdog/cron plumbing lands.

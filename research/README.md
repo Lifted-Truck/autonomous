@@ -4,6 +4,10 @@ Reports preserved verbatim (with URLs) as the citable foundation for design
 choices and kit-v2's INSIGHTS. Summaries live in [DESIGN.md](../DESIGN.md);
 these are the sources.
 
+**[BIBLIOGRAPHY.md](BIBLIOGRAPHY.md)** is the dated ledger of every research
+pass and its sources — the landscape-audit loop (ROADMAP deferred) appends to
+it and reads its per-topic last-checked dates.
+
 - [2026-07-10-multiagent-systems-survey.md](2026-07-10-multiagent-systems-survey.md)
   — what worked/failed across Anthropic, Cognition/Devin, MetaGPT/ChatDev/
   AutoGen/CAMEL, SWE-agent, OpenHands, AgentCoder, MAST, Factory, Sweep,
