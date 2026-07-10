@@ -48,6 +48,17 @@ Spec: DESIGN.md §6. First profiles needed: `organ`, `watchdog`, `conductor`
   be sanity-checked against it before P2).
 - Every existing project at the Claude root, via kit-v2 retrofits.
 - Tonality: first retrofit of the INTEGRATIONS §3 responsibility model.
+- **The daily-digest publisher** (separate project, user 2026-07-10): watches
+  all development projects and produces a styled end-of-day progress summary
+  for the user's website. A pure READ consumer of this repo's substrate —
+  traces/, DECISIONS, ROADMAP phase status, git history — which makes it the
+  first external consumer-driven contract on the kit's status surface: its
+  intake brief should specify exactly what machine-readable status every
+  project must expose, and that spec lands in kit-v2 core (a STATUS
+  artifact). Shares SCAN mechanics (hash ledger, skip-unchanged) with the
+  audit loop and README sweeper; obeys writes-stay-home (never commits to
+  watched repos). Overlaps the governor's STATUS.md duty — the digest should
+  be a *rendering* of the same data, not a second collector.
 
 ## Deferred / demoted
 

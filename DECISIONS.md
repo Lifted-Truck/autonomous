@@ -56,3 +56,19 @@ history; supersede with a new numbered entry.
     setup conversations (unrepeatable, answers evaporate) and fully-auto
     detection (guesses exactly the things only the human knows — "reduce,
     never invent").
+11. **Memory loops are default-on for every project; the global memory is
+    two pools** (2026-07-10, user proposal, adopted — supersedes the
+    "offer when long-lived" stance inherited from the interactive-era loop
+    doc). Every scaffolded project gets the knowledge loop in the kit CORE
+    (cost ≈ zero on quiet projects; early lessons are unrecoverable if not
+    captured; uniformity is what makes sweeping automatable — the write gate,
+    not absence of the loop, is the bloat safeguard). Global memory =
+    (a) an **append-only stream** (warehouse): every candidate lesson from
+    every sweep, dated, with provenance — read ONLY by a top-level analytical
+    agent, NEVER retrieval context for working agents (the 13%-vs-39%
+    bloat finding); enables longitudinal analysis (recurrence, demote-recur
+    cycles, cross-project failure signatures) that per-sweep convergence
+    detection structurally misses; (b) the **distilled pool** (mart): the
+    top of the existing audit-loop hierarchy, entered only through its
+    promotion gates. Heavy machinery (audit threads, fleets, governor)
+    remains earned; the loop itself is not.

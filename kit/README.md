@@ -45,7 +45,9 @@ Profiles beyond `organ` install only on the rung that needs them.
   .claudeignore; doctrine block + four-knowledge-systems firewall (from
   [scaffold-agentic-harness.prompt.md](scaffold-agentic-harness.prompt.md),
   canonical here); `./verify` contract (from [harness/](../harness/));
-  ROADMAP + DECISIONS skeletons; hook set (PostToolUse format/lint,
+  ROADMAP + DECISIONS skeletons; **the knowledge loop, default-on**
+  (Decision 11 — tags seeded from survey Q8; the write gate is the bloat
+  safeguard, not absence of the loop); hook set (PostToolUse format/lint,
   SessionStart context, PreToolUse territory + HALT + destructive-op guard,
   Stop enforced-reflection + red-suite gate).
 - **Profiles** (each = agent definition + permissions + hooks + CLAUDE.md

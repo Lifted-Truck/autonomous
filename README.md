@@ -134,7 +134,11 @@ CI.
 
 ### 4a. Spinning up a knowledge loop (per-project)
 
-**When:** a project becomes long-lived or accumulates hard-won lessons.
+**When: every project, at scaffold time — default-on** (Decision 11). The
+loop costs three files and a write-gated session discipline; a quiet project
+pays ~nothing, and early setup-era lessons are unrecoverable if never
+captured. What scales with project scope is the heavier machinery (audit
+threads, fleets, governor), never the loop itself.
 **How:** run [loops/knowledge-loop/integrate-knowledge-loop.prompt.md](loops/knowledge-loop/integrate-knowledge-loop.prompt.md)
 verbatim. It installs three files — CLAUDE.md protocol block, INDEX.md
 (compact retrieval map, read in full), LIBRARY.md (durable lessons) — and
@@ -189,6 +193,14 @@ curator's job — **targeted, never broadcast** (a CLAUDE.md holds roughly
 100–150 instruction slots; selective memory beat comprehensive 39% vs 13% in
 the research), slot-budgeted, and behind the same adversarial review. This
 direction ships in Phase P3.
+
+**The global memory is two pools** (Decision 11): an **append-only stream**
+(warehouse — every candidate lesson from every sweep, dated, provenance
+attached) and the **distilled pool** (mart — the top of the audit-loop
+hierarchy). The stream is read *only* by a top-level analytical agent hunting
+longitudinal patterns (recurrence, demote-recur cycles, cross-project failure
+signatures); it is **never retrieval context for working agents**, and its
+findings enter circulation only through the distilled pool's promotion gates.
 
 ---
 
