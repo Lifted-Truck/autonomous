@@ -13,9 +13,10 @@ three layers:
 3. **This layer** — the doctrine, the determinism/oracle gates, the four-way
    epistemic firewall, and (optionally) the multi-thread coordination model.
 
-The two composable installers live alongside this file:
-- Mechanical harness → `~/Documents/Claude/claude-code-best-practices/claude-code-best-practices/bootstrap.sh`
-- Knowledge loop → `~/Documents/Claude/integrate-knowledge-loop.prompt.md`
+The two composable installers (canonical paths, autonomous repo):
+- Mechanical harness → `~/Documents/Claude/autonomous/archive/kit-v1/claude-code-best-practices/bootstrap.sh`
+  (kit v1, frozen — superseded by kit v2 at `~/Documents/Claude/autonomous/kit/` when it ships)
+- Knowledge loop → `~/Documents/Claude/autonomous/loops/knowledge-loop/integrate-knowledge-loop.prompt.md`
 
 ## Operating contract (how you run this)
 
