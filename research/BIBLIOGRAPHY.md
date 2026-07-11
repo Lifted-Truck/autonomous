@@ -148,6 +148,10 @@ the strict window and are recorded because they are not yet cited in
   on Gas Town's operational-roles model)
 - "$47K agent loop" postmortem (11-day unbounded live-messaging loop,
   Nov 2025 incident) — forensic writeups on dev.to/clyro.dev, ~Apr–Jun 2026
+- Fleet (parallel coding-agent supervisor: Beads/Dolt queue, multi-backend
+  coder routing, ask_human MCP, context-pressure termination) —
+  https://github.com/sermakarevich/fleet (user-recovered from the audit's
+  blocked HN thread; reviewed 2026-07-11 — conductor prior art, see ROADMAP)
 
 **Agent memory & knowledge loops:**
 - Claude Code changelog v2.1.204–207 —

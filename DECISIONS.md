@@ -118,3 +118,14 @@ history; supersede with a new numbered entry.
     tests + artifact parsing + structure; full: +live-registry smoke — 42
     projects resolve). D0/E0 manifests treated as ratified per user
     go-ahead; D1/E1 are the open fronts.
+16. **Model-tier selection is human-gated, ecosystem-wide** (2026-07-11,
+    user mandate). The governor/watchdog/conductor never auto-swaps model
+    tiers, and automated threat-analysis / security-scanner integrations
+    that can trigger provider-side model demotion are excluded from the
+    stack — the user has tripped such a demotion before and escalating or
+    changing models is always their explicit decision. Any candidate tool
+    carrying such a component is flagged for human review, never silently
+    adopted. (Context: review of the `fleet` supervisor repo — its
+    mechanisms are catalogued as conductor prior art in ROADMAP; its
+    multi-backend model routing would, if ever adopted, keep tier
+    selection human-gated per this decision.)

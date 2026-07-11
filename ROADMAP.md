@@ -124,6 +124,17 @@ wiring), the survey→manifest scaffolder, first profiles.
   actually needed.
 - **Conductor substrate decision** (cron + headless `claude -p` vs
   agent-teams/Workflow vs supervisor daemon) — deferred to P0 entry.
+  Prior art reviewed 2026-07-11: **fleet**
+  (github.com/sermakarevich/fleet, surfaced by the user from the audit's
+  blocked HN link) — a working supervisor-daemon existence proof (Beads/
+  Dolt centralized queue, headless multi-backend coders, web UI). Mechanisms
+  worth adopting whatever substrate wins: per-task artifact dir
+  (PLAN_AND_STATUS.md + KNOWLEDGE.md ≈ our handoff + journal), context-
+  pressure termination (~90% of window → end the shift; mechanizes our
+  fresh-context rhythm), and a durable `ask_human` question queue surfaced
+  to the human's channel of choice (the "escalation is cheap" principle as
+  infrastructure). Constraints per Decision 16: no auto model-tier swaps;
+  no threat-analysis add-ons.
 - **Relocating the leaf knowledge-loop prompt into the agent-knowledge-loop
   repo** (it is that system's Level 0) — pending user decision; canonical here
   until then.
