@@ -42,8 +42,9 @@ project/
 - **Lead session:** run `/model opusplan` — Opus for plan mode, automatic
   switch to Sonnet for execution. Use plain `opus` only for sessions that are
   pure architecture (no implementation expected).
-- **Subagents:** pinned in frontmatter — `implementer` and `verifier` on
-  `sonnet`, `critic` on `opus` with `effort: high`.
+- **Subagents:** pinned in frontmatter — `implementer` on `sonnet`,
+  `verifier` on `haiku` (verbatim gate-reporting needs no more; a precise
+  red is cheap), `critic` on `opus` with `effort: high`.
 - **Cost ceiling:** export `CLAUDE_CODE_SUBAGENT_MODEL=sonnet` to force every
   subagent (including critic) down to Sonnet for budget-constrained sessions.
   Frontmatter loses to the env var, which is the point.

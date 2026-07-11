@@ -129,3 +129,12 @@ history; supersede with a new numbered entry.
     mechanisms are catalogued as conductor prior art in ROADMAP; its
     multi-backend model routing would, if ever adopted, keep tier
     selection human-gated per this decision.)
+17. **Interim model-routing defaults** (2026-07-11, user): top-level/lead
+    agents default to the **latest Opus**; subagents default to the
+    **latest Sonnet**; **Haiku** is pinned for verbatim-report and
+    read-only-scout class tasks (the harness `verifier` — run the oracle,
+    report verbatim, localize the failure — and the built-in Explore
+    scout, which is already Haiku). Model-tier upgrades beyond these
+    defaults are the user's explicit per-session call (Decision 16).
+    Revisit when the user changes plan/lineup; partially resolves DESIGN
+    §8 open question 5 for the interim.
