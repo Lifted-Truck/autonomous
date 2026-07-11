@@ -138,3 +138,11 @@ history; supersede with a new numbered entry.
     defaults are the user's explicit per-session call (Decision 16).
     Revisit when the user changes plan/lineup; partially resolves DESIGN
     §8 open question 5 for the interim.
+18. **Clarifies 17 — Opus covers top AND mid-level agents** (2026-07-11,
+    user). The dividing line is role shape, not hierarchy depth: **Opus for
+    judgment-bearing roles** (lead sessions, organ leads, critic,
+    coherence-critic, curator promotion judgment, distillery analyst);
+    **Sonnet for scoped execution** (implementer-class: build to a brief
+    with acceptance criteria); **Haiku for verbatim-fidelity/scout roles**
+    (verifier, Explore). The harness trio already conforms (critic was
+    always Opus); future kit-v2 profiles pin per this rule.
