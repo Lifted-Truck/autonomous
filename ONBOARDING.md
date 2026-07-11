@@ -109,7 +109,11 @@ LIBRARY lessons). Then run `./verify report` to see the oracle's last state.
    `./verify`, new dependencies, git beyond add/commit, anything §Domain
    protects, anything outward-facing (publishing, remote pushes to new
    places) — stop and ask.
-7. **Respect the AI/deterministic boundary**: if you find yourself doing
+7. **Review beats are visual-first** ([doctrine](doctrine/DOCTRINE.md)):
+   at any gate — phase close, ratification request, PR — lead with a visual
+   presentation sufficient to evaluate the work without reading code; the
+   diff is the fallback, never the ask.
+8. **Respect the AI/deterministic boundary**: if you find yourself doing
    scheduling, metrics, validation, or collection "by judgment," stop — that
    belongs in code you should write instead.
 

@@ -24,10 +24,15 @@ are acting as a resident of the standards repo
 2. Ensure a git author is configured (CI environments often lack one):
    `git config user.name "Landscape Audit"` and
    `git config user.email "noreply@anthropic.com"` — only if unset.
-3. Confirm `gh` is authenticated (`gh auth status`) or a `GH_TOKEN` /
-   `GITHUB_TOKEN` with repo scope is present. If neither: complete every
-   step through the local commit, then STOP and report the branch name and
-   that a push/PR could not be made — never fail silently.
+3. **Push preflight — do this BEFORE any research spend** (lesson from run
+   one, 2026-07-11: a full research pass was stranded on an unauthorized
+   proxy): verify you can actually reach the remote with
+   `git push --dry-run origin main` (a dry run of an up-to-date branch is a
+   no-op that still exercises authorization; also confirm `gh auth status`
+   or a `GH_TOKEN`/`GITHUB_TOKEN`). If the environment's git proxy rejects
+   the repo ("not in this session's authorized repository set" or similar)
+   and you have no way to authorize it, STOP NOW and report exactly what
+   authorization is missing — do not run the research first.
 4. Take today's date from the environment (`date -u +%F`); use it for the
    proposal filename and bibliography section.
 
@@ -107,10 +112,15 @@ are acting as a resident of the standards repo
 11. Branch `landscape-audit/<YYYY-MM>` (if it already exists, suffix `-2`,
     `-3`, …). Commit the two files; end the commit message with:
     `Co-Authored-By: Claude <noreply@anthropic.com>`
-12. Push and open a PR via `gh pr create`, titled
-    `Landscape audit <YYYY-MM>`, body summarizing the recommendations (lead
-    with any DELETE/AMEND items) and ending with:
+12. Push and open a PR (via `gh pr create`, or the GitHub REST API with the
+    token if `gh` is unavailable), titled `Landscape audit <YYYY-MM>`, body
+    summarizing the recommendations (lead with any DELETE/AMEND items) and
+    ending with:
     `🤖 Generated with [Claude Code](https://claude.com/claude-code)`
+    **Salvage rule:** if the push fails despite the preflight, include the
+    FULL text of the proposal file (and the bibliography append) in your
+    final report so the work survives the session — a stranded local commit
+    in an ephemeral environment is lost work.
 13. NEVER merge the PR. Human review is the gate — that is the entire safety
     design of this process: a wrong doctrine change propagates to every
     session on every machine that imports this repo's doctrine.

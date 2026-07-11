@@ -40,8 +40,9 @@ cp ~/Documents/Claude/autonomous/kit/commands/spinup.md ~/.claude/commands/spinu
 ```
 
 Canonical copy: `kit/commands/spinup.md` (re-copy after pulling changes to
-it). Gives every session a `/spinup <path> — <what it is>` command that runs
-the survey-first new-project procedure.
+it). Gives every session a `/spinup [path —] <what it is>` command that runs
+the survey-first new-project procedure; with no path it targets the current
+working directory (the Claude Code Desktop open-in-folder case).
 
 ## 4. Verify
 

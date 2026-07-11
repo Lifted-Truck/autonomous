@@ -18,6 +18,11 @@ per-project. Project-specific facts live in §Domain and in ROADMAP.md.
 - **Reduce, never invent.** Prefer deleting code, tightening a contract, or
   reusing an existing mechanism over adding a new one. Every new abstraction
   must displace at least as much complexity as it introduces.
+- **Review beats are visual-first.** When presenting completed work at a
+  gate (phase close, ratification request, PR), lead with a visual — a
+  self-contained HTML report, render set, or live demo — sufficient to
+  evaluate the change WITHOUT reading the diff, plus evidence it works and
+  open questions. Code diving is the fallback, never the ask.
 
 ## Provenance
 

@@ -4,8 +4,13 @@ description: Scaffold a new project via the ecosystem spin-up procedure (survey 
 
 Spin up a new project: $ARGUMENTS
 
-(If the arguments don't include a target directory and a one-line description
-of what the project is, ask for whichever is missing before doing anything.)
+(Arguments — both optional: a target directory and a one-line description of
+what the project is. **If no directory is given, the target is the current
+working directory** — the normal case when the session was opened inside the
+new folder. Before scaffolding into the cwd, confirm it is the intended
+fresh project root: empty or near-empty, not inside an existing project or
+one of the ecosystem repos; if in doubt, ask. If the description is missing,
+ask for it — it seeds the survey's first question.)
 
 Follow the canonical procedure at
 `~/Documents/Claude/autonomous/ONBOARDING.md` → Part 2 → "Replicating the
