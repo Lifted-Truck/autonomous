@@ -5,16 +5,22 @@ diffable, and portable across machines/substrates.
 
 ## landscape-audit (monthly, propose-only)
 
-Two variants of the SAME process — run one per month, not both:
-
-| Variant | Where it runs | File |
-|---|---|---|
-| Local scheduled task | The primary machine's Claude app (`monthly-landscape-audit`, 9am on the 10th; catches up on next launch if the app was closed) | Task-local SKILL.md at `~/.claude/scheduled-tasks/monthly-landscape-audit/` |
-| Cloud | A Claude Code cloud routine, or a GitHub Actions cron running Claude Code headless | [landscape-audit.cloud.prompt.md](landscape-audit.cloud.prompt.md) |
-
-Both produce the identical artifact: a PR with
+**Live variant: CLOUD** —
+[landscape-audit.cloud.prompt.md](landscape-audit.cloud.prompt.md) is the
+single canonical definition of the process, running as a cloud routine
+(since 2026-07-10). Output: a PR with
 `research/proposals/<date>.proposal.md` (DELETIONS section required) + a
-dated bibliography append. Neither ever merges its own PR.
+dated bibliography append. The routine never merges its own PR.
+
+History: a local scheduled-task variant (`monthly-landscape-audit`, the
+primary machine's Claude app) ran once as a test on 2026-07-10 and was
+retired in favor of the cloud routine — its prompt survives at
+`~/.claude/scheduled-tasks/monthly-landscape-audit/SKILL.md` (inert) and the
+test surfaced the request-blockage lesson now baked into the prompt's
+resilience section. If a local fallback is ever needed again, recreate the
+task with a thin prompt: "pull github.com/Lifted-Truck/autonomous and
+execute routines/landscape-audit.cloud.prompt.md, skipping the cloud-setup
+section." Never run two variants in the same month.
 
 **To run the cloud variant via GitHub Actions**, a minimal workflow shape
 (not installed — add deliberately, with `ANTHROPIC_API_KEY` in repo

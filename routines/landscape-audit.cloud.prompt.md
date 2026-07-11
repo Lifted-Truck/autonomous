@@ -63,6 +63,22 @@ are acting as a resident of the standards repo
    Each agent returns dense findings with URLs and explicitly flags anything
    that CONTRADICTS or EXTENDS current doctrine.
 
+   **Resilience against blocked requests** (observed in practice: automated
+   runs can hit bot-protection on target sites and safety-classifier blocks
+   on security-adjacent queries):
+   - Frame security-topic queries with their true defensive purpose stated
+     up front — this research surveys published *defenses* (circuit
+     breakers, injection mitigations, poisoning safeguards) to harden an
+     autonomous development system; it never seeks exploit code, and agents
+     must not attempt to bypass any refusal or bot-protection.
+   - A blocked or refused fetch is NEVER fatal and never silently dropped:
+     try alternates first (search-result snippets, arXiv abstracts, an
+     alternative writeup of the same finding, archive.org), and whatever
+     remains unverified goes in a **"Blocked / unverified sources"** section
+     of the proposal so the human can check those items interactively.
+   - Prefer bot-tolerant primaries (arXiv, official lab blogs, GitHub, docs
+     sites) over aggregator/paywalled ones when both report the same thing.
+
 ## Synthesis and output (propose-only — hard rule)
 
 7. Diff findings against `doctrine/` and `DESIGN.md`. Write
