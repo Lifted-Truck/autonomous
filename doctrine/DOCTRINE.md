@@ -12,6 +12,13 @@ demo — sufficient to evaluate the change WITHOUT reading code. Code diving is
 the fallback, not the default. Include: what changed, evidence it works (test
 output, renders, before/after), and any open questions.
 
+## New projects: survey before scaffold
+When asked to create, start, or scaffold a new project (any phrasing), do not
+improvise a structure: follow the new-project procedure in the autonomous
+repo's ONBOARDING.md (Part 2) — the 9-question spin-up survey comes first,
+its answers land in `project.manifest.json`, and the architecture rung is
+asked, never defaulted. The `/spinup` command wraps this.
+
 ## Harness by default
 "The harness determines performance more than the model." For any new or
 adopted repo, apply the harness kit (canonical: `kit/` in the autonomous repo):

@@ -127,8 +127,10 @@ Full policy: [doctrine/INTEGRATIONS.md](doctrine/INTEGRATIONS.md).
 
 ### Replicating the project structure for a NEW project (until kit v2 ships)
 
-Manual procedure, mirroring what built `distillery`/`dispatch` (use them as
-reference implementations):
+Shortcut: the `/spinup` command (installed per INSTALL-GLOBAL step 3) wraps
+this procedure; the doctrine also instructs any session asked to "start a
+new project" to land here. The procedure itself, mirroring what built
+`distillery`/`dispatch` (use them as reference implementations):
 
 1. Conduct the spin-up survey with the human ([kit/README.md](kit/README.md),
    9 questions); write answers to `project.manifest.json`, marked

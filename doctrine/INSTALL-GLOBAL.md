@@ -32,7 +32,18 @@ it and auto-loaded every session:
 @~/Documents/Claude/autonomous/doctrine/INTEGRATIONS.md
 ```
 
-## 3. Verify
+## 3. Install the `/spinup` command
+
+```bash
+mkdir -p ~/.claude/commands
+cp ~/Documents/Claude/autonomous/kit/commands/spinup.md ~/.claude/commands/spinup.md
+```
+
+Canonical copy: `kit/commands/spinup.md` (re-copy after pulling changes to
+it). Gives every session a `/spinup <path> — <what it is>` command that runs
+the survey-first new-project procedure.
+
+## 4. Verify
 
 Start a fresh Claude Code session anywhere and ask what the development
 doctrine says about (e.g.) the AI/deterministic boundary. If the answer
