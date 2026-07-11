@@ -124,3 +124,123 @@ Report: [2026-07-10-memory-governance.md](2026-07-10-memory-governance.md)
 - Runaway costs — https://www.supra-wall.com/en/learn/ai-agent-runaway-costs · https://www.nexgismo.com/blog/ai-agent-budget-guards-stop-runaway-api-costs · https://devtoolpicks.com/blog/ai-agents-runaway-claude-code-bills-overnight-2026
 - GitClear code-quality data — https://www.gitclear.com/ai_assistant_code_quality_2025_research · https://www.gitclear.com/the_ai_code_quality_maintainability_gap
 - Agent metrics — https://www.augmentcode.com/tools/autonomous-development-metrics-kpis-that-matter-for-ai-assisted-engineering-teams · https://www.braintrust.dev/articles/ai-agent-evaluation-framework
+
+## 2026-07-11 — Landscape audit (monthly, first run)
+
+Report: [proposals/2026-07-11.proposal.md](proposals/2026-07-11.proposal.md).
+Six fan-out agents, each scoped to "what changed since <topic's last-checked
+date>" (2026-07-08/07-10). Window was 1–3 days; most sources below predate
+the strict window and are recorded because they are not yet cited in
+`doctrine/`/`DESIGN.md`/`research/`, not because they are new-this-week.
+
+**Multi-agent coordination:**
+- Cognition, "Multi-Agents: What's Actually Working" (follow-up to "Don't
+  Build Multi-Agents") — https://cognition.com/blog/multi-agents-working
+  (fetch blocked, via search snippets)
+- UIUC multi-agent token-multiplier study (4–220× range) — via
+  https://www.augmentcode.com/guides/git-worktrees-parallel-ai-agent-execution
+  (secondary; primary not located)
+- RecursiveMAS (embedding-space agent communication, −34–75% tokens) —
+  https://arxiv.org/abs/2604.25917 (via VentureBeat coverage)
+- Overstory (worktree-fleet orchestrator, archived 2026-05-28, superseded by
+  "Warren") — https://github.com/jayminwest/overstory
+- "GasTown and the Two Kinds of Multi-Agent" — https://paddo.dev (commentary
+  on Gas Town's operational-roles model)
+- "$47K agent loop" postmortem (11-day unbounded live-messaging loop,
+  Nov 2025 incident) — forensic writeups on dev.to/clyro.dev, ~Apr–Jun 2026
+
+**Agent memory & knowledge loops:**
+- Claude Code changelog v2.1.204–207 —
+  https://code.claude.com/docs/en/changelog (`/doctor` CLAUDE.md-trim check,
+  2026-07-09; hook shell-injection hardening, 2026-07-11)
+- FARMA: Forged Reasoning Attacks on LLM Agent Memory —
+  https://arxiv.org/abs/2607.05029 (~2026-07-06, fetch blocked)
+- WhisperBench: Stealthy Memory Injection in Persistent Personal Agents —
+  https://arxiv.org/abs/2607.05189 (~2026-07-06, fetch blocked)
+- GhostWriter: Memory Poisoning Attacks on LLM Agents —
+  https://arxiv.org/abs/2607.06595 (~2026-07-06, fetch blocked)
+- AgentPrizm "AgentMemory" product launch (2026-07-09) — market signal only,
+  no stable primary URL found
+
+**Governance, halting, and agentic safety:**
+- Future of Life Institute, "AI Safety Index — Summer 2026" (2026-07-07) —
+  https://futureoflife.org/ai-safety-index-summer-2026/
+- Adversa AI, "GuardFall" open-source coding-agent guard bypass
+  (2026-06-30) —
+  https://thehackernews.com/2026/06/guardfall-exposes-open-source-ai-coding.html
+- Claude Code GitHub Action permission-check bypass, patched in
+  claude-code-action v1.0.94 (2026-06) —
+  https://thehackernews.com/2026/06/claude-code-github-action-flaw-let-one.html
+- Google DeepMind, "Securing internal systems against increasingly capable
+  and imperfectly aligned AI" / AI Control Roadmap (2026-06-18) —
+  https://deepmind.google/blog/securing-the-future-of-ai-agents/
+- Sen. Mark Warner, discussion draft "AI AGENT Act" (2026-06-29) —
+  https://www.warner.senate.gov/newsroom/press-releases/warner-unveils-discussion-draft-of-legislation-to-create-innovative-market-for-secure-artificial-intelligence-agents/
+- Bank of England, agentic-AI trading "kill switch" feasibility study
+  (2026-07-01) —
+  https://www.resultsense.com/news/2026-07-01-boe-breeden-agentic-ai-kill-switch/
+- Sysdig "agentic ransomware" claim (2026-07-02) — unverified, aggregator
+  mentions only, no primary reached
+- Cloud Security Alliance, "Autonomy Levels Framework" reversibility
+  critique (~March 2026, fetch blocked) —
+  labs.cloudsecurityalliance.org
+
+**Verification and CI-as-arbiter:**
+- METR, "GPT-5.6 Sol pre-deployment evaluation" (2026-06-26) —
+  https://metr.org/blog/2026-06-26-gpt-5-6-sol/
+- OpenAI, "Why we no longer evaluate against SWE-bench Verified"
+  (2026-02-23) —
+  https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/
+- "Reward Hacking Benchmark (RHB)" (2026-05-04) —
+  https://arxiv.org/abs/2605.02964
+- "The Verification Horizon: No Silver Bullet for Coding Agent Rewards"
+  (~2026-06) — https://arxiv.org/abs/2606.26300 (fetch blocked)
+- "Auditing Reward Hackability in Code RL Training Environments" (~2026-06)
+  — https://arxiv.org/abs/2606.16062 (fetch blocked)
+- "Understanding Dominant Themes in Reviewing Agentic AI-authored Code"
+  (2026-01) — https://arxiv.org/abs/2601.19287
+- Code Review Agent Benchmark / c-CRAB (~2026-03) —
+  https://arxiv.org/abs/2603.23448
+- "Why Are Agentic Pull Requests Merged or Rejected? An Empirical Study"
+  (2026-05) — https://arxiv.org/abs/2605.22534
+- Trunk.io changelog (incremental flaky-test tooling, no confirmed
+  in-window release) — https://trunk.io
+
+**Context engineering and harness design:**
+- Claude Code changelog v2.1.206 (2026-07-09) / v2.1.207 (2026-07-11) —
+  https://code.claude.com/docs/en/changelog
+- Practitioner critique of CLAUDE.md compliance (dev.to, date unconfirmed,
+  fetch blocked) — dev.to/minatoplanb
+
+**Open-scope — new categories:**
+- OpenAI, GPT-5.6 tiered release (Sol/Terra/Luna) (2026-07-08/09) —
+  https://openai.com/index/gpt-5-6/ ,
+  https://openai.com/index/previewing-gpt-5-6-sol/ ,
+  https://www.cnbc.com/2026/07/08/openai-expanding-gpt-5point6-ai-model-release-ending-government-limits.html
+- xAI/Cursor, Grok 4.5 launch (2026-07-08) —
+  https://x.ai/news/grok-4-5 , https://cursor.com/blog/grok-4-5 ,
+  https://devops.com/spacexais-grok-4-5-undercuts-anthropic-and-openai-on-coding-agent-pricing/
+- SpaceX to acquire Cursor/Anysphere, $60B (2026-06-16) —
+  https://www.cnbc.com/2026/06/16/spacex-spcx-cursor-acquisition-ipo.html ,
+  https://www.forbes.com/sites/sandycarter/2026/06/16/spacex-buys-cursor-in-largest-startup-acquisition-ever-at-60-billion/
+- Anthropic, Fable 5 / Mythos 5 launch, export-control shutdown and reversal
+  (2026-06-12 through 06-30) —
+  https://www.washingtonpost.com/technology/2026/06/30/white-house-drops-export-controls-anthropics-mythos-fable-ai-models/
+  , https://www.cnn.com/2026/06/30/tech/anthropic-export-control-ban-lifted-white-house
+  , https://www.pbs.org/newshour/show/anthropic-disabled-fable-5-and-mythos-5-after-a-us-security-directive
+- Anthropic, "Claude Sonnet 5" (2026-06-30) —
+  https://www.anthropic.com/news/claude-sonnet-5
+- METR, "Time Horizon 1.1" (2026-01-29/02-21) —
+  https://metr.org/blog/2026-1-29-time-horizon-1-1/
+- MCP release candidate — stateless protocol layer, Extensions framework
+  (2026-07-28 RC) — https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/
+- MCP donated to the Agentic AI Foundation / Linux Foundation (2025-12-09) —
+  https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation
+- Agent identity/payment protocol consolidation (Mastercard Agent Pay, Visa
+  Trusted Agent Protocol, Google AP2, MCP-I, W3C Agent Identity Registry) —
+  https://www.biometricupdate.com/202603/vendors-race-to-build-identity-stack-for-agentic-ai
+  , https://www.w3.org/community/agent-identity/
+- Vercel, "eve" durable-workflow agent framework (2026-06-17) —
+  https://vercel.com/blog/introducing-eve
+- AI-agent liability insurance market forming (Corgi, Testudo, Armilla,
+  Klaimee) — https://www.factmr.com/report/ai-agent-liability-insurance-services-market
