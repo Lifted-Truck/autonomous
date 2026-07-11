@@ -1,0 +1,38 @@
+{
+  "comment": "Expected parse of roundtrip/LIBRARY.md under library-entry.1 + the tolerance reading flagged in lines.jsonl. Quarantine 'error_contains' is a substring assertion; exact wording is the implementation's choice.",
+  "lessons": [
+    {
+      "line_no": 14,
+      "entry": {
+        "id": "L0001",
+        "title": "Fence tracking is load-bearing",
+        "tier": "candidate",
+        "added": "2026-07-01",
+        "tags": ["parsing"],
+        "lesson": "A digit-form example inside a fenced block must not ingest; ingesting one fabricates provenance in an append-only store.",
+        "evidence": "this fixture's fenced block above shares this entry's id.",
+        "falsifier": "a contract ruling that fenced lines are entries."
+      }
+    },
+    {
+      "line_no": 15,
+      "entry": {
+        "id": "L0002",
+        "title": "Labeled tier parses",
+        "tier": "canonical",
+        "added": "2026-07-02",
+        "tags": ["parsing", "tolerance"],
+        "lesson": "The labeled-tier form is the dominant real-world shape and parses identically to bare tier.",
+        "evidence": "Wend LIBRARY.md, every entry.",
+        "falsifier": "strict-bare ruling from the contract owner."
+      }
+    }
+  ],
+  "quarantines": [
+    {
+      "line_no": 16,
+      "error_contains": "id"
+    }
+  ],
+  "structural_line_count_note": "All other lines (preamble, both fenced lines, headers, blanks, trailing prose) produce no records."
+}
