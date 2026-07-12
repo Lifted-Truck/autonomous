@@ -32,17 +32,18 @@ it and auto-loaded every session:
 @~/Documents/Claude/autonomous/doctrine/INTEGRATIONS.md
 ```
 
-## 3. Install the `/spinup` command
+## 3. Install the commands
 
 ```bash
 mkdir -p ~/.claude/commands
-cp ~/Documents/Claude/autonomous/kit/commands/spinup.md ~/.claude/commands/spinup.md
+cp ~/Documents/Claude/autonomous/kit/commands/*.md ~/.claude/commands/
 ```
 
-Canonical copy: `kit/commands/spinup.md` (re-copy after pulling changes to
-it). Gives every session a `/spinup [path —] <what it is>` command that runs
-the survey-first new-project procedure; with no path it targets the current
-working directory (the Claude Code Desktop open-in-folder case).
+Canonical copies: `kit/commands/` (re-copy after pulling changes). Gives
+every session `/spinup [path —] <what it is>` (survey-first NEW-project
+procedure) and `/retrofit [path]` (gap-survey catch-up for EXISTING repos);
+with no path both target the current working directory (the Claude Code
+Desktop open-in-folder case).
 
 ## 4. Verify
 

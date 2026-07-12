@@ -161,6 +161,51 @@ new project" to land here. The procedure itself, mirroring what built
    providers, and ask a resident of autonomous to register it in the
    ecosystem tracks (that's a ROADMAP edit — governor/resident-only).
 
+### Retrofitting an EXISTING project (catch-up scaffolding)
+
+Shortcut: the `/retrofit` command wraps this. The greenfield procedure above
+assumes an empty directory; an existing repo has value at risk and its own
+conventions, so the retrofit differs in four load-bearing ways: **infer
+before asking, plan before writing, append never rewrite, and never break
+what works.**
+
+1. **Gap survey (read-only).** Derive the repo's current harness status
+   (the sweep's checks: CLAUDE.md, `./verify`, ROADMAP, DECISIONS,
+   INDEX/LIBRARY, traces/, manifest, `.claude/` hooks+agents); detect the
+   stack and existing test/lint/format commands; read the existing README,
+   docs, and TODOs for implicit roadmap content. Produce a gap table:
+   present / missing / present-but-nonconforming.
+2. **Survey with inference.** Conduct the 9-question spin-up survey
+   ([kit/README.md](kit/README.md)), but propose answers inferred from the
+   code (what-is-it, stack, domain core, consumers) and ask only what code
+   cannot show (architecture rung — still never defaulted — oracle-shape
+   preference, lifespan/autonomy, knowledge-loop tags). Answers land in
+   `project.manifest.json`, noted as a retrofit.
+3. **Plan, then PAUSE for approval.** List every file to create vs modify
+   before writing anything. Unlike greenfield, this pause is mandatory —
+   an existing repo is someone's working state.
+4. **Apply, gap by gap, non-destructively:**
+   - Existing files are appended to between `<!-- MARKER -->` blocks, never
+     rewritten or reordered; on any contradiction between the template and
+     existing content, the existing content wins pending a human ruling.
+   - `./verify` WRAPS the repo's existing test/lint commands — never
+     replaces its test setup. **Red-suite honesty:** if existing tests are
+     currently red, do not gate on them and do not delete them — `fast()`
+     runs the currently-green subset, and the red set is recorded in
+     ROADMAP as explicit debt with its own phase gate. Retrofit never
+     weakens an existing check; it may only quarantine-and-record.
+   - ROADMAP absorbs existing TODOs/plan docs (migrate content, leave
+     pointers at the old locations); DECISIONS starts with the retrofit
+     itself as entry 1 unless history makes earlier decisions certain.
+   - Then as greenfield: traces/, knowledge loop (tags from survey),
+     README brought to the clarity standard with a dated last-verified
+     line.
+5. **Verify + close.** `./verify fast` green; re-running the retrofit is a
+   no-op (marker-idempotent); briefs filed if the project is a consumer or
+   provider; one trace entry for the whole change; report at a review beat
+   (visual-first: the before/after gap table is the artifact) with the
+   manifest for ratification.
+
 ### What not to do
 
 - Don't edit doctrine in any global CLAUDE.md — propose changes in this
