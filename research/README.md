@@ -21,6 +21,11 @@ it and reads its per-topic last-checked dates.
   Claude Code practices, context rot, bloat/poisoning numbers; circuit
   breakers, lab guidance, incident record, governor metrics, ranked halt
   triggers.
+- [2026-07-13-human-ai-epistemics-delegate52.md](2026-07-13-human-ai-epistemics-delegate52.md)
+  — harvested from the sibling human-epistemics project: DELEGATE-52 (stronger
+  models fail invisibly; tightly-scoped tools only) + a seven-mode failure
+  taxonomy, each mapped to the autonomous doctrine it grounds. Primary of
+  DELEGATE-52 flagged attributed-not-verified (landscape-audit to confirm).
 - **Audit-loop research** (2026-07-08) — canonical in
   [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)
   (`audit-loop-research.md`): promote-up loops across LLM-memory and

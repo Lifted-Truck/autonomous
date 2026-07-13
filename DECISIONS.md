@@ -85,6 +85,20 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+20. **Human-epistemics methodology is a sibling project; its grounding is
+    harvested here** (2026-07-13, user-approved "do both"). The user's document
+    "The Applied Epistemics of AI Integration" is scaffolded as its own project
+    (`ai-integration-methodology/`, rung 1) — the human-epistemic half of the
+    practice, distinct from autonomous's agentic/deterministic half and carrying
+    a consulting-product identity. autonomous harvested only the citable
+    grounding: research/2026-07-13-human-ai-epistemics-delegate52.md (DELEGATE-52
+    + a seven-mode failure taxonomy, each mapped to the doctrine it validates)
+    and a new doctrine tenet "Human epistemic discipline at the gates" (the
+    human's share of friction the machine can't enforce). DELEGATE-52's primary
+    is flagged attributed-not-verified — booked for the next landscape audit.
+    Rejected: merging the methodology into autonomous (blurs two sharp things;
+    mixes a business offering into dev infrastructure).
+
 19. **`/spinup --composite` variant adopted** (2026-07-13, user-approved).
     The composite-project pattern (umbrella repo + shared contract + N
     contract-bound module territories under a `modules_dir/`, rung 2→3 by

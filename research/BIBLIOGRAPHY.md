@@ -248,3 +248,23 @@ the strict window and are recorded because they are not yet cited in
   https://vercel.com/blog/introducing-eve
 - AI-agent liability insurance market forming (Corgi, Testudo, Armilla,
   Klaimee) — https://www.factmr.com/report/ai-agent-liability-insurance-services-market
+
+## 2026-07-13 — Human-AI epistemics (harvested, not web-researched)
+
+Report: [2026-07-13-human-ai-epistemics-delegate52.md](2026-07-13-human-ai-epistemics-delegate52.md).
+Source: the user's own methodology document "The Applied Epistemics of AI
+Integration" (canonical in the sibling `ai-integration-methodology/` project),
+NOT a web pass — so these are attributed to that document, and where it cites a
+primary the primary is flagged for verification.
+
+- DELEGATE-52 benchmark (19 models × 52 domains × 20 interactions; invisible
+  failure in stronger models; ~80% of loss in sparse catastrophic collapses;
+  agentic tools worsened performance ~6pts absent tight scoping) — attributed
+  to "2026 Microsoft Research"; **primary URL not located / not verified in
+  this harvest — landscape-audit TODO.**
+- Illusion of explanatory depth (Rozenblit & Keil lineage) — via the doc.
+- Attractor-basin / basin-escape account of LLM generation — the doc's own
+  synthesis; mechanism-level, not a single citable paper.
+- Seven-mode failure taxonomy (Consensus Trap, XY-at-scale, Competency Erosion,
+  Invisible Dependency, Confidence Spiral, Translation Gap, Remediation Cliff)
+  — the doc's framework.

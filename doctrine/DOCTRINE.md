@@ -55,6 +55,21 @@ backend seams (prefer engine, fall back locally). Safety by construction
 When behavior is ambiguous, ask rather than guess, and record the resolution
 in the decision log. A "reasonable guess" is a signal to ask.
 
+## Human epistemic discipline at the gates
+The machine enforces friction (oracles, hooks, fresh-context critics); the
+human owns the friction the machine can't. At every ratification gate: surface
+the outcome you're hoping for BEFORE you evaluate, so you can be suspicious
+when you arrive at it — "your greatest barrier to the truth is that which you
+wish to be true." A conclusion that arrives comfortably is a signal to examine
+it more closely, not to accept it. Uninterrupted flow is where epistemic drift
+accelerates, so adversarial stress-testing and interrogation of comfort are
+designed-in, not failures of smoothness. When conversations compress into
+shorthand, periodically re-anchor it against its foundations — drift hides in
+compression. (Grounding: research/2026-07-13-human-ai-epistemics-delegate52.md;
+the deeper treatment is the sibling human-epistemics project. Empirically,
+stronger models fail *invisibly* — polished output that is subtly wrong — which
+is exactly why a comfortable-looking result earns more scrutiny, not less.)
+
 ## Right-size the agent architecture (multi-agent is an option, never a default)
 At project structuring time, the architecture menu is presented explicitly and
 chosen deliberately: (1) single-threaded agent, (2) single thread + read-only
