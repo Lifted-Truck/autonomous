@@ -18,6 +18,7 @@ them are files, not conversations.
 | **agent-knowledge-loop** | The cross-project audit loop (promote-up memory) | github.com/Lifted-Truck/agent-knowledge-loop |
 | **distillery** | Global memory: append-only stream + analyst + distilled pool | github.com/Lifted-Truck/distillery |
 | **dispatch** | Daily progress publishing: collector → FACTS → digest → gated publish | github.com/Lifted-Truck/dispatch |
+| **ai-integration-methodology** | The human-epistemics sibling: the collaboration methodology + consulting offering | github.com/Lifted-Truck/ai-integration-methodology |
 
 Cross-repo sequencing: [ROADMAP.md → Ecosystem tracks](ROADMAP.md).
 The design and its evidence: [DESIGN.md](DESIGN.md), [research/](research/).
