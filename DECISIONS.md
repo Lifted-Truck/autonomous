@@ -98,6 +98,18 @@ history; supersede with a new numbered entry.
     tier changes are always the human's deliberate call. Supersedes nothing;
     promotes 16–18 from decisions to loaded doctrine.
 
+24. **Correction to #23: the Fable rule lives ONLY in DOCTRINE.md, not
+    duplicated in the global CLAUDE.md** (2026-07-13). #23 also added a direct
+    hard-rule line to the global `~/.claude/CLAUDE.md` — that violated
+    INSTALL-GLOBAL.md's "never edit doctrine in the global file; redundant
+    copies drift" split rule, AND it does not propagate (global files are
+    machine-local, never synced). Removed it. The DOCTRINE.md tenet + the
+    `@import` every machine's global file already carries is the single source
+    and the propagation mechanism: a machine gets the rule by `git pull` on
+    autonomous — nothing to hand-edit per machine. The "belt-and-suspenders"
+    instinct was wrong here: if the import fails, ALL doctrine fails visibly,
+    so one duplicated rule buys nothing.
+
 22. **Licensing: public showcases get PolyForm NC; private commercial
     candidates stay unlicensed until productization** (2026-07-13, human).
     Tonality + Audiology carry PolyForm Noncommercial 1.0.0 (grant NC use,
