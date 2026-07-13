@@ -1,7 +1,7 @@
 # Installing the doctrine on a machine
 
 How to wire a machine's global `~/.claude/CLAUDE.md` to this repo's canonical
-doctrine. Done on: `machinepriest` Mac (2026-07-10). Replicate on any other
+doctrine. First installed 2026-07-10. Replicate on any other
 machine in two steps.
 
 ## 1. Clone the repo to the same path
