@@ -38,6 +38,26 @@ liberal reading driven by real LIBRARYs in the tree (e.g. Wend's entries):
 If either reading is rejected, distillery adjusts its parser and the
 fixtures move with the ruling — that is what this channel is for.
 
+## Field observation from the first real sweep (2026-07-11) — third ruling requested
+
+D1's first ingest over the live registry (44 projects, 18 LIBRARYs, 28
+records) quarantined 7 entries across three projects (`morphos`,
+`synthetic-worlds/edgewise`, `synthetic-worlds/wont`) for one shared reason:
+**those LIBRARYs wrap entries across multiple physical lines** (title line,
+then `| tags: …` / `| lesson: …` continuation lines), while the contract
+grammar is one-entry-per-line. Quarantine-visibly worked as ratified — no
+data was lost and nothing blocked — but the gap is ecosystem-wide and needs
+an owner ruling:
+
+- **(a) Contract stays strict** → the three projects' knowledge loops need
+  fixing (their residents' duty; distillery never writes to swept repos), or
+- **(b) `library-entry.2` adds a continuation-line grammar** (e.g. a line
+  starting with `|` continues the previous entry) → consumers migrate on
+  the version bump.
+
+Distillery is not blocked either way (quarantine records preserve the raw
+lines + provenance for later re-parse once ruled).
+
 ## Two contract ambiguities surfaced (please rule)
 
 1. **Pipes inside free-text fields.** The grammar is `|`-delimited, but

@@ -28,6 +28,11 @@ non-negotiable:
    recorded in ROADMAP as explicit debt, never deleted, never silently
    gated on, never "fixed" by weakening.
 
+Gotcha (first-run lesson, 2026-07-12): the Write tool does NOT set the exec
+bit, so a freshly-written `./verify` (and any `.claude/hooks/*.sh`) fails
+`permission denied` until `chmod +x`. Always `chmod +x verify
+.claude/hooks/*.sh` before running the oracle.
+
 Finish by reporting: the before/after gap table (this is the visual for the
 review beat), the manifest for ratification, green `./verify fast` output,
 and any briefs filed. Reference for the target end-state:

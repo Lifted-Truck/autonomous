@@ -25,6 +25,10 @@ Two behaviors are non-negotiable:
    the agent architecture). Present the three-rung menu with what earns
    each; single-thread is the normal answer, not the fallback.
 
+Gotcha: the Write tool does not set the exec bit — `chmod +x verify
+.claude/hooks/*.sh` before running the oracle, or `./verify` fails
+`permission denied`.
+
 Finish by reporting: the manifest for ratification, the green
 `./verify fast` output, and (if ecosystem-facing) which briefs were filed
 and whether the project should be registered in autonomous's ecosystem
