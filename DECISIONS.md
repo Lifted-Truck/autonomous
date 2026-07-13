@@ -85,6 +85,19 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+23. **Model routing is now a DOCTRINE tenet (loaded every session), with an
+    explicit Fable-subagent prohibition** (2026-07-13, after a project
+    accidentally spawned Fable sub-agents). Root cause: model routing lived
+    only here in DECISIONS (16–18), so sessions in other projects never loaded
+    it. Fix: added a "Model routing (tiers are human-gated)" tenet to
+    doctrine/DOCTRINE.md — which the global CLAUDE.md imports, so it now loads
+    everywhere — plus a direct hard-rule line in the global CLAUDE.md itself
+    (belt-and-suspenders for a safety rule). Rule: Fable is never used for
+    sub-agents or auto-selected for any role unless the human explicitly asks
+    in that session; leads→Opus, subagents→Sonnet, scout/verbatim→Haiku;
+    tier changes are always the human's deliberate call. Supersedes nothing;
+    promotes 16–18 from decisions to loaded doctrine.
+
 22. **Licensing: public showcases get PolyForm NC; private commercial
     candidates stay unlicensed until productization** (2026-07-13, human).
     Tonality + Audiology carry PolyForm Noncommercial 1.0.0 (grant NC use,

@@ -80,6 +80,17 @@ multiplier — never assumed. Escalate a rung only when the current one is the
 demonstrated bottleneck; the evidence base says harness quality outranks
 head-count (research/2026-07-10-multiagent-systems-survey.md, lessons 9–10).
 
+## Model routing (tiers are human-gated)
+Default routing, which no project may override without the human's explicit
+request in the current session: judgment-bearing roles (leads, critics,
+curators, analysts) → latest Opus; scoped-execution sub-agents → Sonnet;
+verbatim-report / scout roles → Haiku. **Fable is NEVER used for sub-agents —
+or auto-selected for any role — unless the human explicitly asks for it in the
+current session.** No project spawns Fable agents by default. Model-tier
+selection, escalation, or change is always the human's deliberate call, never a
+side effect of a default, a template, or tooling (and never through
+integrations that could trigger provider-side tier changes).
+
 ## Clarity standard (living README)
 Every system keeps a current, human-readable README: what it is, the map, the
 status — sufficient for a human to orient WITHOUT reading code or history.
