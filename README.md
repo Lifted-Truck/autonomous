@@ -1,16 +1,19 @@
 # autonomous
 
-**The canonical home for a fully-autonomous development paradigm** — the
-doctrine, harness kit, memory loops, and governor that let coordinated
-parallel agents build correctness-critical software without colliding or
-drifting — *and* the standards for ordinary single-agent projects, because
-the fleet is an option here, never the default.
+**Standards and doctrine for building software with AI coding agents** —
+from a single agent to a coordinated fleet, with the testing discipline and
+governance that keep agent-written code correct without a human reading every
+line.
 
-This README is the orientation document: a human should understand every
-layer, protocol, and cycle from this file alone, without reading the
-implementation. Deep links go to the canonical sources.
+This repository is the canonical home for the pieces that make that work: a
+harness kit, an oracle-and-verify testing discipline, self-improving memory
+loops, and a governor. The multi-agent *fleet* is one option here,
+deliberately never the default. This README is the orientation document — a
+human should understand every layer, protocol, and cycle from this file
+alone, without reading the implementation; deep links go to the canonical
+sources.
 
-*Last verified current: 2026-07-10.*
+*Last verified current: 2026-07-13.*
 
 ---
 
@@ -165,8 +168,8 @@ forever. In autonomous operation, REFLECT is hook-enforced, never voluntary.
    literature.
 3. A human (later: the curator) reviews and applies proposals.
 
-*Currently live on this machine:* weekly Sunday 9am cron over
-`synthetic-worlds/`, config in `agent-knowledge-loop/audit-loop.config`.
+Scheduling an audit loop on a specific machine (cron setup, config location)
+is machine-local ops — see [ONBOARDING.md](ONBOARDING.md) Part 1, not here.
 
 ### 4c. Cross-proliferating lessons between libraries (the promotion standard)
 
@@ -190,9 +193,10 @@ A lesson climbs only through gates that **tighten with altitude**:
 
 Downward proliferation (parent → specific children's CLAUDE.md) is the
 curator's job — **targeted, never broadcast** (a CLAUDE.md holds roughly
-100–150 instruction slots; selective memory beat comprehensive 39% vs 13% in
-the research), slot-budgeted, and behind the same adversarial review. This
-direction ships in Phase P3.
+100–150 instruction slots; selective memory beat comprehensive 39% vs 13% —
+[research/2026-07-10-memory-governance.md](research/2026-07-10-memory-governance.md)),
+slot-budgeted, and behind the same adversarial review. This direction ships
+in Phase P3.
 
 **The global memory is two pools** (Decision 11): an **append-only stream**
 (warehouse — every candidate lesson from every sweep, dated, provenance
@@ -250,8 +254,8 @@ by **reversibility of the change**, not trust in the model.
 |---|---|---|
 | [ONBOARDING.md](ONBOARDING.md) | Replication + arrival guide (human and agent) — start here on a new machine | current |
 | [DESIGN.md](DESIGN.md) | The full research-backed design | current |
-| [ROADMAP.md](ROADMAP.md) | Phase gates (C0 current → P0…P4); single source of direction | current |
-| [DECISIONS.md](DECISIONS.md) | Append-only decision log (10 on record) | current |
+| [ROADMAP.md](ROADMAP.md) | Phase-gated direction: C0 (consolidation) done; kit v2 + ecosystem tracks in progress; governor P0–P4 to build | current |
+| [DECISIONS.md](DECISIONS.md) | Append-only decision log (22 on record) | current |
 | [doctrine/](doctrine/) | Doctrine + integrations policy + global-install guide | current |
 | [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`) + sweep primitive shipped |
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
@@ -263,10 +267,13 @@ by **reversibility of the change**, not trust in the model.
 | [research/](research/) | The evidence base, citations preserved | current |
 | [archive/kit-v1/](archive/kit-v1/) | Kit v1, frozen | archived |
 
-**Sibling execution tracks** (own repos, sequenced in ROADMAP → Ecosystem
-tracks): [`~/Documents/Claude/distillery/`](../distillery/) (global memory:
-stream + analyst + distilled pool) · [`~/Documents/Claude/dispatch/`](../dispatch/)
-(daily progress publishing). This repo governs; they execute.
+**Sibling repos** (own repos, sequenced in ROADMAP → Ecosystem tracks):
+[distillery](https://github.com/Lifted-Truck/distillery) (global memory:
+stream + analyst + distilled pool) ·
+[dispatch](https://github.com/Lifted-Truck/dispatch) (daily progress
+publishing) ·
+[ai-integration-methodology](https://github.com/Lifted-Truck/ai-integration-methodology)
+(the human-epistemics sibling). This repo governs; they execute.
 
 ## 8. Maintenance
 
