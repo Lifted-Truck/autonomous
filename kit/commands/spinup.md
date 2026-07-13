@@ -12,6 +12,15 @@ fresh project root: empty or near-empty, not inside an existing project or
 one of the ecosystem repos; if in doubt, ask. If the description is missing,
 ask for it — it seeds the survey's first question.)
 
+**Composite?** If the arguments include `--composite`, or the project is one
+deployable made of several modules behind a shared seam (a plugin hosting
+engines, an app with plugins, a monorepo built together), follow
+`ONBOARDING.md` → Part 2 → "Composite projects" instead (the five moves:
+promote the seam to the contract; root charter + per-module sub-charters; a
+`composite` manifest block with a `modules_dir`; record doc precedence; rung
+2→3 by default). Worked reference: `~/Documents/Claude/synthetic-worlds/Orrery`.
+Otherwise, the standard procedure:
+
 Follow the canonical procedure at
 `~/Documents/Claude/autonomous/ONBOARDING.md` → Part 2 → "Replicating the
 structure for a NEW project (until kit v2 ships)" — all eight steps, exactly.

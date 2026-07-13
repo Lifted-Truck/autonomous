@@ -85,6 +85,16 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+19. **`/spinup --composite` variant adopted** (2026-07-13, user-approved).
+    The composite-project pattern (umbrella repo + shared contract + N
+    contract-bound module territories under a `modules_dir/`, rung 2→3 by
+    default) is now canonical in ONBOARDING Part 2 and wired into the spinup
+    command. It is the organ model applied intra-repo (territory = subdir, not
+    a repo). First worked example: Orrery (DECISIONS there #5–9). Rejected:
+    repo-per-module for composites (forces a freely-changing seam into a
+    cross-repo versioned contract — see Orrery #6). Kit-v2 will formalize the
+    `composite` manifest schema.
+
 13. **Replication/onboarding instructions live in this repo (ONBOARDING.md),
     not a separate overview repo** (2026-07-10). An overview repo would have
     to describe this repo's content — duplication, hence drift — and the

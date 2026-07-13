@@ -161,6 +161,45 @@ new project" to land here. The procedure itself, mirroring what built
    providers, and ask a resident of autonomous to register it in the
    ecosystem tracks (that's a ROADMAP edit — governor/resident-only).
 
+### Composite projects (`/spinup --composite`) — one repo, N contract-bound modules
+
+For a project that is one deployable made of several modules behind a shared
+seam (a plugin hosting engines, an app with plugins, a monorepo of services
+built together). Worked reference: `~/Documents/Claude/synthetic-worlds/Orrery`
+(one VST, N sequencer engines behind an `IEngine` contract). This is the
+**organ model applied intra-repo** — a territory is a subdirectory with an
+enforced write boundary, NOT a separate repo. Bucket the modules together;
+separate repos are only for independent products with cross-repo versioned
+contracts (that's the INTEGRATIONS protocol, not this).
+
+Differences from the standard procedure — the five moves:
+1. **Promote the shared seam to "the contract."** The one document/interface
+   every module imports (Orrery: `sequencer-studio-architecture.md`). Changes
+   to it are contract-version events; freeze it for a build phase and gate
+   edits behind a human.
+2. **Root charter + one sub-charter per module territory.** Root `CLAUDE.md`
+   carries the layer map + the rung path; each module's `CLAUDE.md` is lean,
+   points at the root + contract, and its §Domain is that module's own spec.
+3. **A `composite` manifest block** — the territory registry: `contract`,
+   a `modules_dir` (Orrery: `engines/`), and one entry per territory
+   (path, role, spec-or-null, prototype, status). This is the machine-readable
+   source of truth for what modules exist.
+4. **Record which doc wins where.** Composite projects accrete docs at
+   different times (Orrery's first engine spec predated the contract); pin
+   precedence in DECISIONS so no agent builds a superseded design.
+5. **Rung 2→3 by default.** Prove the seam on ONE module single-threaded
+   (shell + first engine), gate green, THEN parallelize the rest as organs
+   (own territory + own verify). Composite structure is the strongest
+   earned-rung-3 signal, but exercise the contract before trusting it.
+
+Then, mechanically: put modules under `modules_dir/`; keep a
+`modules_dir/_template/` sub-charter for intake; make `./verify` go RED on any
+`modules_dir/<name>/` not registered in the manifest (the intake safety net —
+nothing half-added). **Watch for contract findings during intake:** a module
+needing a contract *variant* (Orrery's Kuramoto → free-transport) or a new
+output kind (Torus → native pitch) is a contract-change proposal, not just a
+new territory — record it in DECISIONS and gate its build on the change.
+
 ### Retrofitting an EXISTING project (catch-up scaffolding)
 
 Shortcut: the `/retrofit` command wraps this. The greenfield procedure above
