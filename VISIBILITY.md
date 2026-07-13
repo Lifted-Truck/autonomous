@@ -45,6 +45,26 @@ might be worth patenting, public code forecloses the strongest options.
 
 - **Utilities / low-stakes → either; public is fine.** Nothing to protect.
 
+## Licensing decisions (2026-07-13)
+
+- **Public showcase (Tonality, Audiology): PolyForm Noncommercial 1.0.0.**
+  `LICENSE.md` grants the public non-commercial use; commercial rights are
+  reserved to the copyright holder (Julian Smith / Lifted-Truck) by default.
+  Source-available, resume-friendly, commercial-protected. Canonical text:
+  polyformproject.org/licenses/noncommercial/1.0.0.
+- **Private commercial candidates: intentionally UNLICENSED (all rights
+  reserved) until productization.** A license *grants* rights; you do not grant
+  rights on something you may sell. A private repo with no license is
+  all-rights-reserved by default — maximum optionality. Adding even a
+  non-commercial license now would hand the public NC rights that could
+  undercut a future paid product or conflict with a chosen commercial model.
+  So: no LICENSE file on the private music repos; pick the license *at* the
+  productization decision, per product. (User decision — they may become
+  commercial products.)
+- Rule of thumb: **public → license it** (a public repo with no license still
+  reads as all-rights-reserved, which confuses would-be users); **private and
+  possibly-commercial → leave unlicensed** until you decide the business model.
+
 ## Music devices recommended PRIVATE (the actionable list)
 Excludes Tonality + Audiology (kept public per human decision). Each is a
 synthesis engine, sequencer, or audio device with productization potential.

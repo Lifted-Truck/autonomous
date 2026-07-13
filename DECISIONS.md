@@ -85,6 +85,17 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+22. **Licensing: public showcases get PolyForm NC; private commercial
+    candidates stay unlicensed until productization** (2026-07-13, human).
+    Tonality + Audiology carry PolyForm Noncommercial 1.0.0 (grant NC use,
+    reserve commercial to the owner). The private music repos get NO license
+    deliberately — a license grants rights, and you don't grant rights on
+    something you may sell; private + unlicensed = all-rights-reserved =
+    maximum optionality; choose a license per product at the productization
+    decision. Rejected: applying PolyForm NC to the private repos too (would
+    grant NC rights that could undercut a future paid product). Detail:
+    VISIBILITY.md → Licensing decisions.
+
 21. **Repo visibility policy: novel music IP private, infra/methodology public**
     (2026-07-13, human). Disclosure is irreversible and starts patent clocks;
     private preserves optionality at ~zero cost. Music/audio devices → private
