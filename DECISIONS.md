@@ -85,6 +85,18 @@ history; supersede with a new numbered entry.
     gates and the entity operating under them. Rejected: autonomous as
     operational lead (conflates standards with operation; its residency is
     meta-level by design).
+21. **Repo visibility policy: novel music IP private, infra/methodology public**
+    (2026-07-13, human). Disclosure is irreversible and starts patent clocks;
+    private preserves optionality at ~zero cost. Music/audio devices → private
+    by default (Tonality + Audiology kept public as resume showcase);
+    infrastructure + the methodology → public (portfolio/credibility);
+    client-confidential → private. Full policy + the actionable per-repo list:
+    VISIBILITY.md. Sweep gained an opt-in `--visibility` gh check (network;
+    outside the deterministic core). Corrected a prior error: harness-grader
+    is PRIVATE, not public (I had conflated remote-presence with public-ness).
+    Visibility changes are the human's to run (`gh repo edit … --visibility …`)
+    — an access-control action, not mine.
+
 20. **Human-epistemics methodology is a sibling project; its grounding is
     harvested here** (2026-07-13, user-approved "do both"). The user's document
     "The Applied Epistemics of AI Integration" is scaffolded as its own project

@@ -22,6 +22,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -61,8 +62,34 @@ def resolve(registry):
     return projects
 
 
-def derive_status(path):
-    """Presence checks only — status is derived at sweep time, never stored."""
+def _remote_slug(remote):
+    """owner/repo from an https or ssh GitHub remote URL, else None."""
+    if not remote:
+        return None
+    m = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?$", remote)
+    return m.group(1) if m else None
+
+
+def repo_visibility(remote):
+    """PUBLIC/PRIVATE/INTERNAL via `gh`, or None. NETWORK — opt-in only, never
+    part of the deterministic offline core (a missing/​unauthed gh -> None)."""
+    slug = _remote_slug(remote)
+    if not slug:
+        return None
+    try:
+        out = subprocess.check_output(
+            ["gh", "repo", "view", slug, "--json", "visibility", "-q", ".visibility"],
+            stderr=subprocess.DEVNULL,
+        ).decode().strip()
+        return out or None
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def derive_status(path, with_visibility=False):
+    """Presence checks only — status is derived at sweep time, never stored.
+    with_visibility adds a NETWORK gh lookup (opt-in; off by default so the
+    core stays offline + deterministic)."""
     def has(*rel):
         return os.path.exists(os.path.join(path, *rel))
 
@@ -78,9 +105,9 @@ def derive_status(path):
         except subprocess.CalledProcessError:
             remote = None
 
-    return {
+    out = {
         "git": has(".git"),
-        "remote": remote,  # None = local-only; a URL = has a remote (public/private not inferred)
+        "remote": remote,  # None = local-only; a URL = has a remote
         "claude_md": has("CLAUDE.md"),
         "verify": has("verify"),
         "roadmap": has("ROADMAP.md"),
@@ -89,6 +116,9 @@ def derive_status(path):
         "manifest": has("project.manifest.json"),
         "status_surface": has("STATUS.json"),
     }
+    if with_visibility:
+        out["visibility"] = repo_visibility(remote)  # NETWORK; None if gh absent
+    return out
 
 
 def content_hash(path, targets):
@@ -106,13 +136,13 @@ def content_hash(path, targets):
     return hashlib.sha256("\n".join(parts).encode()).hexdigest()[:16]
 
 
-def sweep(registry, targets=None, ledger=None):
+def sweep(registry, targets=None, ledger=None, with_visibility=False):
     """Full pass: enumerate, derive status, and (if targets) diff vs ledger."""
     ledger = ledger or {}
     records = []
     for proj in resolve(registry):
         rec = dict(proj)
-        rec["status"] = derive_status(proj["path"])
+        rec["status"] = derive_status(proj["path"], with_visibility=with_visibility)
         if targets is not None:
             rec["hash"] = content_hash(proj["path"], targets)
             rec["changed"] = rec["hash"] != ledger.get(proj["name"])
@@ -136,12 +166,14 @@ def main(argv=None):
     ap.add_argument("--ledger")
     ap.add_argument("--targets", nargs="+", default=["LIBRARY.md"])
     ap.add_argument("--update-ledger", action="store_true")
+    ap.add_argument("--visibility", action="store_true",
+                    help="enrich each record with GitHub visibility via gh (NETWORK; not deterministic)")
     args = ap.parse_args(argv)
 
     registry = _load_json(args.registry, "registry")
 
     if args.command == "list":
-        records = sweep(registry)
+        records = sweep(registry, with_visibility=args.visibility)
     else:
         if not args.ledger:
             print("sweep: changed requires --ledger", file=sys.stderr)

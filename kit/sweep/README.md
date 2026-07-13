@@ -22,3 +22,8 @@ python3 sweep.py --registry ../../registry.json changed \
 Consumers keep their OWN ledger file (a distillery ingest and a dispatch
 collection are independent cursors over the same registry). Tests:
 `python3 -m unittest discover -s kit/sweep` — run by this repo's `./verify`.
+
+`--visibility` (on `list`) enriches each record with GitHub PUBLIC/PRIVATE via
+`gh` — **network, opt-in, NOT part of the deterministic offline core** (absent
+`gh` → `visibility: null`). Used for the visibility audit (VISIBILITY.md) and,
+later, dispatch's roundup. The default sweep stays offline and deterministic.

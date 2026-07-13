@@ -94,6 +94,19 @@ class TestStatus(SweepFixture):
         self.assertIn("remote", status)
         self.assertIsNone(status["remote"])
 
+    def test_visibility_off_by_default_offline(self):
+        # Default derive_status must NOT include a visibility key and must not
+        # touch the network — the deterministic core stays offline.
+        status = sweep.derive_status(os.path.join(self.root, "alpha"))
+        self.assertNotIn("visibility", status)
+
+    def test_remote_slug_parsing(self):
+        self.assertEqual(sweep._remote_slug("https://github.com/O/r.git"), "O/r")
+        self.assertEqual(sweep._remote_slug("git@github.com:O/r.git"), "O/r")
+        self.assertEqual(sweep._remote_slug("https://github.com/O/r"), "O/r")
+        self.assertIsNone(sweep._remote_slug(None))
+        self.assertIsNone(sweep._remote_slug("https://gitlab.com/O/r.git"))
+
     def test_remote_detected_on_real_git_repo(self):
         # Regression: sweep.py once returned None for ALL remotes because
         # `import subprocess` was missing and a bare except swallowed the
