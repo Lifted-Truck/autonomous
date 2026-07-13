@@ -90,6 +90,27 @@ class TestStatus(SweepFixture):
         self.assertTrue(status["traces"])
         self.assertFalse(status["verify"])
         self.assertFalse(status["status_surface"])
+        # remote key present; None for a non-git fixture dir
+        self.assertIn("remote", status)
+        self.assertIsNone(status["remote"])
+
+    def test_remote_detected_on_real_git_repo(self):
+        # Regression: sweep.py once returned None for ALL remotes because
+        # `import subprocess` was missing and a bare except swallowed the
+        # NameError. This exercises the real git path so that can't recur.
+        repo = os.path.join(self.root, "alpha")
+        url = "https://example.com/x/alpha.git"
+        for args in (["init", "-q"], ["remote", "add", "origin", url]):
+            import subprocess
+            subprocess.run(["git", "-C", repo] + args, check=True,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.assertEqual(sweep.derive_status(repo)["remote"], url)
+        # a git repo without an origin remote reports None, not a crash
+        bare = os.path.join(self.root, "beta")
+        import subprocess
+        subprocess.run(["git", "-C", bare, "init", "-q"], check=True,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.assertIsNone(sweep.derive_status(bare)["remote"])
 
 
 class TestLedger(SweepFixture):

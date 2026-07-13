@@ -22,6 +22,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import sys
 
 
@@ -65,8 +66,21 @@ def derive_status(path):
     def has(*rel):
         return os.path.exists(os.path.join(path, *rel))
 
+    remote = None
+    if has(".git"):
+        # Narrow except: a repo with no 'origin' exits non-zero (expected) ->
+        # None. A missing git binary is a real environment fault -> surface it.
+        try:
+            remote = subprocess.check_output(
+                ["git", "-C", path, "remote", "get-url", "origin"],
+                stderr=subprocess.DEVNULL,
+            ).decode().strip() or None
+        except subprocess.CalledProcessError:
+            remote = None
+
     return {
         "git": has(".git"),
+        "remote": remote,  # None = local-only; a URL = has a remote (public/private not inferred)
         "claude_md": has("CLAUDE.md"),
         "verify": has("verify"),
         "roadmap": has("ROADMAP.md"),
