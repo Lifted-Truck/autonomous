@@ -55,6 +55,14 @@ Profiles beyond `organ` install only on the rung that needs them.
   `verifier`, `critic`, `scout`, `audit-thread`, `curator`, `watchdog`,
   `coherence-critic`, `conductor`. Each profile documents when it's earned,
   what it may never do, and its handoff artifact format.
+- **CI is part of the core.** [templates/ci.github.yml](templates/ci.github.yml)
+  → each repo's `.github/workflows/ci.yml`: GitHub Actions runs `./verify fast`
+  on every push/PR, mirroring the local Stop-hook gate ("CI mirrors the Stop
+  hook"). It runs the project's ONE oracle in the cloud — not new checks. Ships
+  with `/spinup`, added to existing repos by `/retrofit`. `verify full` runs in
+  CI only where the runner supports it (audio-plugin `auval`/codesign is
+  macOS-only + human-run → those repos CI `fast` only). Needs a remote; private
+  repos draw Actions-minutes quota, public are unlimited.
 - **INSIGHTS v2**: every prescription cites its evidence in
   [research/](../research/).
 

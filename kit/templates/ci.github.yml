@@ -1,0 +1,46 @@
+# Kit v2 template — standard GitHub Actions CI.
+# Copy to `.github/workflows/ci.yml` in the target repo. CI here is not new
+# checks: it runs the project's ONE oracle (./verify) in the cloud on every
+# push/PR, mirroring the local Stop-hook gate. Green in CI == green locally.
+#
+# Pick the toolchain setup block that matches the project (delete the rest).
+# `verify fast` is always the gate. `verify full` runs in CI only where the
+# runner supports it — e.g. auval/codesign for audio plugins is macOS-only and
+# human-run, so those projects keep `full` out of CI and run `fast` here.
+
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest        # macos-latest if verify needs Xcode/clang/auval
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Python (stdlib verify: unittest/ruff) ------------------------------
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      # If the project uses a venv + pinned deps, install them here:
+      #   run: python -m pip install -r requirements.txt   (or: -e .[dev])
+
+      # --- Node (delete Python block above) -----------------------------------
+      # - uses: actions/setup-node@v4
+      #   with: { node-version: "lts/*" }
+      # - run: npm ci
+
+      # --- C/C++ / CMake (delete Python block above) --------------------------
+      # - run: sudo apt-get update && sudo apt-get install -y cmake build-essential
+      #   # JUCE plugins: audio deps too; and full()/auval is macOS-only + human-run,
+      #   # so run `verify fast` (ctests) here, not `full`.
+
+      - name: verify fast
+        run: |
+          chmod +x verify
+          ./verify fast

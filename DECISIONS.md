@@ -98,6 +98,19 @@ history; supersede with a new numbered entry.
     tier changes are always the human's deliberate call. Supersedes nothing;
     promotes 16–18 from decisions to loaded doctrine.
 
+26. **CI is a kit-core property: GitHub Actions runs `./verify fast` on every
+    push/PR** (2026-07-13, user goal "every project runs CI"). Not new checks —
+    the cloud runs the project's one oracle, mirroring the local Stop-hook gate.
+    Reference workflow added to autonomous (`.github/workflows/ci.yml`);
+    template at `kit/templates/ci.github.yml` ships via `/spinup`, retrofits
+    via `/retrofit`. Nuances recorded: needs a remote; `verify full` runs in CI
+    only where the runner supports it (audio-plugin auval/codesign is macOS-only
+    + human-run → CI `fast` only); private repos draw Actions-minutes quota.
+    Rollout respects writes-stay-home: each repo's residents add their own
+    workflow (autonomous done as reference; others via their agents or explicit
+    human authorization). This is also the required-checks foundation the P2
+    merge queue assumes.
+
 25. **Model-routing rule generalized: pin explicitly + cap at Opus**
     (2026-07-13, human — "better than 'never Fable'"). Supersedes the
     Fable-specific framing of #23. Two rules attacking the actual failure mode
