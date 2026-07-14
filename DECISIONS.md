@@ -98,6 +98,16 @@ history; supersede with a new numbered entry.
     tier changes are always the human's deliberate call. Supersedes nothing;
     promotes 16–18 from decisions to loaded doctrine.
 
+25. **Model-routing rule generalized: pin explicitly + cap at Opus**
+    (2026-07-13, human — "better than 'never Fable'"). Supersedes the
+    Fable-specific framing of #23. Two rules attacking the actual failure mode
+    (silent inheritance): (1) every agent's model is PINNED at spawn, never
+    inherited from the session/parent default; (2) never exceed the latest
+    Opus — the Claude 5 flagship family (Fable) or any future above-Opus tier
+    is used only on explicit human request. Durable (a ceiling, not a name
+    that goes stale) and root-cause (the accident was an inherited tier, not a
+    named one). In DOCTRINE.md "Model routing (pin explicitly; cap at Opus)".
+
 24. **Correction to #23: the Fable rule lives ONLY in DOCTRINE.md, not
     duplicated in the global CLAUDE.md** (2026-07-13). #23 also added a direct
     hard-rule line to the global `~/.claude/CLAUDE.md` — that violated

@@ -80,16 +80,23 @@ multiplier — never assumed. Escalate a rung only when the current one is the
 demonstrated bottleneck; the evidence base says harness quality outranks
 head-count (research/2026-07-10-multiagent-systems-survey.md, lessons 9–10).
 
-## Model routing (tiers are human-gated)
-Default routing, which no project may override without the human's explicit
-request in the current session: judgment-bearing roles (leads, critics,
+## Model routing (pin explicitly; cap at Opus)
+Two rules, because the failure mode is silent inheritance of the wrong tier:
+1. **Pin every agent explicitly; never inherit.** Each sub-agent's model is set
+   at spawn (frontmatter or the spawn call), never left to inherit the
+   session/parent default — inheritance is exactly how the wrong tier
+   propagates without anyone choosing it.
+2. **Never exceed the latest Opus.** The latest Opus is the default ceiling.
+   Anything above it — the Claude 5 flagship family (e.g. Fable) or any future
+   above-Opus tier — is used ONLY when the human explicitly asks in the current
+   session. No project or template reaches above Opus by default.
+
+Default tiers under that ceiling: judgment-bearing roles (leads, critics,
 curators, analysts) → latest Opus; scoped-execution sub-agents → Sonnet;
-verbatim-report / scout roles → Haiku. **Fable is NEVER used for sub-agents —
-or auto-selected for any role — unless the human explicitly asks for it in the
-current session.** No project spawns Fable agents by default. Model-tier
-selection, escalation, or change is always the human's deliberate call, never a
-side effect of a default, a template, or tooling (and never through
-integrations that could trigger provider-side tier changes).
+verbatim-report / scout roles → Haiku. Tier selection, escalation, or change is
+always the human's deliberate call, never a side effect of a default, template,
+or tooling (and never via integrations that could trigger provider-side tier
+changes).
 
 ## Clarity standard (living README)
 Every system keeps a current, human-readable README: what it is, the map, the
