@@ -33,7 +33,10 @@ import sweep  # noqa: E402
 USER = os.environ.get("USER") or os.path.basename(os.path.expanduser("~"))
 
 HIGH_PATTERNS = [
-    (r"/Users/[^/\s\"']+/", "absolute home path"),
+    # POSIX ERE only — `git grep -E` does NOT support \s / \d (a \s here
+    # silently matched nothing, so absolute-path detection was dead: the
+    # 2026-07-13 first run caught leaks by username alone. Keep it ERE-safe.)
+    (r"/(Users|home)/[^/]+/", "absolute home path"),
     (re.escape(USER), "local username"),
 ]
 INFO_PATTERNS = [
@@ -42,11 +45,26 @@ INFO_PATTERNS = [
 ]
 
 
+# `/Users/<user>/…`, `/home/$USER/…`, `/Users/{name}/…` in prose are docs
+# ABOUT the leak pattern, not leaks. Filter them or the scanner cries wolf —
+# and a noisy scanner is an ignored scanner.
+_PLACEHOLDER = re.compile(r"/(Users|home)/[<${]")
+
+
+def _is_placeholder(line):
+    return bool(_PLACEHOLDER.search(line))
+
+
 def _git_grep(path, pattern):
-    """Lines in tracked files matching pattern (extended regex). [] if none."""
+    """Lines in tracked files matching pattern (extended regex). [] if none.
+
+    Excludes this scanner's own source: it necessarily contains the very
+    patterns it hunts for, so it would always flag itself (a false positive).
+    """
     try:
         out = subprocess.run(
-            ["git", "-C", path, "grep", "-nIE", pattern],
+            ["git", "-C", path, "grep", "-nIE", pattern, "--", ".",
+             ":(exclude)*leak_scan.py"],
             capture_output=True, text=True,
         )
         return out.stdout.splitlines() if out.returncode == 0 else []
@@ -60,6 +78,8 @@ def scan_repo(path, private_names=None, public=None):
         return findings
     for pat, label in HIGH_PATTERNS:
         for line in _git_grep(path, pat):
+            if label == "absolute home path" and _is_placeholder(line):
+                continue  # docs about the pattern, not a leak
             findings.append(("HIGH", label, line))
     for pat, label in INFO_PATTERNS:
         for line in _git_grep(path, pat):
