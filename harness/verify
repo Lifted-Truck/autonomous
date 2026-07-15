@@ -23,10 +23,15 @@ record() { # record <target> <exit_code>
 # /home/$USER/) are docs ABOUT the pattern, not leaks, and are allowed.
 # NB: git grep uses POSIX ERE — no \s, no \d. (A \s here silently matches
 # NOTHING; that is how the fleet scanner once shipped blind. Keep it ERE-safe.)
+# --untracked is load-bearing: git grep defaults to TRACKED files only, so a
+# brand-new file is invisible to the gate until it is staged. Running verify
+# before `git add` then passes, and CI fails after the commit lands — which is
+# exactly how the first version of this gate shipped its own leak. Untracked
+# but not-gitignored == about to be committed, so scan it.
 leak_gate() {
   local hits
-  hits=$(git grep -nIE '/(Users|home)/[^/]+/' -- . ':(exclude)*leak_scan.py' 2>/dev/null \
-         | grep -vE '/(Users|home)/[<$@{]' || true)
+  hits=$(git grep --untracked -nIE '/(Users|home)/[^/]+/' -- . ':(exclude)*leak_scan.py' 2>/dev/null \
+         | grep -vE '/(Users|home)/[<$@{%]' || true)
   [ -z "$hits" ] && return 0
   echo "verify: LEAK — machine-absolute path in a tracked file (use ~/ instead):" >&2
   echo "$hits" | sed 's/^/    /' >&2

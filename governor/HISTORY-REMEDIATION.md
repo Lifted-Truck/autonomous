@@ -55,16 +55,18 @@ git clone --mirror https://github.com/Lifted-Truck/<repo> ~/backups/<repo>-$(dat
 # 1. Fresh clone to operate on (filter-repo refuses a dirty/linked tree)
 git clone https://github.com/Lifted-Truck/<repo> /tmp/<repo>-rw && cd /tmp/<repo>-rw
 
-# 2. Define the replacements (literal string -> replacement)
-cat > /tmp/replacements.txt <<'EOF'
-/Users/machinepriest/Documents==>~/Documents
-EOF
+# 2. Define the replacements (literal string -> replacement).
+#    Build it from $(whoami) so this runbook never itself contains the
+#    username — the leak_gate would (correctly) reject it if it did.
+#    That is not a cute detail: the first draft of this file DID hardcode it
+#    and CI caught it. See §6.
+printf '/Users/%s/Documents==>~/Documents\n' "$(whoami)" > /tmp/replacements.txt
 
 # 3. Rewrite (rewrites ALL commits touching those blobs)
 git filter-repo --replace-text /tmp/replacements.txt
 
 # 4. VERIFY before pushing — the string must be gone from all history
-git log --all -p | grep -c "machinepriest" || echo "clean"
+git log --all -p | grep -c "$(whoami)" || echo "clean"
 git log --oneline | head            # sanity: history structure intact
 
 # 5. Re-add the remote (filter-repo strips it deliberately) and force-push
