@@ -16,9 +16,28 @@ record() { # record <target> <exit_code>
   return "$2"
 }
 
+# --- leak gate (kit-core — DO NOT delete; keep self-contained) --------------
+# No machine-absolute home paths in tracked files: they bake the local username
+# and directory layout into the repo — and into any public remote. Use a
+# ~/-relative path or an env var instead. Prose placeholders (/Users/<user>/,
+# /home/$USER/) are docs ABOUT the pattern, not leaks, and are allowed.
+# NB: git grep uses POSIX ERE — no \s, no \d. (A \s here silently matches
+# NOTHING; that is how the fleet scanner once shipped blind. Keep it ERE-safe.)
+leak_gate() {
+  local hits
+  hits=$(git grep -nIE '/(Users|home)/[^/]+/' -- . ':(exclude)*leak_scan.py' 2>/dev/null \
+         | grep -vE '/(Users|home)/[<$@{]' || true)
+  [ -z "$hits" ] && return 0
+  echo "verify: LEAK — machine-absolute path in a tracked file (use ~/ instead):" >&2
+  echo "$hits" | sed 's/^/    /' >&2
+  return 1
+}
+
 fast() {
   # ---- Layer-0: seconds, not minutes. CI-blocking. -------------------------
-  # PROJECT IMPLEMENTS. Examples:
+  local ok=0
+  leak_gate || ok=1          # privacy gate: kit-core, keep it first
+  # PROJECT IMPLEMENTS the rest. Examples:
   #   ruff check . && mypy src/ && pytest -q tests/unit
   #   cmake --build build --target unit_tests && ./build/unit_tests
   echo "verify[fast]: NOT IMPLEMENTED — edit ./verify" >&2

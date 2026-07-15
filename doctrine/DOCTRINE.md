@@ -98,6 +98,19 @@ always the human's deliberate call, never a side effect of a default, template,
 or tooling (and never via integrations that could trigger provider-side tier
 changes).
 
+## Never commit machine identity
+No machine-absolute paths (`/Users/<you>/…`, `/home/<you>/…`), usernames, or
+local directory layout in tracked files — docs, configs, and code alike. They
+bake your identity into the repo and into any public remote, and they are not
+portable to a clone or a second machine, so they are wrong twice over. Use a
+`~/`-relative path, a repo-relative path, or an env var with an
+`expanduser`'d default. Machine-local config that *can't* be made portable
+(an absolute interpreter path outside the repo) is gitignored, not committed.
+*Enforced by:* the `leak_gate` in every project's `./verify` (so it blocks the
+Stop hook and CI both) — prose is the reminder, the gate is the enforcement.
+Fleet backstop: `governor/leak_scan.py` (catches un-gated repos and the one
+thing a per-repo gate can't see: a private repo's name inside a public one).
+
 ## Clarity standard (living README)
 Every system keeps a current, human-readable README: what it is, the map, the
 status — sufficient for a human to orient WITHOUT reading code or history.

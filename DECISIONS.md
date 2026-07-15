@@ -98,6 +98,25 @@ history; supersede with a new numbered entry.
     tier changes are always the human's deliberate call. Supersedes nothing;
     promotes 16–18 from decisions to loaded doctrine.
 
+27. **Privacy is enforced by a gate, not a sweep** (2026-07-13). `leak_gate` is
+    now kit-core: a self-contained bash function in every project's `./verify`
+    (so it blocks the Stop hook AND CI from one artifact — a repo must be
+    verifiable without autonomous cloned, hence the deliberate copy rather than
+    a shared import). Doctrine tenet added: "Never commit machine identity."
+    `governor/leak_scan.py` demoted to fleet *backstop* (un-gated repos +
+    cross-repo private-name exposure, which a per-repo gate structurally cannot
+    see). Rationale: a monthly sweep leaves a leak live for up to 30 days; a
+    commit-time gate makes it zero. History remediation: see
+    governor/HISTORY-REMEDIATION.md — verdict is "don't, except dispatch (whose
+    bad blobs are unpushed, so rewriting is free)"; a rewrite cannot un-expose
+    what is already public, so it buys little at real cost.
+    **Self-audit (uncomfortable, recorded):** autonomous itself is 3/8 on the
+    harness it defines — missing CLAUDE.md, manifest, knowledge loop, traces,
+    hooks — violating its own Decision 11. Retrofitting the standards repo is
+    now a tracked task; the session's real lessons (exec-bit, bare-except
+    swallowing an import error, `\s` dead in POSIX ERE) currently have no
+    durable in-repo home, which is exactly what a LIBRARY is for.
+
 26. **CI is a kit-core property: GitHub Actions runs `./verify fast` on every
     push/PR** (2026-07-13, user goal "every project runs CI"). Not new checks —
     the cloud runs the project's one oracle, mirroring the local Stop-hook gate.
