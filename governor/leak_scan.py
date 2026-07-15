@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""leak_scan — deterministic fleet privacy audit (the watchdog's first check).
+
+Greps every roster repo's TRACKED files (git grep at HEAD — respects
+.gitignore) for references that leak the local environment, and flags the one
+thing a per-repo check can't see: a PRIVATE repo's name appearing in a PUBLIC
+repo. Deterministic (no model calls); propose-only (reports, never edits).
+
+Severity:
+  HIGH  absolute home paths (/Users/<user>/...) or the literal local username
+        in tracked files — bakes machine identity into the repo.
+  HIGH  a private repo's name found in a public repo's tracked files
+        (cross-repo exposure; needs --visibility / gh).
+  INFO  home-relative structural refs (~/Documents/..., Documents/Claude/...) —
+        intended in replication docs; reported low so real leaks stand out.
+
+Usage:
+  leak_scan.py --registry ../registry.json [--visibility] [--json]
+Exit 0 always (report tool); a CI GATE variant would exit nonzero on HIGH.
+"""
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+# reuse the sweep primitive for roster enumeration + visibility
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "kit", "sweep"))
+import sweep  # noqa: E402
+
+USER = os.environ.get("USER") or os.path.basename(os.path.expanduser("~"))
+
+HIGH_PATTERNS = [
+    (r"/Users/[^/\s\"']+/", "absolute home path"),
+    (re.escape(USER), "local username"),
+]
+INFO_PATTERNS = [
+    (r"~/Documents", "home-relative structural ref"),
+    (r"Documents/Claude", "structural ref"),
+]
+
+
+def _git_grep(path, pattern):
+    """Lines in tracked files matching pattern (extended regex). [] if none."""
+    try:
+        out = subprocess.run(
+            ["git", "-C", path, "grep", "-nIE", pattern],
+            capture_output=True, text=True,
+        )
+        return out.stdout.splitlines() if out.returncode == 0 else []
+    except FileNotFoundError:
+        return []
+
+
+def scan_repo(path, private_names=None, public=None):
+    findings = []
+    if not os.path.isdir(os.path.join(path, ".git")):
+        return findings
+    for pat, label in HIGH_PATTERNS:
+        for line in _git_grep(path, pat):
+            findings.append(("HIGH", label, line))
+    for pat, label in INFO_PATTERNS:
+        for line in _git_grep(path, pat):
+            findings.append(("INFO", label, line))
+    # cross-repo: private names inside a PUBLIC repo
+    if public and private_names:
+        for name in private_names:
+            base = name.split("/")[-1]
+            if len(base) < 4:      # skip short names -> false positives
+                continue
+            for line in _git_grep(path, r"\b" + re.escape(base) + r"\b"):
+                findings.append(("HIGH", f"private-name '{base}' in public repo", line))
+    return findings
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="leak_scan")
+    ap.add_argument("--registry", required=True)
+    ap.add_argument("--visibility", action="store_true",
+                    help="use gh to fetch public/private (enables cross-repo name check)")
+    ap.add_argument("--json", action="store_true")
+    args = ap.parse_args(argv)
+
+    registry = json.load(open(args.registry))
+    projects = sweep.resolve(registry)
+
+    vis = {}
+    private_names = []
+    if args.visibility:
+        for p in projects:
+            v = sweep.repo_visibility(sweep.derive_status(p["path"]).get("remote"))
+            vis[p["name"]] = v
+            if v and v != "PUBLIC":
+                private_names.append(p["name"])
+
+    report = []
+    for p in projects:
+        is_public = vis.get(p["name"]) == "PUBLIC"
+        findings = scan_repo(p["path"], private_names=private_names, public=is_public)
+        if findings:
+            report.append({"name": p["name"], "visibility": vis.get(p["name"]),
+                           "findings": findings})
+
+    if args.json:
+        json.dump(report, sys.stdout, indent=2); sys.stdout.write("\n")
+        return 0
+
+    high = sum(1 for r in report for f in r["findings"] if f[0] == "HIGH")
+    info = sum(1 for r in report for f in r["findings"] if f[0] == "INFO")
+    print(f"leak_scan: {len(report)} repos with findings — {high} HIGH, {info} INFO\n")
+    for r in report:
+        hi = [f for f in r["findings"] if f[0] == "HIGH"]
+        if not hi and not args.json:
+            continue  # in summary view, surface repos with HIGH first
+        vtag = f" [{r['visibility']}]" if r.get("visibility") else ""
+        print(f"── {r['name']}{vtag}")
+        for sev, label, line in hi[:8]:
+            print(f"   HIGH  {label}: {line[:100]}")
+        if len(hi) > 8:
+            print(f"   … +{len(hi)-8} more HIGH")
+    if not high:
+        print("No HIGH-severity leaks in tracked files. ✓ "
+              "(INFO-level structural refs are intended replication docs.)")
+    print("\nNote: scans HEAD (tracked files). Git HISTORY may still hold "
+          "purged blobs — a deeper history scan is a separate, one-time check.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
