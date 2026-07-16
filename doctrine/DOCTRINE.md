@@ -51,6 +51,17 @@ Pure, framework-free cores; UI/IO/time live in thin adapters. Swappable
 backend seams (prefer engine, fall back locally). Safety by construction
 (caps, preallocation, frozen IDs), not by vigilance.
 
+## Self-documenting code
+Write code a future fresh-context agent can understand without re-deriving it —
+because agents DO work in fresh contexts, so intent that lives only in a
+vanished conversation is intent lost. Names and structure carry the *what*;
+comments carry the *why* the code cannot show: the non-obvious constraint, the
+rejected alternative, the trap avoided (e.g. "POSIX ERE — no `\s` here or it
+silently matches nothing"; "`--untracked` is load-bearing: git grep skips new
+files otherwise"). Never comment the *what* the code already states. Match the
+surrounding file's conventions, comment density, and idiom. This is not polish:
+undocumented intent is the seam where the next agent re-derives it wrong.
+
 ## Reduce, never invent
 When behavior is ambiguous, ask rather than guess, and record the resolution
 in the decision log. A "reasonable guess" is a signal to ask.

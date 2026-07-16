@@ -28,9 +28,21 @@ record() { # record <target> <exit_code>
 # before `git add` then passes, and CI fails after the commit lands — which is
 # exactly how the first version of this gate shipped its own leak. Untracked
 # but not-gitignored == about to be committed, so scan it.
+# Allowlist: security docs legitimately CONTAIN the patterns (they are docs
+# ABOUT leaks). `.leakcheck-allow` lists exempt paths/globs, one per line
+# (# comments ok). Exemptions are commits too — justify sensitive ones in
+# DECISIONS.md. The scanner and the allowlist file are always exempt.
 leak_gate() {
-  local hits
-  hits=$(git grep --untracked -nIE '/(Users|home)/[^/]+/' -- . ':(exclude)*leak_scan.py' 2>/dev/null \
+  local hits excludes=(':(exclude)*leak_scan.py' ':(exclude).leakcheck-allow')
+  if [ -f .leakcheck-allow ]; then
+    local line
+    while IFS= read -r line; do
+      line="${line%%#*}"; line="${line#"${line%%[![:space:]]*}"}"  # strip comment + lead ws
+      line="${line%"${line##*[![:space:]]}"}"                       # strip trailing ws
+      [ -n "$line" ] && excludes+=(":(exclude)$line")
+    done < .leakcheck-allow
+  fi
+  hits=$(git grep --untracked -nIE '/(Users|home)/[^/]+/' -- . "${excludes[@]}" 2>/dev/null \
          | grep -vE '/(Users|home)/[<$@{%]' || true)
   [ -z "$hits" ] && return 0
   echo "verify: LEAK — machine-absolute path in a tracked file (use ~/ instead):" >&2

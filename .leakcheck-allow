@@ -1,0 +1,9 @@
+# leak_gate allowlist — paths exempt from the absolute-path scan because they
+# legitimately contain the PATTERNS (documentation about leaks), not leaks.
+# One path/glob per line; # comments ok. Exemptions are commits — a
+# security-sensitive one should be justified in DECISIONS.md.
+#
+# Under review (added 2026-07-16): security-sweep spec, contains rg/git-grep
+# pattern examples like /Users/[A-Za-z]+ and /Users/|/home/.
+REPO-HYGIENE.md
+governor/HISTORY-REMEDIATION.md
