@@ -60,6 +60,19 @@ INTEGRATIONS policy.
   propose-only research pass over the external field (see Deferred);
   bibliography is its ledger.
 
+**Execution-project registry** (leaf repos running the harness kit; they
+consume Track A standards and feed back only through their group scope's
+knowledge-loop harvest — listed so the governor and audits know they exist,
+not for cross-track sequencing):
+
+- **HYPERSAW** (`~/Documents/Claude/synthetic-worlds/HYPERSAW/`, public:
+  github.com/Lifted-Truck/HYPERSAW) — coupled-oscillator synthesizer plugin
+  (CLAP/VST3). Spun up 2026-07-17 via /spinup; manifest ratified same day;
+  rung 2; CI mirrors the Stop hook (`verify fast` only — audio Layer-E is
+  macOS-local). First registered execution project. Future consumer of
+  Tonality (brief due at its Phase 3); registered here at human direction
+  during its ratification gate.
+
 **Cross-track ordering constraints (the only ones):**
 1. Kit v2 core's STATUS + LIBRARY-schema artifacts unblock dispatch E1
    (fully) and distillery D1 (validation half) — answer both briefs early.
