@@ -27,6 +27,14 @@ non-negotiable:
    existing test/lint commands; currently-red tests are quarantined and
    recorded in ROADMAP as explicit debt, never deleted, never silently
    gated on, never "fixed" by weakening.
+5. **Foreign/exported scaffolds: standard mechanisms, project substance**
+   (the override clause — full text in ONBOARDING). Where a chat-exported kit
+   overlaps the ecosystem kit, the kit's MECHANISMS replace the exported ones
+   (verify, charter layout, ROADMAP/DECISIONS, loop, hooks, CI); the exported
+   kit's project-specific SUBSTANCE is migrated into standard slots (§Domain,
+   ROADMAP, DECISIONS, LIBRARY seeds, bespoke checks → verify targets) BEFORE
+   anything is deleted. Unmappable content is surfaced to the human, never
+   silently discarded. Map first, replace second, delete only what's mapped.
 
 Gotcha (first-run lesson, 2026-07-12): the Write tool does NOT set the exec
 bit, so a freshly-written `./verify` (and any `.claude/hooks/*.sh`) fails

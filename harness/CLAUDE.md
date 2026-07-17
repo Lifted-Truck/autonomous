@@ -2,6 +2,10 @@
 
 Everything above §Domain is the invariant harness layer. Do not edit it
 per-project. Project-specific facts live in §Domain and in ROADMAP.md.
+**The global doctrine (imported via `~/.claude/CLAUDE.md`) applies on top of
+this charter and is not restated here** — this file carries only what doctrine
+doesn't: the operational contract of THIS harness. (Context budget: slimmed
+2026-07-16, Decision 28.)
 
 ## Truth contract
 
@@ -15,14 +19,6 @@ per-project. Project-specific facts live in §Domain and in ROADMAP.md.
 - **Grounded refusal is a success class.** "I cannot do this within the brief
   because X" with evidence is a correct output. Guessing to appear productive
   is a failure.
-- **Reduce, never invent.** Prefer deleting code, tightening a contract, or
-  reusing an existing mechanism over adding a new one. Every new abstraction
-  must displace at least as much complexity as it introduces.
-- **Review beats are visual-first.** When presenting completed work at a
-  gate (phase close, ratification request, PR), lead with a visual — a
-  self-contained HTML report, render set, or live demo — sufficient to
-  evaluate the change WITHOUT reading the diff, plus evidence it works and
-  open questions. Code diving is the fallback, never the ask.
 
 ## Provenance
 

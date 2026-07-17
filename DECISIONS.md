@@ -98,6 +98,38 @@ history; supersede with a new numbered entry.
     tier changes are always the human's deliberate call. Supersedes nothing;
     promotes 16–18 from decisions to loaded doctrine.
 
+28. **Context budget: always-on load slimmed ~40%, with a verify-enforced
+    ceiling** (2026-07-16, human-approved after a measured audit: ~5k tokens
+    auto-loaded per session, vs the ~100–150-instruction-slot ceiling in
+    research/2026-07-10-memory-governance.md). Four changes: (a) INTEGRATIONS
+    .md is NO LONGER auto-loaded globally — its doctrine tenet says read it at
+    the start of cross-repo work (JIT retrieval per our own research);
+    (b) doctrine tenets "survey before scaffold" + "right-size architecture"
+    merged into one "Project structuring" tenet (15→14); DOCTRINE.md now has a
+    9000-char budget ENFORCED by ./verify — over budget means merge or delete
+    a tenet (the landscape audit's DELETIONS section is the pruning organ);
+    (c) the charter template's invariant layer no longer restates
+    globally-loaded doctrine (reduce-never-invent, visual-first removed;
+    doctrine-applies-on-top stated once); (d) manifest rule: NO status prose —
+    manifests hold survey answers + territory registry; phase state lives in
+    ROADMAP only (observed drift engine: Orrery's 447-char status field
+    re-edited in parallel with its ROADMAP). Rejected: leaving growth
+    unchecked (addition must be paid for by subtraction, or doctrine becomes
+    noise).
+29. **Foreign-scaffold override clause: standard mechanisms, project
+    substance** (2026-07-16, user). Chat-exported kits (a Claude session
+    exporting a starter scaffold) conflict with the spinup/retrofit protocol.
+    Reconciliation rule, now in ONBOARDING + /retrofit: for any function the
+    ecosystem kit provides, the kit's mechanism REPLACES the exported one
+    (two half-compatible mechanisms = drift by construction); the exported
+    kit's project-specific substance is MIGRATED into standard slots
+    (§Domain, ROADMAP, DECISIONS, LIBRARY seeds, bespoke checks → verify
+    targets) BEFORE anything is deleted; unmappable content is surfaced to
+    the human, never silently discarded. Map first, replace second, delete
+    only what has been mapped. Rejected: letting exported conventions stand
+    alongside kit conventions (dual mechanisms) and wholesale replacement
+    (destroys idiosyncratic project value — often the bespoke checks).
+
 27. **Privacy is enforced by a gate, not a sweep** (2026-07-13). `leak_gate` is
     now kit-core: a self-contained bash function in every project's `./verify`
     (so it blocks the Stop hook AND CI from one artifact — a repo must be

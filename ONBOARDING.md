@@ -246,6 +246,23 @@ what works.**
    (visual-first: the before/after gap table is the artifact) with the
    manifest for ratification.
 
+**Foreign scaffolds (exported kits) — the override clause.** A repo may
+arrive with a scaffold exported by another Claude session (its own
+verify-like script, CLAUDE.md conventions, task files, hooks) that overlaps
+this ecosystem's kit. Reconcile by one rule: **standard mechanisms, project
+substance.** For any *function* the kit provides — oracle/verify dispatcher,
+charter layout, ROADMAP/DECISIONS formats, knowledge loop, hooks, CI
+workflow, leak gate — the kit's version REPLACES the exported one: two
+half-compatible mechanisms is drift by construction. But the exported
+scaffold's project-specific *substance* is preserved and **migrated into the
+standard slots before anything is deleted**: domain invariants → charter
+§Domain · plans/tasks → ROADMAP · recorded choices → DECISIONS · hard-won
+notes → LIBRARY seeds · bespoke checks → targets inside the standard
+`./verify` (never dropped — a bespoke check is often the most valuable thing
+an exported kit carries). Anything that fits no slot is surfaced to the
+human, not silently discarded. **Map first, replace second, delete only what
+has been mapped.**
+
 ### What not to do
 
 - Don't edit doctrine in any global CLAUDE.md — propose changes in this

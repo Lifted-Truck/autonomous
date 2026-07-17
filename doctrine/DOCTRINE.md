@@ -12,12 +12,17 @@ demo — sufficient to evaluate the change WITHOUT reading code. Code diving is
 the fallback, not the default. Include: what changed, evidence it works (test
 output, renders, before/after), and any open questions.
 
-## New projects: survey before scaffold
-When asked to create, start, or scaffold a new project (any phrasing), do not
-improvise a structure: follow the new-project procedure in the autonomous
-repo's ONBOARDING.md (Part 2) — the 9-question spin-up survey comes first,
-its answers land in `project.manifest.json`, and the architecture rung is
-asked, never defaulted. The `/spinup` command wraps this.
+## Project structuring (survey first; right-size the architecture)
+When asked to create, start, or scaffold a project (any phrasing), do not
+improvise: follow ONBOARDING.md Part 2 — the 9-question spin-up survey first,
+answers committed to `project.manifest.json`, deterministic scaffolding from
+the manifest. The architecture menu is asked, never defaulted:
+(1) single-threaded agent · (2) thread + read-only subagents/verifier ·
+(3) organ fleet. Each rung is *earned* by the project's shape (parallelizable
+verifiable work, genuine seams, value justifying the ~15× token multiplier);
+escalate only when the current rung is the demonstrated bottleneck — harness
+quality outranks head-count (research/2026-07-10-multiagent-systems-survey.md).
+`/spinup` wraps this; `/retrofit` catches existing repos up.
 
 ## Harness by default
 "The harness determines performance more than the model." For any new or
@@ -81,16 +86,6 @@ the deeper treatment is the sibling human-epistemics project. Empirically,
 stronger models fail *invisibly* — polished output that is subtly wrong — which
 is exactly why a comfortable-looking result earns more scrutiny, not less.)
 
-## Right-size the agent architecture (multi-agent is an option, never a default)
-At project structuring time, the architecture menu is presented explicitly and
-chosen deliberately: (1) single-threaded agent, (2) single thread + read-only
-subagents / fresh-context verifier, (3) organ fleet (the full autonomous
-paradigm). Each rung is *earned* by the project's shape — parallelizable
-verifiable work, genuine seam count, value that justifies the ~15× token
-multiplier — never assumed. Escalate a rung only when the current one is the
-demonstrated bottleneck; the evidence base says harness quality outranks
-head-count (research/2026-07-10-multiagent-systems-survey.md, lessons 9–10).
-
 ## Model routing (pin explicitly; cap at Opus)
 Two rules, because the failure mode is silent inheritance of the wrong tier:
 1. **Pin every agent explicitly; never inherit.** Each sub-agent's model is set
@@ -130,7 +125,9 @@ session-end discipline otherwise), and staleness is visible, never hidden —
 a dated "last verified" line beats silent rot. A repo whose README lies about
 it is a bug of the same severity as a failing test.
 
-## Cross-project interaction
-All cross-project/cross-repo development follows the integrations policy in
-[INTEGRATIONS.md](INTEGRATIONS.md) — including the commit/PR responsibility
-model (writes stay home; ball-state exchanges; provider-first linked PRs).
+## Cross-project interaction (read INTEGRATIONS.md on demand)
+All cross-project/cross-repo development follows
+[doctrine/INTEGRATIONS.md](INTEGRATIONS.md) (boundary rules, file-based
+brief→response→notice exchanges, writes-stay-home, provider-first linked
+PRs). Deliberately NOT auto-loaded — context budget, Decision 28 — so **read
+it at the start of any cross-repo work**; the pointer is the contract.

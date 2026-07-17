@@ -72,6 +72,16 @@ EOF
            doctrine/DOCTRINE.md doctrine/INTEGRATIONS.md; do
     [ -f "$f" ] || { echo "verify[fast]: missing $f" >&2; ok=1; }
   done
+  # 4. Context budget (Decision 28): DOCTRINE.md auto-loads into EVERY session
+  # on every machine, so its size is a tax on all work. Budget: 9000 chars
+  # (~2.2k tokens). Over budget => merge or DELETE a tenet — the landscape
+  # audit's required DELETIONS section exists precisely for this. Adding
+  # without subtracting is how doctrine becomes noise.
+  local dsize; dsize=$(wc -c < doctrine/DOCTRINE.md | tr -d ' ')
+  if [ "$dsize" -gt 9000 ]; then
+    echo "verify[fast]: DOCTRINE.md ${dsize} chars > 9000 budget — merge or delete a tenet" >&2
+    ok=1
+  fi
   return $ok
 }
 

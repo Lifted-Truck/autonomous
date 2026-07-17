@@ -36,6 +36,13 @@ Each answer maps to a deterministic action (install module X, wire hook Y,
 seed file Z) — the survey is the human-facing face of the manifest, and the
 manifest is the machine-facing face of the survey.
 
+**Manifest rule — no status prose (Decision 28).** The manifest holds survey
+answers + (for composites) the territory registry: near-static facts. Phase
+state lives in ROADMAP.md ONLY; the manifest `status` field is just a
+ratification date + `"see ROADMAP"`. A status paragraph in the manifest is a
+second home for a fact ROADMAP already owns — it WILL drift (observed:
+Orrery's grew to 447 chars re-edited in parallel with its ROADMAP).
+
 **The architecture menu** (doctrine: right-size the agent architecture) is
 question 2: single-threaded agent → thread + subagents/verifier → organ
 fleet. The fleet is a visible option at the outset, never the default.

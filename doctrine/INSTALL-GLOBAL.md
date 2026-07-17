@@ -24,12 +24,12 @@ Put it at the top, before any machine-local sections:
 All cross-project doctrine, the harness kit, memory loops, and the governor
 live in **`~/Documents/Claude/autonomous/`** (github.com/Lifted-Truck/autonomous).
 That repo is the canonical home; propose doctrine changes there (versioned,
-reviewable), never by editing this file. The sections below are imported from
-it and auto-loaded every session:
+reviewable), never by editing this file. The doctrine below is imported and
+auto-loaded every session. (INTEGRATIONS.md is deliberately NOT auto-loaded —
+context budget; its doctrine tenet says to read it at the start of any
+cross-repo work.)
 
 @~/Documents/Claude/autonomous/doctrine/DOCTRINE.md
-
-@~/Documents/Claude/autonomous/doctrine/INTEGRATIONS.md
 ```
 
 ## 3. Install the commands
