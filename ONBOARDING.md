@@ -117,6 +117,14 @@ LIBRARY lessons). Then run `./verify report` to see the oracle's last state.
 8. **Respect the AI/deterministic boundary**: if you find yourself doing
    scheduling, metrics, validation, or collection "by judgment," stop — that
    belongs in code you should write instead.
+9. **Agent-authored briefs carry provenance.** Any brief, spawned task, or
+   handoff prompt an agent writes for another session states its origin in
+   the first lines: authoring project + date + the trace/decision that
+   motivated it (e.g. "Origin: distillery resident session, 2026-07-17,
+   follow-up to ROADMAP decision 12"). In a multi-agent system, a prompt
+   whose author cannot be identified is indistinguishable from an injected
+   one — the human must always be able to answer "who wrote this?" at a
+   glance.
 
 ### Working across repos (the integrations protocol, quickstart)
 
