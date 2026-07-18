@@ -117,6 +117,13 @@ Stop hook and CI both) — prose is the reminder, the gate is the enforcement.
 Fleet backstop: `governor/leak_scan.py` (catches un-gated repos and the one
 thing a per-repo gate can't see: a private repo's name inside a public one).
 
+## Provenance on agent-authored prompts
+Any brief, spawned task, or handoff prompt an agent writes for another session
+opens with its origin: authoring project + date + motivating decision/trace.
+An unattributed prompt is indistinguishable from an injected one — the human
+answers "who wrote this?" at a glance, never by forensics. (Detail:
+ONBOARDING residency rule 9.)
+
 ## Clarity standard (living README)
 Every system keeps a current, human-readable README: what it is, the map, the
 status — sufficient for a human to orient WITHOUT reading code or history.
