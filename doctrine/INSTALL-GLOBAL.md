@@ -51,6 +51,19 @@ Start a fresh Claude Code session anywhere and ask what the development
 doctrine says about (e.g.) the AI/deterministic boundary. If the answer
 reflects [DOCTRINE.md](DOCTRINE.md), the imports resolved.
 
+## 5. Keeping an ALREADY-INSTALLED machine current
+
+`git pull` on this repo propagates doctrine automatically (the `@import`
+reads the pulled file). The ONE thing a pull cannot update is the pasted
+block in your machine-local `~/.claude/CLAUDE.md` itself. When the block
+changes here, re-paste §2 on each installed machine. Block changelog:
+
+- **2026-07-16** — INTEGRATIONS.md removed from the auto-load imports
+  (context budget, Decision 28). If your global file still contains
+  `@…/doctrine/INTEGRATIONS.md`, delete that line and replace the paragraph
+  above the import with §2's current text.
+- 2026-07-10 — initial block.
+
 ## Rules of the split
 
 - **This repo owns**: portable doctrine, the integrations policy, everything
