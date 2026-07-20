@@ -36,6 +36,15 @@ Each answer maps to a deterministic action (install module X, wire hook Y,
 seed file Z) — the survey is the human-facing face of the manifest, and the
 manifest is the machine-facing face of the survey.
 
+**ROADMAP rule — Prior Art bookends (Decision 30).** Every scaffolded ROADMAP
+carries two standard phases: **Phase 0 — Prior-art landscape (agent swarm)**
+before the design is committed, and a **pre-ship Prior-art & IP re-scan**
+before any public release. Both fan out research agents; the late one adds a
+patent/IP landscape pass for anything commercializable (VSTs especially — see
+autonomous VISIBILITY.md on disclosure/patent timing). Findings land in
+`docs/prior-art.md`, dated and cited. In the ROADMAP skeleton
+([scaffold-agentic-harness.prompt.md](scaffold-agentic-harness.prompt.md)).
+
 **Manifest rule — no status prose (Decision 28).** The manifest holds survey
 answers + (for composites) the territory registry: near-static facts. Phase
 state lives in ROADMAP.md ONLY; the manifest `status` field is just a

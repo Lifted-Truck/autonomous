@@ -116,6 +116,20 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+30. **ROADMAP carries Prior-Art bookend phases (agent swarm)** (2026-07-18,
+    user). Every scaffolded ROADMAP includes an EARLY "Phase 0 — Prior-art
+    landscape" (fan-out research before the design is committed: existing
+    solutions, papers, patents, competing products, failure modes → reflected
+    in design + DECISIONS) and a LATE "pre-ship Prior-art & IP re-scan"
+    (re-run before public release; patent/IP landscape for anything
+    commercializable, per the disclosure-timing asymmetry in VISIBILITY.md).
+    Findings live in `docs/prior-art.md`, dated + cited. In the ROADMAP
+    skeleton (kit/scaffold-agentic-harness.prompt.md). Rationale: the swarm
+    reaches adjacent domains a single searcher misses (basin-escape, per the
+    methodology research); early prevents reinventing/landmines, late catches
+    drift + protects IP before the irreversible act of disclosure. Kit-level,
+    not a doctrine tenet (budget; it's a ROADMAP-artifact rule).
+
 29. **Foreign-scaffold override clause: standard mechanisms, project
     substance** (2026-07-16, user). Chat-exported kits (a Claude session
     exporting a starter scaffold) conflict with the spinup/retrofit protocol.

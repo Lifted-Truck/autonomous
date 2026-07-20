@@ -204,8 +204,21 @@ contradicts present evidence, trust the evidence and demote the lesson.
 
 ## Build sequence (phase-gated)
 Phase gates are never weakened to pass. A phase closes only when its gate is green.
+- **Phase 0 — Prior-art landscape (agent swarm).** BEFORE committing the design:
+  fan out research agents (deep-research skill / parallel WebSearch+WebFetch) over
+  existing solutions, papers, patents, competing products, and known failure modes.
+  Gate: a `docs/prior-art.md` exists with dated, cited findings, and the design +
+  DECISIONS reflect what it surfaced (what to reuse, avoid, or differentiate from).
+  A "we already know the space" is a signal to run it anyway — the swarm reaches
+  adjacent domains a single searcher won't.
 - **Phase 1 — <name>.** Gate: <the exact test/fixture set that proves it>.
 - **Phase 2 — <name>.** Gate: …
+- **Phase N (pre-ship) — Prior-art & IP re-scan (agent swarm).** BEFORE any public
+  release / commercialization: re-run the swarm to catch what emerged since Phase 0,
+  and for anything commercializable add a **patent/IP landscape** pass (public
+  disclosure starts/forecloses patent clocks — autonomous VISIBILITY.md). Gate:
+  a dated re-scan appended to `docs/prior-art.md`; conflicts/landmines surfaced to
+  the human with a go/no-go; IP posture confirmed before disclosure.
 
 ## Decisions on record (append-only)
 Each entry: the decision, the alternative rejected, and why. Never rewrite history;
