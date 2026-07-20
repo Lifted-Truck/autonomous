@@ -66,6 +66,13 @@ changes here, re-paste §2 on each installed machine. Block changelog:
 
 ## Rules of the split
 
+- **"Update the global CLAUDE.md" ≈ "put it somewhere synced."** When the
+  human asks to add a standing rule/fact to the global instructions, they
+  almost always mean it should reach every machine — so it belongs in THIS
+  repo (a doctrine file the global CLAUDE.md imports or points at), not in the
+  machine-local sections of `~/.claude/CLAUDE.md`. Default to the synced home;
+  only genuinely machine-specific facts (a toolchain quirk of one Mac) stay
+  local.
 - **This repo owns**: portable doctrine, the integrations policy, everything
   a second machine should inherit identically.
 - **The global file owns**: machine-local facts only (build quirks, local

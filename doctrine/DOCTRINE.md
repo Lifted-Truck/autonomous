@@ -132,6 +132,11 @@ session-end discipline otherwise), and staleness is visible, never hidden —
 a dated "last verified" line beats silent rot. A repo whose README lies about
 it is a bug of the same severity as a failing test.
 
+## Project-type conventions (read on demand)
+Conventions specific to a project KIND — e.g. audio-plugin branding — live in
+[doctrine/CONVENTIONS.md](CONVENTIONS.md): synced, not auto-loaded. Read the
+relevant section when working on that project type.
+
 ## Cross-project interaction (read INTEGRATIONS.md on demand)
 All cross-project/cross-repo development follows
 [doctrine/INTEGRATIONS.md](INTEGRATIONS.md) (boundary rules, file-based

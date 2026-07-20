@@ -73,12 +73,17 @@ Profiles beyond `organ` install only on the rung that needs them.
   what it may never do, and its handoff artifact format.
 - **CI is part of the core.** [templates/ci.github.yml](templates/ci.github.yml)
   → each repo's `.github/workflows/ci.yml`: GitHub Actions runs `./verify fast`
-  on every push/PR, mirroring the local Stop-hook gate ("CI mirrors the Stop
-  hook"). It runs the project's ONE oracle in the cloud — not new checks. Ships
-  with `/spinup`, added to existing repos by `/retrofit`. `verify full` runs in
-  CI only where the runner supports it (audio-plugin `auval`/codesign is
-  macOS-only + human-run → those repos CI `fast` only). Needs a remote; private
-  repos draw Actions-minutes quota, public are unlimited.
+  mirroring the local Stop-hook gate ("CI mirrors the Stop hook"). It runs the
+  project's ONE oracle in the cloud — not new checks. Ships with `/spinup`,
+  added to existing repos by `/retrofit`. `verify full` runs in CI only where
+  the runner supports it (audio-plugin `auval`/codesign is macOS-only + human-
+  run → those repos CI `fast` only).
+- **CI-minutes budget (Decision 31).** Only PRIVATE repos spend Actions minutes
+  (free tier: 2000/mo; public repos unlimited). The template defaults
+  economical: PRs + pushes-to-main only (not every branch push), `concurrency`
+  cancels superseded runs, `paths-ignore` skips docs-only changes, and heavy
+  macOS builds (~10× Linux minutes) stay OUT of CI (`full` is local/human).
+  Watch the private + heavy (JUCE/C++) repos first — they are the drain.
 - **INSIGHTS v2**: every prescription cites its evidence in
   [research/](../research/).
 

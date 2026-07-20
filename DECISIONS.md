@@ -116,6 +116,19 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+31. **CI-minutes budget: economical triggers, cancel superseded, heavy builds
+    stay local** (2026-07-20, after the human hit the free-tier private-repo
+    Actions limit). Only PRIVATE repos spend minutes (2000/mo free; public
+    unlimited); the drain is private + heavy (JUCE/C++/`auval` — macOS runners
+    at ~10× Linux). Kit CI template now defaults: triggers = PRs + push-to-main
+    only (feature-branch feedback still via the PR), `concurrency` cancels
+    superseded runs, `paths-ignore` skips docs-only, and `verify full` (auval/
+    codesign) stays out of CI (local/human). Contrast Decision 26 (get CI
+    running everywhere) — this is HOW, economically. Rejected: on-every-push
+    everywhere (what exhausted the quota) and moving heavy repos public just
+    for free minutes (visibility is an IP decision, not a CI one — VISIBILITY.md).
+    Retrofit propagates the economical template; existing repos' agents adopt it.
+
 30. **ROADMAP carries Prior-Art bookend phases (agent swarm)** (2026-07-18,
     user). Every scaffolded ROADMAP includes an EARLY "Phase 0 — Prior-art
     landscape" (fan-out research before the design is committed: existing

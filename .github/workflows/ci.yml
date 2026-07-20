@@ -5,8 +5,15 @@ name: ci
 # means the same thing as green locally: ./verify fast passed.
 
 on:
-  push:
   pull_request:
+  push:
+    branches: [main]
+
+# Cancel superseded runs on the same ref (hygiene; this repo is public so
+# minutes are free, but the template we ship defaults economical — model it).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
