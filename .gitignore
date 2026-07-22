@@ -2,3 +2,5 @@
 .DS_Store
 .harness/
 governor/STATUS.md
+__pycache__/
+*.pyc
