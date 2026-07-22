@@ -55,9 +55,11 @@ fast() {
   local ok=0
   # 0. Privacy: no machine-absolute paths committed
   leak_gate || ok=1
-  # 1. Sweep primitive unit tests
+  # 1. Sweep primitive + governor monitor unit tests
   (cd kit/sweep && python3 -m unittest discover -q .) \
     || { echo "verify[fast]: sweep tests red" >&2; ok=1; }
+  (cd governor && python3 -m unittest discover -q .) \
+    || { echo "verify[fast]: governor tests red" >&2; ok=1; }
   # 2. Machine-readable artifacts parse
   python3 - <<'EOF' || ok=1
 import json, sys

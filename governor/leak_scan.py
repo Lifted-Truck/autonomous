@@ -45,26 +45,39 @@ INFO_PATTERNS = [
 ]
 
 
-# `/Users/<user>/…`, `/home/$USER/…`, `/Users/{name}/…` in prose are docs
-# ABOUT the leak pattern, not leaks. Filter them or the scanner cries wolf —
-# and a noisy scanner is an ignored scanner.
-_PLACEHOLDER = re.compile(r"/(Users|home)/[<${]")
+# `/Users/<user>/…`, `/home/$USER/…`, `/Users/%s/`, `/Users/{name}/…`,
+# `/Users/@…` in prose/code are docs ABOUT the pattern, not leaks. Filter them
+# or the scanner cries wolf — a noisy scanner is an ignored scanner.
+# MUST match the bash leak_gate's placeholder class `[<$@{%]` in every ./verify
+# (two detectors — bash gate, python scanner — that must stay consistent; when
+# one changes, change both. The gate once had %/@ that this lacked, so the
+# monitor false-flagged repos the gate passed.)
+_PLACEHOLDER = re.compile(r"/(Users|home)/[<${@%]")
 
 
 def _is_placeholder(line):
     return bool(_PLACEHOLDER.search(line))
 
 
-def _git_grep(path, pattern):
-    """Lines in tracked files matching pattern (extended regex). [] if none.
+def _excludes(path):
+    """Pathspec excludes: the scanner itself, the allowlist file, and every
+    entry in the repo's .leakcheck-allow (security docs that legitimately hold
+    the patterns). Same allowlist the ./verify leak_gate honors."""
+    ex = [":(exclude)*leak_scan.py", ":(exclude).leakcheck-allow"]
+    allow = os.path.join(path, ".leakcheck-allow")
+    if os.path.isfile(allow):
+        for line in open(allow, encoding="utf-8", errors="ignore"):
+            line = line.split("#", 1)[0].strip()
+            if line:
+                ex.append(":(exclude)" + line)
+    return ex
 
-    Excludes this scanner's own source: it necessarily contains the very
-    patterns it hunts for, so it would always flag itself (a false positive).
-    """
+
+def _git_grep(path, pattern, excludes):
+    """Lines in tracked files matching pattern (POSIX ERE). [] if none."""
     try:
         out = subprocess.run(
-            ["git", "-C", path, "grep", "-nIE", pattern, "--", ".",
-             ":(exclude)*leak_scan.py"],
+            ["git", "-C", path, "grep", "-nIE", pattern, "--", "."] + excludes,
             capture_output=True, text=True,
         )
         return out.stdout.splitlines() if out.returncode == 0 else []
@@ -76,13 +89,14 @@ def scan_repo(path, private_names=None, public=None):
     findings = []
     if not os.path.isdir(os.path.join(path, ".git")):
         return findings
+    excludes = _excludes(path)
     for pat, label in HIGH_PATTERNS:
-        for line in _git_grep(path, pat):
+        for line in _git_grep(path, pat, excludes):
             if label == "absolute home path" and _is_placeholder(line):
                 continue  # docs about the pattern, not a leak
             findings.append(("HIGH", label, line))
     for pat, label in INFO_PATTERNS:
-        for line in _git_grep(path, pat):
+        for line in _git_grep(path, pat, excludes):
             findings.append(("INFO", label, line))
     # cross-repo: private names inside a PUBLIC repo
     if public and private_names:
@@ -90,7 +104,7 @@ def scan_repo(path, private_names=None, public=None):
             base = name.split("/")[-1]
             if len(base) < 4:      # skip short names -> false positives
                 continue
-            for line in _git_grep(path, r"\b" + re.escape(base) + r"\b"):
+            for line in _git_grep(path, r"\b" + re.escape(base) + r"\b", excludes):
                 findings.append(("HIGH", f"private-name '{base}' in public repo", line))
     return findings
 

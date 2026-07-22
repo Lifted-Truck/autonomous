@@ -116,6 +116,24 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+32. **Governor built as the watchdog-MONITOR first; controller deferred**
+    (2026-07-20, human "do it"). `governor/monitor.py`: a deterministic
+    (no-model) fleet-health sweep — per-repo leaks, un-gated verify, no-CI,
+    stale README, manifest status-prose (Dec 28), harness gaps → STATUS
+    dashboard. Earned NOW (this session kept hitting these by hand); the
+    HALT-sentinel/conductor/coherence-critic stay deferred (no running organ
+    fleet to govern — building the control room for an idle factory is the
+    speculative escalation the doctrine forbids). First real run caught a
+    LEAK regression: Tonality's paths, fixed at commit ca47050, were
+    REINTRODUCED by later CLAUDE.md regeneration and went uncaught because
+    Tonality is UN-GATED — validating both the monitor and "un-gated repos are
+    where leaks recur." Fixed a consistency bug: `leak_scan.py` had drifted
+    from the `./verify` leak_gate (missing the `%`/`@` placeholder filters +
+    the .leakcheck-allow honoring) → the monitor false-flagged repos the gate
+    passed; re-synced, with a comment that the two detectors must stay
+    consistent. STATUS.md gitignored (it names private repos — committing it
+    to public autonomous would be the cross-repo leak the monitor hunts).
+
 31. **CI-minutes budget: economical triggers, cancel superseded, heavy builds
     stay local** (2026-07-20, after the human hit the free-tier private-repo
     Actions limit). Only PRIVATE repos spend minutes (2000/mo free; public
