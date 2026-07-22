@@ -13,7 +13,7 @@ human should understand every layer, protocol, and cycle from this file
 alone, without reading the implementation; deep links go to the canonical
 sources.
 
-*Last verified current: 2026-07-13.*
+*Last verified current: 2026-07-20.*
 
 ---
 
@@ -77,13 +77,23 @@ is a committed artifact from which the boundary linter is generated.
 
 **Layer 4 — Memory** ([loops/](loops/); standards in §4 below).
 
-**Layer 5 — Governor** ([governor/](governor/); to build, spec DESIGN §4).
+**Layer 5 — Governor** ([governor/](governor/); ~10% built, spec DESIGN §4).
 Three separable functions on the AI/deterministic split: a **watchdog**
 (deterministic, no model calls — budgets, halt triggers, HALT sentinel every
 agent's hooks obey), a **curator** (model judgment behind quarantined writes —
 runs the memory loops, maintains READMEs), and a **coherence critic**
 (fresh-context review against ROADMAP + contracts, because "green is not
 coherent": CI proves main passes, not that N changes compose sensibly).
+**Reality check (2026-07-20):** the *full* governor governs a running organ
+fleet — and nothing yet runs as one (the ecosystem is separate lead-run
+projects coordinating by files; Orrery is the closest and self-governs). So
+the HALT sentinel / conductor / coherence-critic are deferred until a fleet
+exists to govern (escalate only when it's the bottleneck). What IS real and
+earned is the **watchdog-as-monitor**: deterministic fleet-health checks,
+already accreting as `governor/leak_scan.py` (privacy), the DOCTRINE budget
+gate, per-repo CI, and — human-facing — dispatch's status roundup. The next
+honest step is consolidating those into one runnable health sweep, not
+building a control room for a factory that isn't running.
 
 ---
 
@@ -230,7 +240,12 @@ version:
 
 ---
 
-## 6. Governance and halting (fleet rung)
+## 6. Governance and halting (fleet rung — DESIGNED, mostly not built)
+
+> This section describes the target design for governing a running organ
+> fleet. Today only its deterministic *gates* exist (leak_gate, budget gate,
+> CI, leak_scan); the HALT sentinel, watchdog loop, and conductor await a
+> fleet to govern. See Layer 5 above for what's real.
 
 Every consequential guard is **technically enforced, never prose** — the
 entire incident record (prod-DB deletions, five-figure runaway loops) traces
@@ -254,13 +269,13 @@ by **reversibility of the change**, not trust in the model.
 |---|---|---|
 | [ONBOARDING.md](ONBOARDING.md) | Replication + arrival guide (human and agent) — start here on a new machine | current |
 | [DESIGN.md](DESIGN.md) | The full research-backed design | current |
-| [ROADMAP.md](ROADMAP.md) | Phase-gated direction: C0 (consolidation) done; kit v2 + ecosystem tracks in progress; governor P0–P4 to build | current |
-| [DECISIONS.md](DECISIONS.md) | Append-only decision log (22 on record) | current |
-| [doctrine/](doctrine/) | Doctrine + integrations policy + global-install guide | current |
-| [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`) + sweep primitive shipped |
+| [ROADMAP.md](ROADMAP.md) | Phase-gated direction: C0 done; kit v2 + ecosystem tracks in progress; governor watchdog-monitor next, HALT/conductor/critic deferred | current |
+| [DECISIONS.md](DECISIONS.md) | Append-only decision log (31 on record) | current |
+| [doctrine/](doctrine/) | Doctrine (auto-loaded) + INTEGRATIONS + CONVENTIONS (JIT) + global-install guide | current |
+| [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`), sweep primitive, CI template, leak gate shipped |
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
 | [loops/](loops/) | Memory loops (leaf here; audit loop → [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)) | current |
-| [governor/](governor/) | Watchdog · curator · coherence critic | **to build** (P0–P4) |
+| [governor/](governor/) | Watchdog · curator · coherence critic | **~10%** — `leak_scan.py` (privacy watchdog) + `HISTORY-REMEDIATION.md` live; rest designed (DESIGN §4) |
 | [integrations/](integrations/) | Intake channel — one dir per consumer (briefs from `distillery`, `dispatch`) | live |
 | [registry.json](registry.json) | Canonical sweep/watch allowlist for ecosystem processes (Decision 14) | live |
 | [routines/](routines/) | Versioned prompts for recurring routines (landscape audit: local task + cloud variant) | live |
