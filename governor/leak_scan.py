@@ -30,13 +30,23 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "kit", "sweep"))
 import sweep  # noqa: E402
 
-USER = os.environ.get("USER") or os.path.basename(os.path.expanduser("~"))
+# USERNAME is the Windows spelling; USER is POSIX. Both, or a Windows run
+# falls back to the homedir basename and can miss the username entirely.
+USER = (
+    os.environ.get("USER")
+    or os.environ.get("USERNAME")
+    or os.path.basename(os.path.expanduser("~"))
+)
 
 HIGH_PATTERNS = [
     # POSIX ERE only — `git grep -E` does NOT support \s / \d (a \s here
     # silently matched nothing, so absolute-path detection was dead: the
     # 2026-07-13 first run caught leaks by username alone. Keep it ERE-safe.)
     (r"/(Users|home)/[^/]+/", "absolute home path"),
+    # Windows identity path. `\\+` matches raw `C:\Users\` AND escaped
+    # `C:\\Users\\` (how it lands in JSON/configs); a one-backslash pattern
+    # misses the escaped form silently.
+    (r"[A-Za-z]:\\+Users\\+[^\\]", "windows absolute home path"),
     (re.escape(USER), "local username"),
 ]
 INFO_PATTERNS = [
@@ -52,7 +62,7 @@ INFO_PATTERNS = [
 # (two detectors — bash gate, python scanner — that must stay consistent; when
 # one changes, change both. The gate once had %/@ that this lacked, so the
 # monitor false-flagged repos the gate passed.)
-_PLACEHOLDER = re.compile(r"/(Users|home)/[<${@%]")
+_PLACEHOLDER = re.compile(r"/(Users|home)/[<${@%]|[A-Za-z]:\\+Users\\+[<${@%]")
 
 
 def _is_placeholder(line):

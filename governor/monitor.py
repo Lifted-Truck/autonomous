@@ -49,7 +49,8 @@ _LAST_VERIFIED = re.compile(r"[Ll]ast verified[^:\n]*:\s*(\d{4}-\d{2}-\d{2})")
 def _read(path, *rel):
     p = os.path.join(path, *rel)
     try:
-        return open(p, encoding="utf-8", errors="ignore").read()
+        with open(p, encoding="utf-8", errors="ignore") as fh:
+            return fh.read()
     except OSError:
         return None
 

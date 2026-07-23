@@ -116,6 +116,31 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+34. **Cross-platform portability made a gate, not a habit** (2026-07-23,
+    prompted by the human cloning the roster onto a Windows machine). Three
+    silent-failure vectors closed before the clone rather than after:
+    (a) **the leak gates were POSIX-only** — `/(Users|home)/<name>/` cannot
+    match `C:\Users\<name>\`, so identity committed FROM Windows would have
+    passed every gate. Both detectors (bash `leak_gate`, `leak_scan.py`) now
+    carry the drive-letter form, with `\\+` so the escaped variant that lands
+    in JSON matches too; `USERNAME` added alongside `USER` for the username
+    check. (b) **CRLF** — Git for Windows' `core.autocrlf=true` default
+    rewrites checkouts, so identical content has different bytes and every
+    byte-comparison gate (`content_hash`, hash ledgers, goldens) fails for a
+    reason unrelated to the change; a CRLF shebang also kills `./verify` with
+    a bare "command not found". Fixed by a committed `.gitattributes`
+    (`* text=auto eol=lf`), which beats a global git setting because it
+    travels with the repo. (c) **INSTALL-GLOBAL was macOS-only** — new §6
+    covers shell (Git Bash, not PowerShell), `python3` availability, clone
+    layout for the `~` import, and the Mac-only AU/`auval` exclusion.
+    Verified by running the new pattern against known-bad input in raw,
+    escaped, and drive-letter forms BEFORE trusting it (the `\s` lesson);
+    the test also caught the gate flagging its own explanatory comment, fixed
+    by rewriting the comment rather than allowlisting the gate file —
+    allowlisting `verify` would blind the gate to real leaks in it.
+    Not yet done: `.gitattributes` exists only here; the fleet-wide rollout
+    rides the mass-retrofit, and the 22 non-cloneable dirs (3 git-no-remote,
+    19 not git) will simply be absent on the Windows machine.
 33. **REPO-HYGIENE.md adopted as the canonical security-sweep spec**
     (2026-07-20, human "adopt repo-hygiene"). Moved root → `governor/`; folded
     in the review corrections: (a) secrets scans FAIL-CLOSED on a missing tool,

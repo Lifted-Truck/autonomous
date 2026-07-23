@@ -42,8 +42,14 @@ leak_gate() {
       [ -n "$line" ] && excludes+=(":(exclude)$line")
     done < .leakcheck-allow
   fi
-  hits=$(git grep --untracked -nIE '/(Users|home)/[^/]+/' -- . "${excludes[@]}" 2>/dev/null \
-         | grep -vE '/(Users|home)/[<$@{%]' || true)
+  # Two identity shapes: POSIX `/Users|home/<name>/` and the Windows drive
+  # form `C:\Users\<name>\`. The `\\+` quantifier (not a fixed `\\`) is
+  # load-bearing: it matches the raw single-backslash form AND the
+  # doubled-backslash escaped form that a Windows agent writes into JSON or
+  # any quoted string. A fixed-width pattern misses the escaped one silently.
+  # (Written without a literal example on purpose — this gate greps itself.)
+  hits=$(git grep --untracked -nIE '/(Users|home)/[^/]+/|[A-Za-z]:\\+Users\\+[^\\]' -- . "${excludes[@]}" 2>/dev/null \
+         | grep -vE '/(Users|home)/[<$@{%]|[A-Za-z]:\\+Users\\+[<$@{%]' || true)
   [ -z "$hits" ] && return 0
   echo "verify: LEAK — machine-absolute path in a tracked file (use ~/ instead):" >&2
   echo "$hits" | sed 's/^/    /' >&2

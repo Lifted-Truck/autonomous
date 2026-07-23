@@ -64,6 +64,46 @@ changes here, re-paste §2 on each installed machine. Block changelog:
   above the import with §2's current text.
 - 2026-07-10 — initial block.
 
+## 6. Windows machines (read BEFORE the first clone)
+
+Everything above applies, with five differences. Four of them fail *silently*
+if skipped — that is why this section exists.
+
+**a. Set line endings before cloning anything.** Git for Windows defaults to
+`core.autocrlf=true`, rewriting checkouts to CRLF. Identical content then has
+different bytes on the two machines, breaking every byte-comparison gate here
+(`content_hash`, hash ledgers, golden renders) for reasons unrelated to the
+change under test — and a CRLF shebang makes `./verify` die with a bare
+"command not found". Repos carrying a `.gitattributes` are protected; this
+covers the ones that don't:
+
+```bash
+git config --global core.autocrlf input
+```
+
+**b. Run the harness from Git Bash, not PowerShell or cmd.** Every `./verify`
+is `#!/usr/bin/env bash` and shells out to `git grep`/`sed`. Git Bash (bundled
+with Git for Windows) runs them unmodified; WSL also works. PowerShell does
+not, and the failure looks like a broken repo rather than a wrong shell.
+
+**c. `python3` may not exist.** The verify scripts invoke `python3`; Windows
+installs commonly provide only `python` / the `py` launcher. Confirm
+`python3 --version` works in Git Bash before concluding a gate is broken.
+
+**d. Clone to the same relative layout.** The doctrine import is
+`@~/Documents/Claude/autonomous/doctrine/DOCTRINE.md`. Claude Code expands `~`
+to `C:\Users\<you>`, so cloning into `Documents\Claude\` under your home
+directory makes the import resolve unchanged. Cloning elsewhere means editing
+the import path in §2.
+
+**e. Windows-shaped identity leaks are now gated too.** The `leak_gate` and
+`leak_scan` catch the drive-letter home path in both its raw and
+backslash-escaped forms, alongside the POSIX one. A leak committed from the
+Windows machine fails CI exactly like a leak committed from the Mac — but
+`auval`, AU builds, and the Mac-only plugin steps in the global file's
+audio-plugin section do not exist there; on Windows those projects are VST3
+only.
+
 ## Rules of the split
 
 - **"Update the global CLAUDE.md" ≈ "put it somewhere synced."** When the
