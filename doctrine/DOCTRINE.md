@@ -114,8 +114,9 @@ portable to a clone or a second machine, so they are wrong twice over. Use a
 (an absolute interpreter path outside the repo) is gitignored, not committed.
 *Enforced by:* the `leak_gate` in every project's `./verify` (so it blocks the
 Stop hook and CI both) — prose is the reminder, the gate is the enforcement.
-Fleet backstop: `governor/leak_scan.py` (catches un-gated repos and the one
-thing a per-repo gate can't see: a private repo's name inside a public one).
+Fleet backstop: `governor/leak_scan.py` + `monitor.py`. Full playbook (secrets,
+binary/EXIF vectors the text gate can't see, pre-publication audit):
+`governor/REPO-HYGIENE.md`.
 
 ## Provenance on agent-authored prompts
 Any brief, spawned task, or handoff prompt an agent writes for another session

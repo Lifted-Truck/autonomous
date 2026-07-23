@@ -14,6 +14,9 @@ CONTROLLER is deferred until a running organ fleet exists to govern.** Spec:
 - **`leak_scan.py`** — the privacy watchdog `monitor` builds on (absolute
   paths / username in tracked files; kept consistent with the `./verify`
   leak_gate — two detectors, one policy).
+- **`REPO-HYGIENE.md`** — the canonical security-sweep spec: leak surface,
+  the three gate tiers, habits, pre-publication audit. The `leak_gate` /
+  `leak_scan` / `monitor` above are its Layer-0 implementation.
 - **`HISTORY-REMEDIATION.md`** — the leaked-history purge runbook.
 
 The `HALT` sentinel, watchdog loop, and conductor below are DESIGN, not built

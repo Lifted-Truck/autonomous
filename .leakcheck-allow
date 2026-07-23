@@ -3,7 +3,7 @@
 # One path/glob per line; # comments ok. Exemptions are commits — a
 # security-sensitive one should be justified in DECISIONS.md.
 #
-# Under review (added 2026-07-16): security-sweep spec, contains rg/git-grep
-# pattern examples like /Users/[A-Za-z]+ and /Users/|/home/.
-REPO-HYGIENE.md
+# Canonical security-sweep spec + runbook — contain rg/git-grep pattern
+# examples (/Users/[A-Za-z]+, /Users/|/home/) that are docs, not leaks.
+governor/REPO-HYGIENE.md
 governor/HISTORY-REMEDIATION.md

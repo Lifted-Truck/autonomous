@@ -116,6 +116,21 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+33. **REPO-HYGIENE.md adopted as the canonical security-sweep spec**
+    (2026-07-20, human "adopt repo-hygiene"). Moved root → `governor/`; folded
+    in the review corrections: (a) secrets scans FAIL-CLOSED on a missing tool,
+    never skip (the blind-gate trap that bit us twice); (b) tiered — the
+    deps-free `leak_gate` is the Layer-0 CI core, gitleaks/rg live in the
+    pre-commit hook + pre-publication audit, not the CI-blocking gate; (c)
+    reconciled with the shipped code (leak_gate/leak_scan/monitor/allowlist are
+    now its implementation, not a divergent parallel). New content: the
+    binary-file gap — `git grep -I` skips binaries, so `.pyc`/EXIF/notebook
+    leaks pass every text gate (the tracked-`.pyc` incident, Decision 32's
+    cleanup); defense is gitignore/strip, not scan. Doctrine tenet + governor
+    README point at it. Allowlisted at the new path so it doesn't trip its own
+    gate. Rejected: adopting the doc as-written (its `command -v gitleaks ||
+    skip` was fail-open — the exact failure the review caught).
+
 32. **Governor built as the watchdog-MONITOR first; controller deferred**
     (2026-07-20, human "do it"). `governor/monitor.py`: a deterministic
     (no-model) fleet-health sweep — per-repo leaks, un-gated verify, no-CI,
