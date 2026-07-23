@@ -13,6 +13,15 @@ git clone https://github.com/Lifted-Truck/autonomous.git ~/Documents/Claude/auto
 The `@` imports below use this absolute location. If you must clone elsewhere,
 adjust the import paths to match.
 
+To bring the **rest of the roster** across, run the generated plan from inside
+that clone — it reproduces the nested layout (`synthetic-worlds/Orrery`, not a
+flattened `Orrery`) that the registry and every cross-repo path assume, and it
+names the repos no clone can reach rather than letting them disappear quietly:
+
+```bash
+./kit/clone-roster.sh          # print the plan; --run to execute
+```
+
 ## 2. Add this block to `~/.claude/CLAUDE.md`
 
 Paste verbatim (this is exactly the block installed on the first machine).
