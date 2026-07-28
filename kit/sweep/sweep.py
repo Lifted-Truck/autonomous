@@ -105,9 +105,30 @@ def derive_status(path, with_visibility=False):
         except subprocess.CalledProcessError:
             remote = None
 
+    # A registered path that is NOT a repo but CONTAINS one is a wrapper
+    # directory: the registry points one level too high, so the real repo is
+    # invisible to every consumer (leak scan, monitor, clone-roster) while the
+    # roster still reports the name as "present". That is the worst shape of
+    # wrong — covered-looking and uncovered. Observed 2026-07-27: `audiology`
+    # registered at its wrapper hid a PUBLIC repo carrying a live identity leak
+    # for 19 days. Detected and surfaced, never auto-adopted: which nested repo
+    # belongs on the roster is the human's allowlist call (Decision 14).
+    nested = []
+    if not has(".git") and os.path.isdir(path):
+        try:
+            nested = sorted(
+                d for d in os.listdir(path)
+                if os.path.isdir(os.path.join(path, d, ".git"))
+            )
+        except OSError:
+            nested = []
+
     out = {
         "git": has(".git"),
         "remote": remote,  # None = local-only; a URL = has a remote
+        # Non-empty ONLY when this path isn't itself a repo. Consumers must
+        # treat it as "roster bug, fix the registry", not as a project list.
+        "nested_repos": nested,
         "claude_md": has("CLAUDE.md"),
         "verify": has("verify"),
         "roadmap": has("ROADMAP.md"),

@@ -183,3 +183,40 @@ class TestCli(SweepFixture):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestNestedRepoDetection(unittest.TestCase):
+    """A registered path that isn't a repo but CONTAINS one hid a PUBLIC repo
+    (with a live identity leak) from every consumer for 19 days. The failure
+    was SILENT — the roster reported the name as present while nothing scanned
+    it — so detection needs a test that fails loudly if it regresses."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_wrapper_dir_reports_nested_repo(self):
+        wrapper = os.path.join(self.tmp, "audiology")
+        os.makedirs(os.path.join(wrapper, "Audiology", ".git"))
+        st = sweep.derive_status(wrapper)
+        self.assertFalse(st["git"], "wrapper itself is not a repo")
+        self.assertEqual(st["nested_repos"], ["Audiology"])
+
+    def test_real_repo_reports_no_nested(self):
+        """A genuine repo must NOT list its submodule-ish children — a
+        non-empty list is a roster bug signal, so false positives would train
+        the reader to ignore it."""
+        repo = os.path.join(self.tmp, "proj")
+        os.makedirs(os.path.join(repo, ".git"))
+        os.makedirs(os.path.join(repo, "vendor", ".git"))
+        st = sweep.derive_status(repo)
+        self.assertTrue(st["git"])
+        self.assertEqual(st["nested_repos"], [])
+
+    def test_plain_dir_no_nested(self):
+        plain = os.path.join(self.tmp, "notes")
+        os.makedirs(os.path.join(plain, "subdir"))
+        st = sweep.derive_status(plain)
+        self.assertEqual(st["nested_repos"], [])
