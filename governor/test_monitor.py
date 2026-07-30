@@ -8,6 +8,8 @@ must NOT flag a 'see ROADMAP' pointer or an incidental 'O0 gate' reference."""
 import datetime
 import json
 import os
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -68,6 +70,91 @@ class TestLeakGateDetection(unittest.TestCase):
         _write(d2, "verify", "fast() { pytest; }")
         self.assertIs(monitor.verify_has_leak_gate(d2), False)
         self.assertIsNone(monitor.verify_has_leak_gate(tempfile.mkdtemp()))
+
+
+class TestStatusShapeResilience(unittest.TestCase):
+    """monitor crashed the ENTIRE fleet dashboard because one repo shipped a
+    structured (dict) manifest status. A crashed monitor reports nothing, which
+    is indistinguishable from a healthy fleet — the exact silent failure this
+    tool exists to catch."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _manifest(self, status):
+        with open(os.path.join(self.tmp, "project.manifest.json"), "w") as f:
+            json.dump({"status": status}, f)
+
+    def test_dict_status_does_not_raise(self):
+        self._manifest({"ratified": None, "note": "Phase state lives in ROADMAP.md only."})
+        self.assertIsNone(monitor.manifest_status_prose(self.tmp))
+
+    def test_dict_status_still_detects_prose(self):
+        """Structured shape must not become a way to smuggle progress prose past
+        the check — flatten and scan the strings inside."""
+        self._manifest({"ratified": None, "note": "Phase 3 DONE and shipped ✅"})
+        self.assertIsNotNone(monitor.manifest_status_prose(self.tmp))
+
+    def test_list_and_scalar_status_do_not_raise(self):
+        for shape in ([{"a": 1}, "x"], 42, None, True):
+            with self.subTest(shape=shape):
+                self._manifest(shape)
+                monitor.manifest_status_prose(self.tmp)  # must not raise
+
+
+class TestDormancy(unittest.TestCase):
+    """Dormancy (antiphon-001): a deliberately-inactive green repo must be
+    distinguishable from an abandoned one — WITHOUT becoming a way to silence
+    rot forever. So it expires, and the expiry is louder than what it muted."""
+
+    def setUp(self):
+        # A REAL git repo: check_repo early-returns {} for non-git dirs, so a
+        # bare tmpdir silently tests nothing at all.
+        self.tmp = tempfile.mkdtemp()
+        subprocess.run(["git", "init", "-q", self.tmp], check=True)
+        self.today = datetime.date(2026, 8, 20)
+        _write(self.tmp, "CLAUDE.md", "x")
+        _write(self.tmp, "README.md",
+               "*Last verified current: 2026-07-13.*")   # 38d stale at self.today
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _dormant(self, **kw):
+        _write(self.tmp, "project.manifest.json", json.dumps({"dormant": kw}))
+
+    def _checks(self):
+        return monitor.check_repo({"name": "t", "path": self.tmp}, self.today, 30)
+
+    def test_fixture_is_actually_a_repo(self):
+        """Guard the guard: if this fixture stops being a git repo, every other
+        test in this class passes vacuously on an empty dict."""
+        self.assertTrue(monitor.sweep.derive_status(self.tmp)["git"])
+
+    def test_live_dormancy_suppresses_stale(self):
+        self._dormant(since="2026-07-13", reason="conditions unmet", review_by="2026-10-13")
+        c = self._checks()
+        self.assertNotIn("STALE", c)
+        self.assertIn("DORMANT", c)
+        self.assertEqual(c["DORMANT"][0], "INFO")
+
+    def test_expired_dormancy_is_louder_than_what_it_muted(self):
+        self._dormant(since="2026-07-13", reason="conditions unmet", review_by="2026-08-01")
+        c = self._checks()
+        self.assertIn("DORMANT-EXPIRED", c)
+        self.assertEqual(c["DORMANT-EXPIRED"][0], "WARN")
+        self.assertIn("STALE", c)   # expiry restores the underlying warning too
+
+    def test_missing_review_by_is_ignored(self):
+        """The incomplete form must fail toward NOISE, not toward silence —
+        otherwise omitting review_by becomes a permanent mute."""
+        self._dormant(since="2026-07-13", reason="no review date")
+        c = self._checks()
+        self.assertNotIn("DORMANT", c)
+        self.assertIn("STALE", c)
 
 
 if __name__ == "__main__":

@@ -80,9 +80,47 @@ def manifest_status_prose(path):
         status = json.loads(text).get("status", "")
     except ValueError:
         return None
+    # `status` is prose by convention, but a repo may legitimately use a
+    # STRUCTURED status (juce-rag ships {"ratified":…, "note":…}) — which is
+    # arguably the better shape. Flatten dict/list values and scan the strings
+    # inside; anything else has no prose to drift. Assuming str here crashed the
+    # whole dashboard on one repo's schema choice (2026-07-28).
+    if isinstance(status, dict):
+        status = " ".join(str(v) for v in status.values() if isinstance(v, str))
+    elif isinstance(status, list):
+        status = " ".join(str(v) for v in status if isinstance(v, str))
+    elif not isinstance(status, str):
+        return None
     if _STATUS_PROSE.search(status) or len(status) > 250:
         return status[:90]
     return None
+
+
+def manifest_dormant(path):
+    """The manifest's `dormant` declaration, or None.
+
+    Shape (specified in response to antiphon-001, 2026-07-28):
+        "dormant": {"since": "YYYY-MM-DD", "reason": "...",
+                    "review_by": "YYYY-MM-DD"}
+
+    `review_by` is REQUIRED and load-bearing. A permanent "ignore me" flag is
+    precisely how an abandoned repo hides from a health sweep, so dormancy
+    EXPIRES: it defers activity warnings until a dated audit beat, then becomes
+    a louder warning than the one it suppressed. Deferred, never hidden —
+    doctrine's "staleness is visible, never hidden". A declaration missing
+    `review_by` is ignored (treated as no declaration), so the incomplete form
+    fails toward noise rather than toward silence.
+    """
+    text = _read(path, "project.manifest.json")
+    if text is None:
+        return None
+    try:
+        d = json.loads(text).get("dormant")
+    except ValueError:
+        return None
+    if not isinstance(d, dict) or not isinstance(d.get("review_by"), str):
+        return None
+    return d
 
 
 def verify_has_leak_gate(path):
@@ -123,8 +161,23 @@ def check_repo(proj, today, stale_days):
     if st.get("remote") and not has_ci(path):
         out["NO-CI"] = ("WARN", "remote but no .github/workflows")
 
+    # Dormancy defers the ACTIVITY warning only, and only until its review date.
+    # A green repo with no commits is otherwise indistinguishable from an
+    # abandoned one (antiphon-001) — but suppressing that forever would make the
+    # flag a rot-concealer, so an expired declaration is LOUDER than STALE.
+    dormant = manifest_dormant(path)
+    if dormant and days_since(dormant["review_by"], today) > 0:
+        out["DORMANT-EXPIRED"] = (
+            "WARN",
+            f"dormancy review_by {dormant['review_by']} has passed — re-ratify or wake",
+        )
+        dormant = None  # expired: fall through to the normal staleness checks
+
     lv = readme_last_verified(path)
-    if lv is None:
+    if dormant:
+        out["DORMANT"] = ("INFO", f"dormant by design since {dormant.get('since','?')}"
+                                  f" · review {dormant['review_by']}")
+    elif lv is None:
         if st["claude_md"] or st["roadmap"]:      # a harnessed repo should have one
             out["STALE"] = ("WARN", "README has no 'Last verified' line")
     elif days_since(lv, today) > stale_days:
@@ -187,7 +240,17 @@ def main(argv=None):
     today = (datetime.date.fromisoformat(args.today) if args.today
              else datetime.date.today())
     registry = json.load(open(args.registry))
-    rows = [(p["name"], check_repo(p, today, args.stale_days))
+    # Per-repo isolation: one repo's unexpected data shape must never take the
+    # whole fleet dashboard down with it. A crashed monitor reports NOTHING,
+    # which reads exactly like a healthy fleet — the silent-failure mode this
+    # tool exists to prevent. A repo that blows up is itself a finding.
+    def _guarded(p):
+        try:
+            return check_repo(p, today, args.stale_days)
+        except Exception as exc:  # noqa: BLE001 — surface, never swallow
+            return {"MONITOR-ERROR": ("HIGH", f"{type(exc).__name__}: {exc}")}
+
+    rows = [(p["name"], _guarded(p))
             for p in sweep.resolve(registry)]
 
     if args.json:

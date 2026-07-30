@@ -116,6 +116,35 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+36. **Dormancy is a machine-readable, EXPIRING manifest field** (2026-07-28,
+    responding to brief `antiphon-001`). ANTIPHON asked to be listed in
+    ROADMAP's execution-project registry as deliberately dormant, so a green
+    oracle with no commits would not read as abandoned. Granted — but the
+    listing alone does not solve the stated problem: `governor/monitor.py` does
+    not read ROADMAP.md, so prose is legible to humans and invisible to the
+    governor. ANTIPHON trips `STALE` on 2026-08-12 regardless. So dormancy is
+    now `project.manifest.json` → `dormant {since, reason, review_by}`, honored
+    by monitor. **`review_by` is required**: a permanent flag is how abandoned
+    repos hide, so a live declaration suppresses STALE at INFO, an expired one
+    raises DORMANT-EXPIRED at WARN *and* restores STALE, and one missing
+    `review_by` is ignored entirely — the incomplete form fails toward noise,
+    never toward silence. Defers the activity signal only; LEAK/UNGATED/NO-CI
+    still fire, because a dormant repo can still be insecure. The brief itself
+    proposed this as the better answer; it was right.
+
+35. **monitor gets per-repo fault isolation after one manifest killed it**
+    (2026-07-28). `manifest_status_prose` assumed `status` was a string;
+    `juce-rag` ships a structured `{"ratified":…, "note":…}` — arguably the
+    better shape — and the TypeError took down the entire fleet dashboard. A
+    crashed monitor reports nothing, which is indistinguishable from a healthy
+    fleet: the precise silent failure the tool exists to catch. Two fixes, and
+    the second matters more: (a) flatten dict/list statuses and scan the strings
+    inside, so structure cannot smuggle prose past the check either; (b) wrap
+    each repo's checks so an unexpected shape yields a HIGH `MONITOR-ERROR` row
+    for that repo instead of killing the run. One repo's schema choice must
+    never be able to blind the whole sweep. Found only because a brief required
+    running monitor — it had been silently dead.
+
 34. **Cross-platform portability made a gate, not a habit** (2026-07-23,
     prompted by the human cloning the roster onto a Windows machine). Three
     silent-failure vectors closed before the clone rather than after:

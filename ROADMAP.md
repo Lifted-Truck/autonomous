@@ -72,6 +72,19 @@ not for cross-track sequencing):
   macOS-local). First registered execution project. Future consumer of
   Tonality (brief due at its Phase 3); registered here at human direction
   during its ratification gate.
+- **ANTIPHON** (`~/Documents/Claude/synthetic-worlds/Antiphon/`, public:
+  github.com/Lifted-Truck/antiphon) — quantized harmonic companion for Ableton
+  Live (live regime only; the offline harmonizer is Wend's `harmonize` mode).
+  Spun up 2026-07-13 via /spinup; rung 1 (single thread); CI mirrors the Stop
+  hook (`verify fast`; Layer-E needs a live Ableton set and is not runnable on
+  a runner). **Status: deliberately dormant** — feature work gated on three
+  unmet spin-up conditions (Wend H2 passes; a demonstrated live-regime need; a
+  measured quantization ceiling). Green oracle, no activity expected. Future
+  consumer of **Wend** (frozen `HarmonicSpine` + pinned voice stage) and
+  **Tonality** (analysis slices); briefs deliberately unfiled until the
+  conditions hold. Listed per brief `antiphon-001`; dormancy is also declared
+  machine-readably in its manifest (`dormant.review_by`), which is what the
+  governor actually reads — this prose entry is for humans.
 
 **Cross-track ordering constraints (the only ones):**
 1. Kit v2 core's STATUS + LIBRARY-schema artifacts unblock dispatch E1
