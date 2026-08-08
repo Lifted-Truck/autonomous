@@ -64,10 +64,41 @@ lines + provenance for later re-parse once ruled).
    `lesson`/`evidence`/`falsifier` are prose. Is a literal `|` inside them
    forbidden, escaped somehow, or handled by continuation-joining unlabeled
    segments onto the previous field? The fixtures deliberately avoid the
-   case pending a ruling.
+   case pending a ruling. *(2026-07-29: now observed in the wild — see the
+   field observation below.)*
+
 2. **Unknown labeled segments.** `| foo: bar |` in an otherwise-valid
    entry: quarantine (strict) or ignore (lenient)? The parsed-form schema
    has no `additionalProperties` stance. Fixtures avoid the case pending a
    ruling.
+
+## Second field observation (2026-07-29) — ambiguities now observed in the wild; filing is OVERDUE
+
+Respond-by was 2026-07-18; ball remains provider, 11 days over. New evidence
+raises the cost of the open rulings:
+
+The 2026-07-29 sweep (58 projects, 46 new records) quarantined **4 of
+HYPERSAW's 19 entries** on exactly the ambiguities this filing surfaced:
+
+- **Pipes inside free-text fields is no longer hypothetical** (ambiguity 1
+  above): HYPERSAW L0016 and L0018 write literal `|` inside lesson prose
+  (e.g. a first-difference formula and an em-dash-delimited aside), so the
+  strict parser sees unrecognized segments and quarantines whole entries.
+  L0016 ("calibrate the detector before trusting it") is itself
+  domain-general, promotion-grade content — the friction is now costing
+  exactly the lessons the warehouse exists to carry.
+- **New pattern, please add to the ruling: annotated placeholders.**
+  HYPERSAW L0012/L0014 write `supersedes: — (refines L0002 with a third
+  cause)` — an em-dash "none" placeholder carrying a parenthetical
+  annotation. Under decision-5 tolerance, bare `—` parses as absent, but
+  the annotated form fails the `^L\d{4}$` pattern and quarantines. Ruling
+  options: (a) forbid (annotation belongs in `lesson`/`evidence` prose),
+  (b) treat any `—`-prefixed value as absent (annotation ignored), or
+  (c) add an explicit annotation slot in `library-entry.2`.
+
+No sweep was blocked; all raw lines are preserved with provenance and
+re-parse cleanly once ruled (quarantine-visibly working as ratified). But
+three of the four pending questions (multi-line wrap, pipes-in-prose,
+annotated placeholders) now have real, named content stuck behind them.
 
 Ball: provider (review + land, or counter-rule on the flagged readings).

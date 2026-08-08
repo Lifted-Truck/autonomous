@@ -116,6 +116,30 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+37. **`library-entry.2`: the parser loses nothing, the promotion gate judges**
+    (2026-07-31, ruling distillery-002 — 13 days past respond-by). Five open
+    questions, one principle. A `|`-delimited format that forbids `|` in prose
+    is not strict, it is broken (CSV without quoting): HYPERSAW L0016
+    quarantined because its lesson contains `|x[n]-x[n-1]|`, absolute-value
+    notation in a DSP lesson, and L0016 is domain-general promotion-grade
+    content. Rulings: (1) entry boundary is the `[Lxxxx]` marker not the
+    newline — fixes morphos/edgewise/wont's 7 wrapped entries with zero
+    resident work and needs no continuation character; (2) unlabeled segments
+    continue the open field — rejected escaping, which requires every author to
+    remember and fails silently when they don't; (3) both tier forms accepted,
+    but the bare form is recognized by ENUM MATCH not position, else a title
+    containing `|` silently corrupts `tier` (worse than quarantining);
+    (4) annotated placeholders → field absent + annotation preserved as
+    `<field>_note`, rejecting distillery's option (b) because those annotations
+    are real graph edges ("generalises [[L0014]]") and dropping them deletes
+    the relational knowledge the warehouse exists to hold; (5) unknown labels →
+    `extra{}`, neither quarantining a good entry nor dropping data.
+    **Explicitly NOT a weakened gate**: everything newly accepted is a
+    formatting variation carrying identical information; everything still
+    rejected is missing information, and the contract now lists the four
+    quarantining cases exhaustively so forgiveness cannot creep. Falsifier and
+    evidence requirements untouched.
+
 36. **Dormancy is a machine-readable, EXPIRING manifest field** (2026-07-28,
     responding to brief `antiphon-001`). ANTIPHON asked to be listed in
     ROADMAP's execution-project registry as deliberately dormant, so a green
