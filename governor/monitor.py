@@ -37,6 +37,7 @@ sys.path.insert(0, os.path.join(_HERE, "..", "kit", "sweep"))
 import sweep        # noqa: E402  (roster enumeration + derive_status)
 sys.path.insert(0, _HERE)
 import leak_scan    # noqa: E402  (the leak content scan, kept consistent with the gate)
+import ball_scan    # noqa: E402  (open INTEGRATIONS exchanges — who owes whom)
 
 # Progress content that belongs in ROADMAP, not the manifest status field
 # (Decision 28). Case-sensitive DONE/CLOSED + the ✅/🟡 status glyphs catch real
@@ -194,6 +195,52 @@ def check_repo(proj, today, stale_days):
     return out
 
 
+def render_exchanges(projects, today):
+    """Fleet-wide open-exchange block.
+
+    Deliberately its OWN section rather than per-repo severity rows. The fleet
+    already carries ~56 WARNs; an overdue obligation folded into that pile is
+    findable only by someone already looking, which is the failure this check
+    exists to fix. One list, sorted worst-first, is the whole point.
+    """
+    overdue, ours, untracked = [], [], []
+    for p in projects:
+        for th in ball_scan.scan_repo(p["path"], p["name"], today):
+            if th["days_overdue"]:
+                overdue.append((th["days_overdue"], p["name"], th))
+            elif th["ours"]:
+                ours.append((p["name"], th))
+        for f in ball_scan.untracked_mailbox_files(p["path"]):
+            untracked.append((p["name"], f))
+
+    out = ["", "## Open exchanges (INTEGRATIONS `ball:`)", ""]
+    if not (overdue or ours or untracked):
+        out += ["Nothing owed. No overdue balls, no uncommitted mailbox writes.", ""]
+        return out, len(overdue)
+
+    if overdue:
+        out += ["### OVERDUE — past `respond-by`, ball on us", ""]
+        for d, repo, th in sorted(overdue, key=lambda t: (-t[0], t[1], t[2]["id"])):
+            out.append(f"- **{d}d overdue** · `{repo}` · `{th['id']}` "
+                       f"(due {th['respond_by']}, status `{th['status']}`)")
+        out.append("")
+    if ours:
+        out += ["### Ball on us, no deadline breached", ""]
+        for repo, th in sorted(ours, key=lambda t: (t[0], t[1]["id"])):
+            out.append(f"- `{repo}` · `{th['id']}` — status `{th['status']}`"
+                       + (f", due {th['respond_by']}" if th["respond_by"] else ""))
+        out.append("")
+    if untracked:
+        out += ["### Uncommitted mailbox writes", "",
+                "Filed by a visitor under the mailbox exception; committing them is a",
+                "RESIDENT action. Until then they are invisible to anyone reading the",
+                "repo through git.", ""]
+        for repo, f in sorted(untracked):
+            out.append(f"- `{repo}` · `{f}`")
+        out.append("")
+    return out, len(overdue)
+
+
 def render_status(rows, today, stale_days):
     sev = {"HIGH": 0, "WARN": 0, "INFO": 0}
     for _, checks in rows:
@@ -250,17 +297,19 @@ def main(argv=None):
         except Exception as exc:  # noqa: BLE001 — surface, never swallow
             return {"MONITOR-ERROR": ("HIGH", f"{type(exc).__name__}: {exc}")}
 
-    rows = [(p["name"], _guarded(p))
-            for p in sweep.resolve(registry)]
+    projects = list(sweep.resolve(registry))
+    rows = [(p["name"], _guarded(p)) for p in projects]
+    exchange_md, n_overdue = render_exchanges(projects, today)
 
     if args.json:
         json.dump({n: c for n, c in rows}, sys.stdout, indent=2, sort_keys=True)
         sys.stdout.write("\n")
         return 0
 
-    md = render_status(rows, today, args.stale_days)
+    md = render_status(rows, today, args.stale_days) + "\n".join(exchange_md)
     if args.out:
-        open(args.out, "w", encoding="utf-8").write(md)
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(md)
     # compact stdout summary (the dashboard is the file)
     sev = {"HIGH": 0, "WARN": 0, "INFO": 0}
     for _, c in rows:
@@ -268,6 +317,7 @@ def main(argv=None):
             sev[v[0]] += 1
     print(f"monitor: {sev['HIGH']} HIGH · {sev['WARN']} WARN · {sev['INFO']} INFO "
           f"across {len(rows)} repos"
+          + (f" · {n_overdue} OVERDUE ball(s)" if n_overdue else "")
           + (f" → {args.out}" if args.out else " (use --out to write STATUS.md)"))
     for name, checks in rows:
         hi = [k for k, v in checks.items() if v[0] == "HIGH"]

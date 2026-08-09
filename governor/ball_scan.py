@@ -1,0 +1,179 @@
+#!/usr/bin/env python3
+"""ball_scan — who owes whom, and since when.
+
+The INTEGRATIONS protocol gives every exchange a `ball:` field so exactly one
+side owns the next move. It assigns responsibility; NOTHING escalates it. Three
+exchanges in one week were found only because a human happened to mention them:
+distillery-002 sat 13 days past `respond-by` with named content blocked behind
+it, and two mailbox writes sat untracked for ~12 days each. The field worked;
+the absence of a sweep over it did not.
+
+Deterministic, no model calls, read-only — same class as leak_scan.
+
+THE UNIT IS THE EXCHANGE ID, NOT THE FILE. A thread's opening `brief.md` keeps
+`ball: provider, status: filed` forever; the answer lands in a *sibling* file.
+Per-file evaluation therefore reports every answered thread as permanently
+overdue, which is worse than no check at all — a scanner that always cries wolf
+is a scanner nobody reads. Files are grouped by their `id:` frontmatter and the
+thread's state is taken from its most recent member.
+"""
+
+import datetime
+import glob
+import os
+import re
+
+# A thread in one of these states owes nobody anything.
+TERMINAL = {"closed", "ratified", "shipped", "withdrawn", "declined", "superseded"}
+
+# Most-recent-wins, in order of decisiveness. `ratified` outranks `responded`
+# outranks `filed` because a thread can be re-filed (`refreshed`) after an answer.
+_DATE_FIELDS = ("ratified", "responded", "refreshed", "filed")
+
+_FM = re.compile(r"\A---\s*\n(.*?)\n---", re.S)
+
+
+def _field(fm, name):
+    m = re.search(rf"^{name}:\s*(.+?)\s*$", fm, re.M)
+    return m.group(1).strip() if m else None
+
+
+def _parse(path):
+    """Frontmatter of one exchange file, or None if it isn't one."""
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as fh:
+            head = fh.read(4096)
+    except OSError:
+        return None
+    m = _FM.match(head)
+    if not m:
+        return None
+    fm = m.group(1)
+    if not _field(fm, "id"):
+        return None                      # not an exchange; some other fronted doc
+    dates = [d for d in (_field(fm, f) for f in _DATE_FIELDS) if d]
+    return {
+        "path": path,
+        "id": _field(fm, "id"),
+        "ball": (_field(fm, "ball") or "").lower(),
+        "status": (_field(fm, "status") or "").lower(),
+        "respond_by": _field(fm, "respond-by"),
+        # Sort key: the newest date the file claims. Files with no date at all
+        # sort oldest, so a dated answer always outranks an undated opener.
+        "date": max(dates) if dates else "",
+        # Same-day tiebreak. Exchange dates have DAY resolution, and a live
+        # channel turns around inside a day: FOUNDATIONS filed a new proposal
+        # (ball: provider) hours after our response (ball: consumer), all
+        # stamped 2026-08-09. Ordering on the date alone fell through to
+        # alphabetical filename, which put `response.md` last and reported the
+        # ball as theirs while it was actually ours.
+        # CAVEAT: a fresh `git clone` stamps every file with checkout time, so
+        # this degrades to filename order there. Day-resolution dates are the
+        # real limitation; a monotonic `seq:` field in the protocol would fix
+        # it properly. Filed as a known gap rather than papered over.
+        "mtime": os.path.getmtime(path) if os.path.exists(path) else 0.0,
+    }
+
+
+def _ball_is_ours(ball, repo_name):
+    """True when the ball sits on the repo that OWNS this mailbox.
+
+    Tolerant on purpose: the protocol says `provider`/`consumer`, but real
+    exchanges also name the repo directly (Audiology's template writes
+    `ball: audiology`). Unrecognized values are treated as NOT ours and
+    reported verbatim — under-claiming is safe, silently absorbing another
+    project's obligation is not.
+    """
+    if not ball or ball in ("none", "-"):
+        return False
+    return ball == "provider" or ball == repo_name.lower().split("/")[-1]
+
+
+def scan_repo(path, repo_name, today=None):
+    """Open exchange threads in one repo's mailbox.
+
+    Returns a list of dicts: id, dir, ball, ours, status, respond_by,
+    days_overdue (None when not past due), untracked (mailbox file not in git).
+    """
+    today = today or datetime.date.today()
+    files = []
+    for f in glob.glob(os.path.join(path, "integrations", "*", "*.md")):
+        p = _parse(f)
+        if p:
+            files.append(p)
+
+    threads = {}
+    for f in files:
+        threads.setdefault(f["id"], []).append(f)
+
+    out = []
+    for tid, members in sorted(threads.items()):
+        # Closure is MONOTONIC and beats date-ordering: if any member declares a
+        # terminal status the thread is done. Trusting "latest file wins" here
+        # reported antiphon-001 as 12 days overdue when its ratification.md said
+        # `status: closed` — the ratification carried the same `responded:` date
+        # as the response it closed, so the tiebreak picked the wrong file.
+        # Exchange dates are hand-written and will collide; closure is a fact.
+        if any(m["status"] in TERMINAL for m in members):
+            continue
+        # Only files that ASSERT a ball determine who holds it. `ball: none`
+        # marks a file that deliberately moves nothing — an informational note,
+        # an FYI. Treating those as "latest wins" let FOUNDATIONS' informational
+        # note, filed 34 seconds after their actual proposal, mask a live
+        # `ball: provider` ask. A thread is not a linear conversation; concurrent
+        # members are normal, so the ball comes from the newest file that claims
+        # one, not from the newest file.
+        claimants = [m for m in members if m["ball"] and m["ball"] not in ("none", "-")]
+        if not claimants:
+            continue                       # open, but nobody is holding anything
+        latest = max(claimants, key=lambda m: (m["date"], m["mtime"], m["path"]))
+        # The live commitment is the LATEST respond-by in the thread: a refile
+        # or a counter-brief resets the clock, and honouring a superseded date
+        # would report an obligation nobody currently holds.
+        deadlines = [m["respond_by"] for m in members if m["respond_by"]]
+        respond_by = max(deadlines) if deadlines else None
+        ours = _ball_is_ours(latest["ball"], repo_name)
+
+        # Overdue is computed ONLY when the ball is ours. A `respond-by` binds
+        # whoever holds the ball; once we answer and the ball moves, that date is
+        # satisfied, not breached. Without this guard every answered thread
+        # reported as overdue forever — the exact false-positive flood that
+        # trains a reader to skip the section.
+        overdue = None
+        if ours and respond_by:
+            try:
+                d = (today - datetime.date.fromisoformat(respond_by)).days
+                overdue = d if d > 0 else None
+            except ValueError:
+                overdue = None            # malformed date is not an obligation
+        out.append({
+            "id": tid,
+            "dir": os.path.basename(os.path.dirname(latest["path"])),
+            "ball": latest["ball"] or "(unset)",
+            "ours": ours,
+            "status": latest["status"] or "(unset)",
+            "respond_by": respond_by,
+            "days_overdue": overdue,
+        })
+    return out
+
+
+def untracked_mailbox_files(path):
+    """Mailbox files present on disk but not in git.
+
+    A brief filed under the mailbox exception is written by a VISITOR and
+    committed by a RESIDENT — so it is untracked by design for a moment, and
+    invisible to anyone reading the repo through git for as long as the
+    resident doesn't notice. Two sat ~12 days each. This is the check that
+    would have caught them.
+    """
+    import subprocess
+    try:
+        out = subprocess.run(
+            ["git", "-C", path, "ls-files", "--others", "--exclude-standard",
+             "--", "integrations/"],
+            capture_output=True, text=True, check=True,
+        ).stdout
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return []
+    return [l for l in out.splitlines() if l.strip()]

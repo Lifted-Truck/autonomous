@@ -116,6 +116,37 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+42. **Overdue-`ball:` detection, and why the sweep runs from a session hook
+    rather than a scheduler** (2026-08-09). The INTEGRATIONS `ball:` field
+    assigns responsibility and nothing escalated it: three exchanges surfaced
+    in one week only because the human mentioned them (distillery-002, 13 days
+    past respond-by with named content blocked; two mailbox writes untracked
+    ~12 days each). `governor/ball_scan.py` now sweeps every repo's mailbox.
+    Four modelling rules, each forced by a false positive on the FIRST real
+    run — the module is only useful if it is read, so every one of these is
+    really a defence against noise: (a) the unit is the exchange **id**, not
+    the file — an opening `brief.md` keeps `ball: provider` forever and the
+    answer lands in a sibling, so per-file evaluation reports every answered
+    thread as permanently overdue; (b) **closure is monotonic** and beats
+    date-ordering — antiphon-001 read as 12d overdue while CLOSED because its
+    ratification carried the same date as the response it closed; (c) overdue
+    is computed **only when the ball is ours** — a respond-by binds the holder,
+    so once we answer it is satisfied, not breached; (d) only files that ASSERT
+    a ball may determine who holds it — FOUNDATIONS' `ball: none` informational
+    note, filed 34 seconds after a real proposal, masked a live ask. Reported
+    in its OWN STATUS section, never folded into the ~56-WARN pile, since an
+    obligation buried there is findable only by someone already looking.
+    **Scheduling: rejected launchd/cron after trying it.** macOS TCC protects
+    `~/Documents` and a LaunchAgent does not inherit Full Disk Access, so the
+    job returned "Operation not permitted" (exit 512) while STATUS.md kept the
+    mtime of a manual run — installed-looking, fresh-looking, doing nothing.
+    Granting FDA to a bare interpreter is a worse trade. Instead: a synchronous
+    SessionStart hook reads the cache (instant) and an `async` one refreshes it
+    (~4s, off the critical path), so the sweep runs with the file access a
+    session already has and needs no scheduler. Freshness gap is one session
+    and the brief prints the cache age, so staleness is visible rather than
+    assumed — the failure that killed the monitor silently for days.
+
 41. **Correspondent-roster sweep: promote signal MET by convergent independent
     derivation; kit-v2 candidate, build deferred** (2026-08-09, foundations-001
     §4). FOUNDATIONS offered a four-state correspondent registry + drift sweep
