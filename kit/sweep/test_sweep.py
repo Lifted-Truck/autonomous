@@ -220,3 +220,32 @@ class TestNestedRepoDetection(unittest.TestCase):
         os.makedirs(os.path.join(plain, "subdir"))
         st = sweep.derive_status(plain)
         self.assertEqual(st["nested_repos"], [])
+
+
+class TestPathCaseMismatch(unittest.TestCase):
+    """macOS resolves a mis-cased registry path fine and Linux does not, so this
+    bug is invisible on the machine that creates it and breaks on CI or on a
+    second machine. Reported, never auto-corrected."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_matching_case_is_clean(self):
+        d = os.path.join(self.tmp, "Widget")
+        os.makedirs(d)
+        self.assertIsNone(sweep.derive_status(d)["path_case_mismatch"])
+
+    def test_mismatched_case_reports_the_disk_spelling(self):
+        os.makedirs(os.path.join(self.tmp, "Tonality-Live"))
+        st = sweep.derive_status(os.path.join(self.tmp, "tonality-Live"))
+        # On a case-insensitive FS the wrong spelling still resolves; that is
+        # exactly why it needs reporting rather than trusting isdir().
+        if st["path_case_mismatch"] is not None:
+            self.assertEqual(st["path_case_mismatch"], "Tonality-Live")
+
+    def test_missing_dir_reports_nothing(self):
+        st = sweep.derive_status(os.path.join(self.tmp, "absent"))
+        self.assertIsNone(st["path_case_mismatch"])

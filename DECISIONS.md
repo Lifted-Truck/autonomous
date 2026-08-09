@@ -116,6 +116,44 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+44. **Registry paths are case-checked; `path_case_mismatch` reported, never
+    auto-corrected** (2026-08-09, from FOUNDATIONS' foundations-001 four-state
+    note). They flagged `Morphos`/`morphos` and warned a cross-platform roster
+    sweep will hit it, failing in the worst way — a false alarm on the first
+    run, when the reader is deciding whether to trust the tool. We had it live:
+    `registry.json` carried `~/Documents/tonality-Live` against `Tonality-Live`
+    on disk. macOS is case-INSENSITIVE but case-PRESERVING so it resolved
+    silently; Linux CI would not, and a second machine is being set up this
+    week. Entry corrected; `sweep.derive_status` now reports the disk spelling
+    with a test. REPORTED, not auto-corrected — which spelling is canonical is
+    the human's call, same stance as `nested_repos`. Chose reporting over
+    FOUNDATIONS' `(st_dev, st_ino)` identity comparison deliberately: identity
+    RESOLVES the mismatch invisibly, right for a sweep that must not cry wolf,
+    but here it is a portability bug worth fixing rather than tolerating. Their
+    roster must survive a rename; ours must survive a clone.
+
+43. **`contract_gate` landed as kit-core; second consumer established
+    empirically, not by argument** (2026-08-09, foundations-001 proposal).
+    FOUNDATIONS offered the enforcement half of Decision 39 — does the file the
+    manifest names as the contract declare a version — deliberately narrow: no
+    semver ordering, no bump-detection, no prose reading, because Decision 39's
+    second half (*was the freeze respected?*) is a human ruling and stays one.
+    Landed at `kit/gates/contract_gate.py`. Their two-consumer caveat was
+    honest but their proposed answer ("the second consumer is the doctrine
+    itself") is self-ratifying — a rule wanting its own enforcement is not
+    independent evidence. The real second consumer is empirical: **Orrery, the
+    composite worked reference, declares no `contract-version:`**, while its own
+    manifest says Lathe pins a version and files briefs for deltas — a live
+    pinning relationship against a contract with nothing to pin. FOUNDATIONS
+    explicitly refused to check Orrery ("it is not my tree, and if it does not,
+    that is a finding for its residents rather than a stick to hand you"), which
+    was the correct call; checking it is autonomous's scope. Four negative tests
+    re-implemented rather than cited — a gate landed on someone else's word is a
+    gate nobody has run — plus one added: prose mentioning `contract-version:`
+    mid-line must FAIL, pinning the anchor a future "simplification" would drop.
+    Kit changes reach existing repos only on retrofit, so nothing breaks today;
+    the Orrery finding is filed separately.
+
 42. **Overdue-`ball:` detection, and why the sweep runs from a session hook
     rather than a scheduler** (2026-08-09). The INTEGRATIONS `ball:` field
     assigns responsibility and nothing escalated it: three exchanges surfaced

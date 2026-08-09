@@ -66,6 +66,11 @@ fast() {
     || { echo "verify[fast]: sweep tests red" >&2; ok=1; }
   (cd governor && python3 -m unittest discover -q .) \
     || { echo "verify[fast]: governor tests red" >&2; ok=1; }
+  # kit/gates ships checks that OTHER repos wire into their own verify. If its
+  # tests are not discovered here, a broken kit gate propagates outward silently
+  # — the shipped-untested case is worse than the untested-local one.
+  (cd kit/gates && python3 -m unittest discover -q .) \
+    || { echo "verify[fast]: kit gate tests red" >&2; ok=1; }
   # 2. Machine-readable artifacts parse
   python3 - <<'EOF' || ok=1
 import json, sys

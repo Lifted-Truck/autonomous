@@ -123,9 +123,30 @@ def derive_status(path, with_visibility=False):
         except OSError:
             nested = []
 
+    # macOS is case-INSENSITIVE but case-PRESERVING, so a registry entry whose
+    # case differs from disk resolves fine here and breaks on any case-sensitive
+    # filesystem (Linux CI, a case-sensitive volume). It fails in the worst way:
+    # silently correct on the machine that authored it. Reported, never
+    # auto-corrected — which spelling is canonical is the human's call, same
+    # stance as nested_repos. (FOUNDATIONS hit this as `Morphos`/`morphos` and
+    # flagged it kit-ward in the foundations-001 four-state note; autonomous had
+    # `tonality-Live` vs `Tonality-Live` on disk at the time of reading it.)
+    case_mismatch = None
+    parent, base = os.path.dirname(path), os.path.basename(path)
+    if base and os.path.isdir(path):
+        try:
+            actual = [d for d in os.listdir(parent) if d.lower() == base.lower()]
+        except OSError:
+            actual = []
+        if actual and actual[0] != base:
+            case_mismatch = actual[0]
+
     out = {
         "git": has(".git"),
         "remote": remote,  # None = local-only; a URL = has a remote
+        # Non-None = the registry's spelling differs from disk's. Portability
+        # bug, not cosmetic: this path does not exist on a case-sensitive FS.
+        "path_case_mismatch": case_mismatch,
         # Non-empty ONLY when this path isn't itself a repo. Consumers must
         # treat it as "roster bug, fix the registry", not as a project list.
         "nested_repos": nested,
