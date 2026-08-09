@@ -116,6 +116,72 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+41. **Correspondent-roster sweep: promote signal MET by convergent independent
+    derivation; kit-v2 candidate, build deferred** (2026-08-09, foundations-001
+    §4). FOUNDATIONS offered a four-state correspondent registry + drift sweep
+    as a report, not a request, correctly noting the two-consumer rule left it
+    at one consumer. The second consumer is THIS repo, unknown to them: on
+    2026-07-27 `registry.json` was found pointing at wrapper directories, and
+    five repos — including PUBLIC `audiology`, carrying a machine-identity leak
+    for 19 days — were invisible to leak_scan/monitor/clone-roster while the
+    roster reported their names as present. Both fixes converged on the same
+    shape AND the same deliberate restraint: detect drift, report loudly,
+    **never mutate the roster** ("discovering a repo is not registering it" /
+    "surfaced, never auto-adopted"). Convergent design under independent
+    derivation is the strongest signal the two-consumer rule can produce, and
+    neither party could see it alone — which is itself an argument for filing
+    resolved-locally findings upstream. Generalization frozen: a hand-maintained
+    roster of relationships drifts from reality silently; the countermeasure is
+    a deterministic declared-vs-observed sweep that blocks only on
+    project-controlled state and cannot mutate the roster. NOT built today —
+    kit v2 is not open, and a half-generalized version is worse than two working
+    specific ones. FOUNDATIONS' `deferred-with-revisit-trigger` state is the
+    piece autonomous lacks: without it the same finding re-surfaces every sweep
+    and trains the reader to skip it.
+
+40. **Prior-art bookend inverts for design-first projects, on the record**
+    (2026-08-09, foundations-001 §3, ACCEPTED). Decision 30 put Phase 0
+    prior-art before the design is committed; a project arriving with a human's
+    founding document cannot run that order. Ruling: run it as an AMENDMENT
+    PASS against the committed design, inversion recorded in DECISIONS, plus one
+    acceptance criterion that is the load-bearing part — **contradictions become
+    DECISIONS proposals, never absorbed or discarded**. Without that criterion a
+    late pass is *performed rather than used*, and the failure is invisible
+    because both produce the same artifact. Rejected: dropping the phase
+    (loses it) and silently reordering (loses the record that it was inverted).
+    Evidence the form bites, verified rather than accepted: FOUNDATIONS' F1
+    produced 8 proposals against an already-committed constitution.
+
+39. **A composite contract file may be a versioned WRAPPER over a normative
+    source** (2026-08-09, foundations-001 §2, ACCEPTED). ONBOARDING composite
+    move 1 implied the contract document must contain the seam's prose;
+    FOUNDATIONS' seam was already §2/§4/§5 of a human-written constitution, so
+    following it literally meant duplicating canonical content — a bug under
+    README §8, and two copies of a contract drift until no consumer can say
+    which text it pinned. Ruling: the invariant is that **exactly one file owns
+    the version and the freeze state**, not that it holds the prose; a
+    normative-source table satisfies move 1. Move 1 conflated "one place to pin"
+    with "one place the text lives" because Orrery — the only worked reference —
+    had a contract written AS the contract, so nothing forced the distinction. A
+    single worked example is a weak generalization. FOUNDATIONS' offered
+    `contract-version:` freeze check accepted as a kit-core gate candidate:
+    prose is the reminder, the gate is the enforcement.
+
+38. **FOUNDATIONS registered in the ecosystem tracks; execution projects are no
+    longer assumed to be leaves** (2026-08-09, brief foundations-001).
+    Registered per the HYPERSAW/ANTIPHON shape. `registry.json` needed no edit —
+    verified rather than accepted, the `synthetic-worlds` group rule already
+    resolves it with a full harness. But the Execution-project registry's own
+    preamble describes its entries as leaves that "feed back only through their
+    group scope's knowledge-loop harvest," and FOUNDATIONS is upstream of eight
+    registered consumers: its F2 gates HYPERSAW's extraction and a
+    contract-version event is an eight-way fan-out. Registering it under a
+    description false about it would have been the drift this protocol exists to
+    prevent, so a fifth cross-track ordering constraint was added — the first in
+    that list originating in an execution project rather than Track A. The leaf
+    assumption still holds for every other entry; it needed naming, not silent
+    amendment.
+
 37. **`library-entry.2`: the parser loses nothing, the promotion gate judges**
     (2026-07-31, ruling distillery-002 — 13 days past respond-by). Five open
     questions, one principle. A `|`-delimited format that forbids `|` in prose

@@ -72,6 +72,25 @@ not for cross-track sequencing):
   macOS-local). First registered execution project. Future consumer of
   Tonality (brief due at its Phase 3); registered here at human direction
   during its ratification gate.
+- **FOUNDATIONS** (`~/Documents/Claude/synthetic-worlds/FOUNDATIONS/`, private:
+  github.com/Lifted-Truck/FOUNDATIONS) — C++ infrastructure library for
+  synth/MIDI plugins (parameter registry, modulation, scoped presets, voice
+  architecture, signal graph, event pipeline, musical-context blackboard). Owns
+  no novelty; owns the contracts novelty plugs into. Spun up 2026-08-08 via
+  /spinup (composite variant); manifest RATIFIED 2026-08-09; rung 2
+  (human-chosen — earned by the §7 Mediator critic-profile and bit-parity
+  extraction oracles; rung 3 explicitly not earned). CI mirrors the Stop hook
+  (`verify fast`, ubuntu; `full` is macOS-local — `auval`/codesign — per
+  Decision 31). Phase: F0 closed, F1 prior-art complete, F2 = HYPERSAW
+  extraction behind a bit-parity gate.
+  **This is the first registered project that is UPSTREAM of other registered
+  projects** — provider to HYPERSAW, Morphos, unified-pm, spectrogen,
+  refraction-bench, Place, quantum-morph, auricle; consumer of autonomous,
+  Tonality, tonality-core. That is why it is a track entry and not merely a
+  registry line: an F2 slip moves HYPERSAW's schedule, and a contract-version
+  event moves all of them at once. **It is therefore the first entry here whose
+  phase state is a cross-track ordering constraint** — see the constraints list
+  below. Registered per brief `foundations-001` (Decision 38).
 - **ANTIPHON** (`~/Documents/Claude/synthetic-worlds/Antiphon/`, public:
   github.com/Lifted-Truck/antiphon) — quantized harmonic companion for Ableton
   Live (live regime only; the offline harmonizer is Wend's `harmonize` mode).
@@ -95,7 +114,14 @@ not for cross-track sequencing):
    (degrade-visibly rule applies to internal seams too).
 3. autonomous P3 must NOT build a second distilled pool — it consumes
    Track B's (D4).
-4. Everything else proceeds in parallel without coordination.
+4. **FOUNDATIONS F2 gates HYPERSAW's extraction work**, and any FOUNDATIONS
+   contract-version event is a fan-out to all eight registered consumers.
+   This is the first ordering constraint in this list that originates in an
+   execution project rather than in Track A — execution projects were assumed
+   to be leaves ("they feed back only through their group scope's
+   knowledge-loop harvest"), and FOUNDATIONS is not one. The assumption stands
+   for every other entry; it needed naming rather than silent amendment.
+5. Everything else proceeds in parallel without coordination.
 
 **Ecosystem-lead milestone (decision-in-principle, gated).** Once distillery
 D4 + autonomous P3 are green, evaluate promoting **distillery to operational

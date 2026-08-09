@@ -211,6 +211,16 @@ Phase gates are never weakened to pass. A phase closes only when its gate is gre
   DECISIONS reflect what it surfaced (what to reuse, avoid, or differentiate from).
   A "we already know the space" is a signal to run it anyway — the swarm reaches
   adjacent domains a single searcher won't.
+  *Design-first projects invert the order, deliberately and on the record.* When
+  the human arrives with the design already committed (a founding document),
+  "before the design" is not available. Do NOT drop the phase and do NOT quietly
+  reorder it: run it as an **amendment pass** against the committed design, with
+  the inversion recorded in DECISIONS and one extra acceptance criterion —
+  **contradictions become DECISIONS proposals, never absorbed or discarded.**
+  That criterion is the whole point: without it a late prior-art pass is
+  performed rather than used, which looks identical in the artifact and changes
+  nothing. (foundations-001 §3, Decision 40. Evidence that it bites: FOUNDATIONS'
+  F1 produced 8 proposals against an already-committed constitution.)
 - **Phase 1 — <name>.** Gate: <the exact test/fixture set that proves it>.
 - **Phase 2 — <name>.** Gate: …
 - **Phase N (pre-ship) — Prior-art & IP re-scan (agent swarm).** BEFORE any public

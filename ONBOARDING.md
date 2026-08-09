@@ -186,6 +186,17 @@ Differences from the standard procedure — the five moves:
    every module imports (Orrery: `sequencer-studio-architecture.md`). Changes
    to it are contract-version events; freeze it for a build phase and gate
    edits behind a human.
+   *The contract file may be a **versioned wrapper** over a normative source it
+   does not contain.* The invariant is that exactly one file owns the
+   **version** and the **freeze state** — not that that file holds the prose.
+   When the seam is already documented somewhere canonical (a founding design
+   doc, an ADR, an upstream standard), the contract file carries the version,
+   the freeze, the change log, and a normative-source table pointing at it.
+   Copying the prose in would put the same content in two places, which is a
+   bug (README §8), and two copies of a contract drift until no consumer can
+   say which text it pinned. Orrery never hit this because its contract was
+   written *as* the contract; FOUNDATIONS did, because its seam was §2/§4/§5 of
+   a constitution the human wrote first (foundations-001 §2, Decision 39).
 2. **Root charter + one sub-charter per module territory.** Root `CLAUDE.md`
    carries the layer map + the rung path; each module's `CLAUDE.md` is lean,
    points at the root + contract, and its §Domain is that module's own spec.
