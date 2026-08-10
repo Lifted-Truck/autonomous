@@ -116,6 +116,31 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+45. **`status.1` contract tests landed in CI; the contract has zero producers**
+    (2026-08-09, closing dispatch-001's owed item, 16 days past respond-by).
+    dispatch's three fixtures landed verbatim with a stdlib validator
+    (`kit/gates/status_validate.py`) wired into `./verify fast`. Two design
+    calls. (a) **Returns a list of findings, not a bool** — their third fixture
+    pins error GRANULARITY (four *named* findings), which is a materially
+    stronger contract than "must be rejected": it catches a validator that
+    rejects the right document for the wrong reason, which passes a pass/fail
+    test while being useless to a consumer repairing its own output.
+    (b) **Targeted validator, not a JSON Schema engine, zero dependencies** —
+    this CI installs nothing, so a `jsonschema` dep would be red-for-unrelated-
+    reasons or skipped, and a skipped check is the blind-gate trap
+    (REPO-HYGIENE). `kit/contracts/status.md` stays normative.
+    **The finding the filing surfaced:** swept all 62 repos — NONE emit
+    `STATUS.json`, including autonomous, which authored the contract. The writer
+    "ships with kit v2 core" and kit v2 is not open, so `status.1` has been
+    frozen a month with a schema, an example, one consumer built against it and
+    **no producer anywhere**. A contract validated only from the consumer side is
+    untested in the direction that matters: nobody has tried to EMIT one and
+    discovered the schema asks for something a real project cannot cheaply
+    produce. Writer deliberately NOT built here — it is kit-v2 scope and
+    building ahead of the kit is how a "temporary" second implementation becomes
+    permanent — but the gap is now on the record rather than implicit in a
+    degrade-visibly clause that has only ever run in the degraded direction.
+
 44. **Registry paths are case-checked; `path_case_mismatch` reported, never
     auto-corrected** (2026-08-09, from FOUNDATIONS' foundations-001 four-state
     note). They flagged `Morphos`/`morphos` and warned a cross-platform roster
