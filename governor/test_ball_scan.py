@@ -125,5 +125,45 @@ class TestBallOwnership(unittest.TestCase):
         self.assertFalse(ball_scan._ball_is_ours("", "autonomous"))
 
 
+class TestAnnotatedBallValues(unittest.TestCase):
+    """Real mailboxes annotate the field: `ball: consumer (ratify B23 locally)`,
+    `ball: none (F2 opens on their schedule)`. Whole-string matching made every
+    annotated value unrecognized — and for `provider (...)` that is an
+    obligation ON US reported as not ours, a false negative in the one check
+    whose job is not losing work."""
+
+    def test_bare_tokens_still_work(self):
+        self.assertTrue(ball_scan._ball_is_ours("provider", "autonomous"))
+        self.assertFalse(ball_scan._ball_is_ours("consumer", "autonomous"))
+
+    def test_annotated_provider_is_still_ours(self):
+        self.assertTrue(ball_scan._ball_is_ours(
+            "provider (please review the fixtures)", "autonomous"))
+
+    def test_annotated_none_is_not_a_claim(self):
+        self.assertFalse(ball_scan._ball_is_ours(
+            "none (F2 opens on FOUNDATIONS' schedule; nothing owed)", "autonomous"))
+
+    def test_annotated_repo_name_is_ours(self):
+        self.assertTrue(ball_scan._ball_is_ours(
+            "FOUNDATIONS (the deliverable is a linkable core)",
+            "synthetic-worlds/FOUNDATIONS"))
+
+    def test_annotated_none_does_not_mask_a_live_ask(self):
+        """The claimant filter must strip the same way, or `none (...)` counts
+        as a claim and can win the recency tiebreak over a real one."""
+        tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, tmp, True)
+        box = os.path.join(tmp, "integrations", "peer")
+        ask = _fm(box, "proposal.md", id="y-1", ball="provider",
+                  status="proposed", filed="2026-08-09")
+        note = _fm(box, "note.md", id="y-1", ball="none (nothing owed either way)",
+                   status="informational", filed="2026-08-09")
+        os.utime(ask, (1, 1_000_000))
+        os.utime(note, (1, 2_000_000))
+        (row,) = ball_scan.scan_repo(tmp, "me", TODAY)
+        self.assertTrue(row["ours"])
+
+
 if __name__ == "__main__":
     unittest.main()

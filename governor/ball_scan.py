@@ -84,9 +84,27 @@ def _ball_is_ours(ball, repo_name):
     reported verbatim — under-claiming is safe, silently absorbing another
     project's obligation is not.
     """
-    if not ball or ball in ("none", "-"):
+    token = _ball_token(ball)
+    if not token or token in ("none", "-"):
         return False
-    return ball == "provider" or ball == repo_name.lower().split("/")[-1]
+    return token == "provider" or token == repo_name.lower().split("/")[-1]
+
+
+def _ball_token(ball):
+    """The bare holder token, stripped of any prose qualifier.
+
+    Real exchanges annotate the field — `ball: consumer (ratify B23 locally and
+    proceed)`, `ball: none (F2 opens on FOUNDATIONS' schedule)`. Whole-string
+    comparison made every annotated ball unrecognized, which for `provider (…)`
+    means an obligation ON US reported as not ours: a FALSE NEGATIVE, the
+    direction that loses work, in the check whose entire job is not losing work.
+    Found 2026-08-09 while answering "is there a HYPERSAW brief?" — the annotated
+    forms live in FOUNDATIONS' and Tonality's mailboxes, not in autonomous's, so
+    no fixture here would have caught it.
+    """
+    if not ball:
+        return ""
+    return re.split(r"[\s(,;:—-]", ball.strip(), 1)[0].strip().lower()
 
 
 def scan_repo(path, repo_name, today=None):
@@ -123,7 +141,8 @@ def scan_repo(path, repo_name, today=None):
         # `ball: provider` ask. A thread is not a linear conversation; concurrent
         # members are normal, so the ball comes from the newest file that claims
         # one, not from the newest file.
-        claimants = [m for m in members if m["ball"] and m["ball"] not in ("none", "-")]
+        claimants = [m for m in members
+                     if _ball_token(m["ball"]) not in ("", "none", "-")]
         if not claimants:
             continue                       # open, but nobody is holding anything
         latest = max(claimants, key=lambda m: (m["date"], m["mtime"], m["path"]))
