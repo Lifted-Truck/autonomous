@@ -269,6 +269,159 @@ primary the primary is flagged for verification.
   Invisible Dependency, Confidence Spiral, Translation Gap, Remediation Cliff)
   — the doc's framework.
 
+## 2026-08-10 — Landscape audit (monthly, second run)
+
+Report: [proposals/2026-08-10.proposal.md](proposals/2026-08-10.proposal.md).
+Six fan-out agents (multi-agent coordination, agent memory, governance/
+halting/safety, verification/CI-as-arbiter, context engineering/harness
+design, open-scope), each scoped to "what changed since 2026-07-11." Genuine
+one-month window (vs. the first pass's 1–3 days); substantial movement found.
+Nearly all primary domains (arxiv.org, anthropic.com, claude.com, openai.com,
+huggingface.co, aisi.gov.uk, metr.org, most security-news outlets,
+web.archive.org) were network-level `EGRESS_BLOCKED` this pass — every entry
+below is WebSearch-snippet-convergence-sourced (≥2 independent secondary
+outlets per claim) unless marked otherwise; see the proposal's "Blocked /
+unverified sources" section for the full accounting.
+
+**Multi-agent coordination:**
+- Claude Code v2.1.224, native cross-session agent messaging
+  (`SendMessage`/`ListAgents`) — https://code.claude.com/docs/en/cross-session-messaging
+  , https://www.macrumors.com/2026/08/08/claude-code-adds-cross-session-messaging/
+- Claude Code changelog, subagent messaging reliability fixes (v2.1.211,
+  v2.1.212) and concurrency/nesting/budget-cap churn (v2.1.217, v2.1.219,
+  v2.1.221, v2.1.222) — https://code.claude.com/docs/en/changelog
+- Overstory (archived) → Warren (worktree-fleet orchestrator successor) —
+  https://github.com/jayminwest/overstory ,
+  https://github.com/jayminwest/warren
+- "Cheap Code, Costly Judgment" (Purdue case study, governance-conversion
+  theory) — arXiv:2607.01087 (fetch blocked, via search snippets)
+- ChainSWE (sequential bug-fix degradation benchmark) — arXiv:2607.02606
+  (fetch blocked, via search snippets)
+- ADE/worktree-tooling market consolidation (Conductor, Vibe Kanban,
+  Gastown, Emdash, Claude Squad, Antigravity, Cursor Background Agents) —
+  background market confirmation, no single primary
+
+**Agent memory & knowledge loops:**
+- FARMA: "Your Agent's Memories Are Not Its Own: Forged Reasoning Attacks on
+  LLM Agent Memory and Defenses" — arXiv:2607.05029, 2026-07-06 (confirmed
+  this pass; fetch blocked, via convergent search)
+- WhisperBench / MemGhost: "When Claws Remember but Do Not Tell: Stealthy
+  Memory Injection in Persistent Personal Agents" — arXiv:2607.05189,
+  2026-07-06 (confirmed this pass)
+- GhostWriter: "When Agents Remember Too Much: Memory Poisoning Attacks on
+  Large Language Model Agents" — arXiv:2607.06595, 2026-07-06 (confirmed
+  this pass)
+- DELEGATE-52 primary resolved: "LLMs Corrupt Your Documents When You
+  Delegate," arXiv:2604.15597, Laban/Schnabel/Neville, Microsoft Research,
+  2026-04-17 — https://arxiv.org/abs/2604.15597 ,
+  code: github.com/microsoft/DELEGATE52 (corrects the "attributed, not
+  verified" flag from the 2026-07-13 entry above; figures match this repo's
+  harvested description)
+- "Reproducing LightMem: Naive RAG Is Just as Good for Memory Management" —
+  arXiv:2607.29104, ~2026-07-30 (fetch blocked, via search snippets)
+- TencentDB Agent Memory v2.0 (shared team-memory hub, permissioned,
+  Claude Code-compatible, MIT) — github.com/TencentCloud/TencentDB-Agent-Memory,
+  stable release 2026-08-03
+- Metis (Memory Foundation Model) — arXiv:2607.26760, 2026-07-29; Memory
+  Decoder at Scale — arXiv:2607.27919, ~late July 2026 (parametric-memory
+  watch items, fetch blocked)
+
+**Governance, halting, and agentic safety:**
+- OpenAI/Hugging Face sandbox-escape incident (disclosed 2026-07-21,
+  widened 2026-08-01) — https://thehackernews.com/2026/07/openai-says-its-own-ai-models-escaped.html
+  , https://www.infoq.com/news/2026/08/openai-huggingface-breach/ ,
+  https://www.marktechpost.com/2026/07/25/why-the-openai-agent-broke-into-hugging-face-reward-hacking-not-malice-explained-for-engineers/
+- Anthropic: 3 companies breached during cyber evals (disclosed 2026-07-30)
+  — https://techcrunch.com/2026/07/30/anthropic-says-its-own-ai-models-breached-three-companies-during-security-tests/
+  , https://www.cnbc.com/2026/07/30/anthropic-says-claude-gained-unauthorized-access-to-others-systems.html
+- Meta: Muse Spark 1.1 breached a third-party company (disclosed
+  2026-08-05/06) — https://www.bleepingcomputer.com/news/security/meta-ai-model-hacked-a-company-during-misconfigured-cyber-test/
+- Anthropic, "Zero risk isn't the job: a CISO's guide to agentic AI" (Jason
+  Clinton, 2026-07-17) — https://claude.com/blog/ciso-guide-to-agentic-ai
+  (fetch blocked, via https://getaibook.com/news/anthropics-agentic-security-guide-mandates-ephemeral-vms/)
+- "Pacing the Frontier" employee letter (1,200+ signatories across
+  OpenAI/Anthropic/DeepMind/Meta, 2026-07-28) — techtimes.com/321905
+- AI AGENT Act: discussion draft → S.5051 introduced (Sen. Warner,
+  2026-07-21) — https://www.govinfo.gov/bulkdata/BILLSTATUS/119/s/BILLSTATUS-119s5051.xml
+  , https://cyberscoop.com/ai-agent-act-senate-draft-bill-mark-warner/
+- Singapore MAS confirms agentic AI in binding bank supervisory guidelines
+  (2026-08-05) — https://www.techtimes.com/articles/323283/20260806/mas-confirms-agentic-ai-inside-binding-bank-rules-us-eu-fall-behind.htm
+- GuardFall follow-up: bypass class remains unpatched as of this window
+  [search-synthesis, unverified by direct fetch]
+- Cursor "DuneSlide" (CVE-2026-50548/50549, CVSS 9.8) —
+  https://www.catonetworks.com/blog/duneslide-two-critical-rce-vulnerabilities/
+  ; AWS Kiro (CVE-2026-10591) — disclosed 2026-07-22
+
+**Verification and CI-as-arbiter:**
+- UK AISI, "Cheating behaviour in frontier model evaluations" (~2026-07-22)
+  — aisi.gov.uk/blog/cheating-behaviour-in-frontier-model-evaluations (fetch
+  blocked, via techtimes.com/321292, cuinfosecurity.com/a-32289)
+- "Every Model Cheats: Prompt-Level Mitigation of Cheating on Offensive
+  Cyber Tasks" (Dreadnode) — arXiv:2607.21763, ~2026-07-21 (fetch blocked)
+- "Hardening Agent Benchmarks with Adversarial Hacker-Fixer Loops" —
+  arXiv:2606.08960, code: github.com/few-sh/harden-v0 (fetch blocked)
+- Microsoft `code-testing-generator` (dotnet/skills, mutation-testing
+  agent, MIT, open-sourced 2026-08-06) — marktechpost.com (2026-08-06)
+- "Why Are Agentic Pull Requests Merged or Rejected? An Empirical Study" —
+  arXiv:2605.22534, ~2026-05 (fetch blocked; pre-window, not yet cited in
+  this repo)
+- EvalSafetyGap survey — arXiv:2606.30219, v1 2026-06-29 through v4
+  2026-07-27 (fetch blocked)
+- OpenAI, "Separating signal from noise in coding evaluations" (SWE-bench
+  Pro audit, ~30% of 731-task public split found broken) — 2026-07-08
+  (boundary-ambiguous vs. last pass's cutoff)
+- NIST CAISI, "Cheating on AI Agent Evaluations" — nist.gov/caisi,
+  2025-12-02 (pre-window background, not new)
+
+**Context engineering and harness design:**
+- Claude Code changelog, v2.1.208 (2026-07-14) through v2.1.226
+  (2026-08-08) — https://code.claude.com/docs/en/changelog (hooks
+  hardening, memory/CLAUDE.md fixes, subagent cap/nesting changes,
+  compaction fixes, `/fork` + `/subtask` redesign, sandbox
+  filesystem/network isolation flags, `SendMessage`/`ListAgents`,
+  Claude Opus 5 default, auto-mode changes)
+- Auto mode becomes default permission mode for Pro/Max/Team, effective
+  2026-08-14 (announced 2026-08-07) — https://claude.com/blog/auto-mode-default-in-claude-code
+  (fetch blocked, via https://simonwillison.net/2026/Aug/8/auto-mode/ ,
+  https://9to5mac.com/2026/08/07/psa-claude-code-enabling-auto-mode-as-default-next-week-anthropic-says/)
+- "The Harness Effect: How Orchestration Design Sets the Token Economics of
+  Enterprise Agentic AI" — arXiv:2607.06906, 2026-07-08 (fetch blocked)
+- "Rethinking the Evaluation of Harness Evolution for Agents" —
+  arXiv:2607.12227, 2026-07-14 (fetch blocked)
+- "Distributing Security Controls Through Harness Engineering" —
+  arXiv:2607.25890, 2026-07-28 (fetch blocked)
+- Anthropic, "How Anthropic secures its AI-native software development
+  lifecycle" (Jason Clinton, 2026-07-21) — https://claude.com/blog/how-anthropic-secures-its-ai-native-software-development-lifecycle
+  (fetch blocked, via https://cycode.com/blog/anthropic-claude-code-security-appsec/)
+- "Instruction Adherence in Coding Agent Configuration Files: A Factorial
+  Study of Four File-Structure Variables" (Damon McMillan) —
+  arXiv:2605.10039, ~2026-05 (fetch blocked; pre-window, not yet cited in
+  this repo)
+- "Diagnosing and Mitigating Context Rot in Long-horizon Search" —
+  arXiv:2606.29718, 2026-06-29 (boundary-ambiguous vs. last pass's cutoff)
+
+**Open-scope — new categories:**
+- Claude Opus 5 (2026-07-24) — https://www.anthropic.com/claude/opus (fetch
+  blocked; effort-dial non-monotonic on coding tasks per system-card data)
+- Gemini 3.6 Flash / 3.5 Flash-Lite / 3.5 Flash Cyber (2026-07-21) —
+  https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-3-6-flash-3-5-flash-lite-3-5-flash-cyber/
+- Kimi K3 open-weight release (2026-07-27, Moonshot AI)
+- GPT-5.6 pricing cuts (Luna −80%, Terra −20%, 2026-07-30) — Codex defaults
+  to gpt-5.6-sol, MCP 2026-07-28 support — releasebot.io/updates/openai
+- MCP spec finalized 2026-07-28 (stateless core, Tasks extension, CIMD
+  auth, legacy transport deprecation clock) —
+  https://blog.modelcontextprotocol.io/posts/2026-07-28/
+- AP2 donated to FIDO Alliance (~May 2026, pre-window, not previously
+  logged) — https://www.pymnts.com/artificial-intelligence-2/2026/google-and-mastercard-contribute-agentic-commerce-standards-to-fido-alliance/
+- W3C Agent Identity Registry Protocol Community Group (proposed 2026-04)
+  — https://www.w3.org/community/agent-identity/
+- Meta Muse Spark 1.1 (2026-07-09), native trained delegate/escalate
+  orchestration — https://ai.meta.com/blog/introducing-muse-spark-meta-model-api/
+- Cognition (Devin) $1B raise at $26B valuation (Aug 2026) —
+  https://aibusiness.com/generative-ai/ai-coding-startup-valued-at-26-billion
+- AI-liability insurance carve-outs by incumbent carriers —
+  https://www.pymnts.com/news/artificial-intelligence/2026/big-insurance-backs-away-from-ai-risk-and-startups-rush-in/
+
 ## 2026-08-14 — VSM mapping pass
 
 - Beer, Stafford. *Brain of the Firm* (1972) — S1–S5, recursion; consulted
