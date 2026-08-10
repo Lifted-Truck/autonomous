@@ -1,4 +1,104 @@
-# Contract: LIBRARY entry format — `library-entry.2`
+# Contract: LIBRARY entry format — `library-entry.3`
+
+> **v3 (2026-08-10)** — rules distillery's `report-002` §3 and `distillery-003`.
+> Same governing principle as v2: **the parser's job is to lose nothing; the
+> promotion gate's job is to judge.** Four changes, three of which formalize
+> rules distillery had already been forced to invent to implement v2 against the
+> real corpus (so they cost consumers nothing to adopt — they are already live):
+>
+> 1. **Structural terminators** end an entry span (§Span boundaries).
+> 2. **Span-open condition** — a `[Lxxxx]` marker opens a span only under stated
+>    conditions, so a prose cross-reference cannot fabricate a phantom entry.
+> 3. **Repeated known labels** continuation-join; never last-wins.
+> 4. **NEW: block form admitted on READ.** ~20 entries across 8+ projects were
+>    invisible under v1 AND v2 — a larger silent loss than v2's ruling recovered.
+>    The line form stays canonical for writing.
+>
+> **Correction to the distillery-002 response letter:** that letter said the bare
+> tier is recognized "by matching the tier enum, not by position." That was
+> wrong; this contract said segment-1 AND enum-match, and distillery implemented
+> the contract. Enum-match-anywhere would let a bare enum word in prose overwrite
+> `tier`. The contract text is and was normative; the letter was the error.
+
+## Span boundaries (v3)
+
+An entry span begins at a span-opening marker and ends at the next one, or at a
+**structural terminator**, whichever comes first:
+
+- a fence line (```` ``` ````)
+- a markdown heading (`^#`) — *unless* it is itself a span-opening marker
+- a horizontal rule (`^-{3,}`, `^\*{3,}`, `^_{3,}`)
+- an HTML anchor line (`^<a`)
+
+Blank lines **fold through** — they do not end a span. Corpus-forced: `morphos`
+separates entries with `---`, `wont` with `<a id="Lxxxx">` anchors, and `wont`
+has interior blank lines inside single entries. Without terminators, trailing
+structural prose is absorbed into the final entry's `falsifier`.
+
+### Span-open condition
+
+A `[Lxxxx]` marker opens a span **iff** its predecessor line is blank,
+structural, or start-of-file, **OR** the marker line itself contains a `|`.
+
+Both halves are corpus-forced and pull in opposite directions:
+
+- `morphos` L0012 wraps a prose line *beginning* with a pipeless `[L0010]`
+  cross-reference. It must **fold**, not split — a phantom span there would
+  fabricate provenance, inventing an entry that was never written.
+- `attest` writes back-to-back pipe-bearing single-line entries with no blank
+  separator. They must **split**, not fold — distillery caught this as a real
+  10-lessons-to-1-quarantine regression during integration.
+
+**Residual risk, documented rather than hidden:** a wrapped cross-reference line
+that *also* contains a later `|` would still split. Zero instances in the current
+corpus. The structural fix is a distinct cross-reference syntax — `[[Lxxxx]]`
+for references, `[Lxxxx]` only for entry markers — which HYPERSAW already uses
+for some references. It is **not** ruled here because the corpus is mixed
+(HYPERSAW writes both forms; `morphos` writes only the single form), so
+mandating it would strand existing prose. Prefer `[[Lxxxx]]` in new writing; the
+heuristic above is the compatibility path, not the destination.
+
+### Repeated known labels
+
+A label that appears more than once in an entry **continuation-joins** into the
+open field, with the repeated label text restored — never last-wins. Corpus:
+`morphos` L0007 carries two `evidence:` and two `falsifier:` segments in
+canonical-tier content. Last-wins would silently discard half of a promoted
+entry's evidence, which is the failure mode this whole contract exists to
+prevent.
+
+## Block form (v3, READ-side only)
+
+An entry may also be written as a **heading-delimited block**. Recognized shapes,
+all present in the corpus:
+
+```
+### [L0001] Title here          # Catena, Limen  — bracketed id + title
+### L0001 — Title here          # Antiphon       — bare id, em-dash, title
+### L0001                       # resume-workshop — bare id, title on next line
+```
+
+- The marker is `^#{2,6}\s+\[?L\d{4}\]?`. Such a heading **terminates** any open
+  span and **opens** a new one (this is the stated exception in §Span boundaries).
+- `title` is the heading remainder with a leading `—`/`-` stripped; if the
+  remainder is empty, the first non-empty following line is the title.
+- Fields carry the **same label set**, in any of these delimiters:
+  `| label: value`, `**label:** value`, `- **label:** value`. Middot (`·`)
+  separates inline bold fields.
+
+**Why admitted rather than migrated.** The alternative was for 8+ projects to
+migrate their loops. Writes stay home, so that needs 8 independent residents to
+act, and every entry stays invisible until the last one does — an indefinite
+tail on content that is *complete*. These entries are not malformed: `Antiphon`,
+`Catena`, `Limen` and `resume-workshop` all carry `lesson`, `evidence` and
+`falsifier`, serialized with markdown bold instead of pipes. Nothing about them
+is missing; only the delimiter differs. Rejecting complete content over its
+delimiter is the same misplaced rigor v2 rejected.
+
+**The line form remains canonical for writing.** Knowledge-loop templates emit
+`[Lxxxx] … | … |`; block form is accepted, never generated. Liberal in what it
+accepts, conservative in what it emits — so the corpus converges without anyone
+being forced to migrate on a deadline.
 
 > **v2 (2026-07-31)** — rules the five questions filed in distillery-002.
 > Governing principle, and the reason every ruling went the way it did:
@@ -92,7 +192,7 @@ is a quality gate, not a formatting convention.
 
 ```json
 {
-  "$id": "library-entry.2",
+  "$id": "library-entry.3",
   "type": "object",
   "required": ["id", "title", "tier", "added", "tags", "lesson", "evidence", "falsifier"],
   "properties": {
@@ -112,6 +212,11 @@ is a quality gate, not a formatting convention.
     "supersedes_note": {"type": "string"},
     "recurred_note":   {"type": "string"},
 
+    "entry_form": {
+      "enum": ["line", "block"],
+      "description": "v3: which serialization this entry was READ from. Line is canonical for writing; block is accepted so ~20 complete entries across 8+ projects stop being invisible. Recorded so a later migration can find them without re-parsing."
+    },
+
     "extra": {
       "type": "object",
       "description": "v2: unrecognized `label: value` segments, preserved verbatim. An unknown label must NOT quarantine an otherwise-valid entry (that cost promotion-grade content under v1) and must NOT be silently dropped (that loses data). Keeping it visible here is what lets a later ruling promote it to a real field.",
@@ -123,8 +228,13 @@ is a quality gate, not a formatting convention.
 
 ## Validation stance (for ingesting consumers)
 
-**What still quarantines under v2** — the exhaustive list, so "be forgiving"
-cannot creep into "accept anything":
+**What still quarantines — the exhaustive list, UNCHANGED from v2 to v3**, so
+"be forgiving" cannot creep into "accept anything". v3 admits three new
+*delimiters* and one new *layout*; it admits no new absence. Verified against
+the corpus before ruling: every heading-form entry v3 newly accepts carries
+`lesson`, `evidence` and `falsifier` already. Had they not, the answer would
+have been migration, not admission — a format that cannot express a required
+field is not a format variant:
 
 1. A malformed or missing `[Lxxxx]` marker, or a duplicate id within a file.
 2. A missing REQUIRED field (`title`, `tier`, `added`, `tags`, `lesson`,

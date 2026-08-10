@@ -116,6 +116,39 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+46. **`library-entry.3`: block form admitted on read; distillery's three
+    corpus-forced rules adopted; a response letter is never normative**
+    (2026-08-10, ruling report-002 §3 + distillery-003). Three adoptions cost
+    consumers nothing — structural terminators, the span-open condition, and
+    repeated-label continuation-join were already live in distillery, invented
+    because implementing v2 against the real corpus required them. Leaving them
+    consumer-side is how a contract and its only implementation drift apart
+    while both look healthy. The span-open residual risk is recorded, not
+    hidden; the structural fix (`[[Lxxxx]]` for cross-refs) is named as the
+    destination but NOT ruled, because the corpus is mixed and mandating it
+    today strands existing prose.
+    **distillery-003 — block form.** ~20 entries across 8+ projects were
+    invisible under v1 AND v2, a larger silent loss than v2's ruling recovered.
+    It is not one heading form but THREE serializations (bracketed id, bare
+    id + em-dash, bare id with the title on the next line) with fields as
+    `**label:**`, `- **label:**`, or `| label:`. The check that decided it: do
+    they carry the REQUIRED fields, or is this a format that cannot express one?
+    Verified against all four projects — every one carries lesson, evidence and
+    falsifier. Had they not, the answer would have been migration, because a
+    format that cannot express a required field is not a format variant.
+    Admitted on READ; line form stays canonical on WRITE. Rejected migration:
+    it needs 8 independent residents under writes-stay-home, with every entry
+    invisible until the last one acts. The exhaustive still-quarantines list is
+    UNCHANGED v2→v3 and the contract now says so — v3 admits new delimiters and
+    one new layout, no new absence.
+    **Correction on the record:** the distillery-002 response letter said bare
+    tier matches "by enum, not by position"; the contract said segment-1 AND
+    enum-match. distillery implemented the contract and flagged the discrepancy.
+    The letter was wrong — enum-match-anywhere lets a bare enum word in prose
+    overwrite `tier`, silent corruption rather than a parse failure. General
+    rule now stated in the contract: **the contract file is normative; a
+    response letter never is.**
+
 45. **`status.1` contract tests landed in CI; the contract has zero producers**
     (2026-08-09, closing dispatch-001's owed item, 16 days past respond-by).
     dispatch's three fixtures landed verbatim with a stdlib validator
