@@ -52,6 +52,31 @@ ratification date + `"see ROADMAP"`. A status paragraph in the manifest is a
 second home for a fact ROADMAP already owns — it WILL drift (observed:
 Orrery's grew to 447 chars re-edited in parallel with its ROADMAP).
 
+**Gate rule — assert the EFFECTIVE state, never the DECLARED state
+(autonomous LIBRARY L0001 + L0002; two-consumer signal, 2026-08-14).** Every
+gate the kit ships or a project writes must prove the *result*, not the
+*artifact that is supposed to produce it*. Two independent derivations in one
+week, from opposite ends of the fleet: (a) `sshd -T` on a live box showed
+password auth ON behind a script that had `sed`'d it off — the config *file*
+was hardened, the *effective* config was not (cloud-init drop-ins are Included
+first; first-value-wins). (b) A `git grep -E` gate using `\b` matched nothing
+and would have shipped permanently green — the gate *existed*, it had never
+*fired*. Same failure shape: reading the declaration where only the effect
+counts. So: a hardening script asserts with `sshd -T`/`ufw status`, never by
+grepping the file it wrote; a detector is proven by planting a known-bad and
+watching it fire, a known-good near-miss and watching it stay quiet, THEN the
+clean tree; a scheduled job is proven by the artifact's mtime moving, not by
+`launchctl list` saying loaded (Decision 42). "Installed", "configured",
+"present" are declared states. Only "fired", "refused", "moved" are effective.
+
+**MCP-server retrofit check (LIBRARY L0003).** For a repo exposing an MCP
+server, the SDK-2.0 question is NOT "does the import resolve" — a
+try-2.x/fall-back-1.x shim makes it resolve on both. It is "does the server
+touch anything beyond `@tool` and `.run()`?" The shim is safe only on that
+shared surface; a server reaching into 1.x FastMCP internals passes the import
+and fails at first call. Prove both ways (fresh 2.0 venv AND the old pin)
+before dropping any pin.
+
 **The architecture menu** (doctrine: right-size the agent architecture) is
 question 2: single-threaded agent → thread + subagents/verifier → organ
 fleet. The fleet is a visible option at the outset, never the default.
