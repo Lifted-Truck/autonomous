@@ -116,6 +116,28 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+49. **autonomous gets its own LIBRARY.md/INDEX.md — the standards repo had
+    nowhere to file a lesson** (2026-08-14). Surfaced when the Life-OS
+    resident closed autonomous-lifeos-001 with a lesson explicitly offered
+    "for your LIBRARY" and this repo — author of the LIBRARY contract, ruler
+    of three versions of it — had no LIBRARY at all, five weeks in. First
+    piece of the self-retrofit gap (3/8 harness coverage) closed. Four entries
+    seeded, every one evidence-backed from this session: cloud-image sshd
+    drop-in precedence (Life-OS's finding: `sed` on the main file is silently
+    overridden by cloud-init's `50-*.conf`; write `00-*.conf` and assert with
+    `sshd -T`); `git grep -E` has no `\s`/`\d`/`\b` and a never-fired gate is
+    not a gate (three instances in five weeks); MCP SDK 2.0 moved
+    `mcp.server.fastmcp` with the try-2.x-fall-back-1.x migration proven both
+    ways; consumer-authored contract tests catch the dialect the provider does
+    not write. **Validated against distillery's real v3 parser rather than by
+    eye** — which immediately quarantined L0001 for `origin: life-os-app#L?`,
+    a back-link to an entry that does not exist yet. The contract was right
+    and the entry was wrong: recorded as a leaf, to be promoted when
+    life-os-app files its own copy. The parser is the oracle for its own
+    contract; the ruler does not get to eyeball it. autonomous-lifeos-001
+    CLOSED by the resident: box verified hardened (one real finding fixed
+    live and durably), mcp migrated not pinned, CI pin dropped by them.
+
 48. **VSM amendments A–D built** (2026-08-14, human ratified all four in one
     word; each was designed as a separate gate and the human collapsed them —
     recorded as one entry so the collapse is visible). **A** — `s4_scan.py`:
