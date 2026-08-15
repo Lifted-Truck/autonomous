@@ -268,3 +268,15 @@ primary the primary is flagged for verification.
 - Seven-mode failure taxonomy (Consensus Trap, XY-at-scale, Competency Erosion,
   Invisible Dependency, Confidence Spiral, Translation Gap, Remediation Cliff)
   — the doc's framework.
+
+## 2026-08-14 — VSM mapping pass
+
+- Beer, Stafford. *Brain of the Firm* (1972) — S1–S5, recursion; consulted
+  via the human's reading + standard secondary literature. Discussed in
+  research/2026-08-14-viable-system-model-mapping.md.
+- Beer, Stafford. *The Heart of Enterprise* (1979) — variety engineering,
+  channel capacity/transduction. Same report.
+- Beer, Stafford. *Diagnosing the System for Organizations* (1985) —
+  pathology checklist applied to the fleet. Same report.
+- Ashby, W. Ross. *An Introduction to Cybernetics* (1956) — Law of Requisite
+  Variety; adopted as the standing channel-design test. Same report.

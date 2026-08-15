@@ -169,6 +169,27 @@ scaffolder, first profiles.
   watched repos). Overlaps the governor's STATUS.md duty — the digest should
   be a *rendering* of the same data, not a second collector.
 
+**VSM amendment queue (Decision 47 — each item is a separate human
+ratification; vocabulary is adopted, machinery is not):**
+
+- **A. S4 freshness + open-PR surfacing in monitor** — `S4-STALE` WARN when
+  the newest research artifact / unmerged `landscape-audit/*` branch exceeds
+  ~35d, and open PRs in this repo reported as obligations on the human.
+  Earned by: PR #2 (the 2026-08 audit) sitting unsurfaced four days.
+- **B. "Outside & then" section in STATUS.md** — last audit date, unconsumed
+  findings, next run, beside the health rows.
+- **C. Environment-watch remit in the landscape-audit prompt** — protocol
+  cadence, platform shifts (TCC class), provider policy, CI pricing.
+- **D. Algedonic cloud check** — weekly scheduled cloud job, deterministic
+  script, GitHub-visible pain only (red default-branch CI, leak_scan on
+  public-repo clones), notify on HIGH alone. Earned by the 19-day public
+  leak. Local-only pain explicitly out of scope.
+- **E (adopted with 47, listed for symmetry): non-adoptions** — no standing
+  S4 agent, no resource-bargaining machinery ahead of a running fleet, no
+  five-box build-out, no new doctrine tenet.
+
+Full mapping: research/2026-08-14-viable-system-model-mapping.md.
+
 ## Deferred / demoted
 
 - **Live agent-to-agent messaging** — deliberately excluded; published

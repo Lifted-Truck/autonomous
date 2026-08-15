@@ -118,6 +118,24 @@ one task → verify → commit → journal → handoff notes → die. The conduc
 
 ## 4. The governor (three separable functions)
 
+> **Cybernetic frame (2026-08-14, Decision 47).** The governor's three
+> functions correspond to Stafford Beer's Viable System Model, and the
+> vocabulary is adopted so a fresh-context agent inherits fifty years of
+> diagnosed failure modes in a sentence instead of one incident each:
+> **watchdog ≈ S3\* (audit bypassing self-report) + the algedonic channel**
+> (threshold pain signals that leap the hierarchy — its two-severity halt
+> design is already algedonic-shaped); **curator ≈ S2/S3** (shared-standard
+> down-propagation, anti-oscillation); **coherence critic ≈ the interface
+> where operational health meets identity** — its "green is not coherent" is
+> Beer's distinction between S3-level health and viability (mapped loosely on
+> purpose: the critic reads inward, not outward — it is NOT S4).
+> The fleet's S4 (outside-and-then) is the landscape audit; its S5 is
+> DOCTRINE.md + the human at ratification gates. Standing design test from
+> Ashby: every mechanism here is an attenuator or an amplifier for the human
+> channel, and its noise floor is its capacity — a channel nobody reads has
+> no requisite variety. Full mapping, pathology checklist and amendment
+> queue: research/2026-08-14-viable-system-model-mapping.md.
+
 **4a. Watchdog — deterministic, no model calls, runs every tick.**
 Signals (research-calibrated): token-rate (>~4k/min sustained ≈ looping);
 state-hash no-progress (unchanged workspace k steps); (tool,args)-hash

@@ -116,6 +116,36 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+47. **Beer's Viable System Model adopted as the governor's vocabulary;
+    machinery queued, not built** (2026-08-14, human-directed after reading
+    Beer; session model Fable, explicitly human-selected). The framework
+    converged on VSM empirically — the July–August incident record is a list
+    of failures Beer named fifty years ago: transducer distortion (the early
+    "merged"), audit captured by self-report (the wrapper registry), missing
+    algedonics (the 19-day public leak), channel ambiguity (day-resolution
+    ball dates), a dead regulator indistinguishable from a healthy fleet (the
+    monitor crash). Adopting the vocabulary is adopting compression: one
+    sentence to a fresh-context agent instead of one incident per lesson.
+    Mapping: S1=repos/territories (recursion real at fleet→repo), S2=
+    INTEGRATIONS+contracts (strongest), S3=human+ordering constraints
+    (correctly human-carried at this scale), S3*=monitor/leak_scan/ball_scan
+    ("derived, never declared" IS the audit-channel principle), S4=landscape
+    audit (thinnest), S5=doctrine-import+ratification gates (Decision 12
+    already guards Beer's S5-into-S3 collapse). Pathology verdict: guilty on
+    missing S4 and missing algedonics only — and S4 was demonstrated LIVE
+    during the analysis: the 2026-08 audit ran on schedule, opened PR #2 on
+    2026-08-10, and sat unsurfaced four days because nothing transduces an
+    open PR into the human's attention. POSIWID and requisite-variety adopted
+    as standing tests (every mechanism is an attenuator or amplifier for the
+    human channel; its noise floor is its capacity). Amendments A–D queued in
+    ROADMAP as SEPARATE ratifications — vocabulary now, machinery each on its
+    own gate. Rejected: a doctrine tenet (budget 8729/9000; DESIGN §4 + the
+    research note suffice) and the classic VSM misuse of building five boxes
+    as staff functions ahead of need — the controller half stays deferred
+    until a fleet exists, which Beer would endorse: metasystem grows with S1
+    variety. Full mapping incl. recorded strain points:
+    research/2026-08-14-viable-system-model-mapping.md.
+
 46. **`library-entry.3`: block form admitted on read; distillery's three
     corpus-forced rules adopted; a response letter is never normative**
     (2026-08-10, ruling report-002 §3 + distillery-003). Three adoptions cost
