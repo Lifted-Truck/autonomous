@@ -91,6 +91,31 @@ not for cross-track sequencing):
   event moves all of them at once. **It is therefore the first entry here whose
   phase state is a cross-track ordering constraint** — see the constraints list
   below. Registered per brief `foundations-001` (Decision 38).
+- **plainsynth** (`~/Documents/Claude/synthetic-worlds/plainsynth/`) — a
+  deliberately boring generic synth (sine/saw/noise) that exists as a
+  **validation instrument for FOUNDATIONS**: it consumes the header-only C++20
+  core and proves the seam works before anything interesting depends on it.
+  Manifest RATIFIED 2026-08-12. Full harness + CI. First registered consumer
+  of FOUNDATIONS whose only purpose is to be a consumer — listed so the
+  eight-way fan-out in constraint 4 has a canary.
+- **spectral-morph** (`~/Documents/Claude/synthetic-worlds/spectral-morph/`)
+  — research phase mapping the algorithm space for musical morphing between
+  two sounds (transformation, not mixture). Manifest structured
+  (`ratified: null`, state in ROADMAP). Full harness + CI. FOUNDATIONS lists
+  it `deferred` with `revisit_at: "when it ships a deployable"` — its own
+  first artifact, not a FOUNDATIONS phase.
+- **mind-lathe** (`~/Documents/Claude/mind-lathe/`, **private**) — the public
+  static site at the root of mindlathe.xyz (Vite/React/TS, pre-rendered).
+  Spun up 2026-08-15, manifest PROVISIONAL awaiting ratification. Consumes
+  autonomous + life-os tooling conventions. **Standing constraint carried
+  from its Life-OS brief:** the hidden hub path must never appear in public
+  output — noted here because `vite.config.ts` names the prefix in a
+  comment today; harmless while private, a finding the moment it flips.
+- **juce-rag** (`~/Documents/Claude/juce-rag/`) — deterministic grounding
+  layer over JUCE documentation, built for coding agents. Manifest
+  structured (`ratified: null`). Full harness + CI. Its retrieval tools are
+  the high-risk MCP shape (path + pattern args touching the filesystem) —
+  first in line for the MCP-server sweep (LIBRARY L0003 check).
 - **ANTIPHON** (`~/Documents/Claude/synthetic-worlds/Antiphon/`, public:
   github.com/Lifted-Truck/antiphon) — quantized harmonic companion for Ableton
   Live (live regime only; the offline harmonizer is Wend's `harmonize` mode).
@@ -189,6 +214,56 @@ ratification; vocabulary is adopted, machinery is not):**
   five-box build-out, no new doctrine tenet.
 
 Full mapping: research/2026-08-14-viable-system-model-mapping.md.
+
+**Human TODO surface — one list of everything in the fleet waiting on the
+human (Decision 50, path queued 2026-08-15; human-directed):**
+
+The signals ALREADY exist, scattered across six mechanisms, and nothing
+aggregates them into the one question that matters to the person running
+this: *what is waiting on me?* Measured at the moment of writing — 8
+manifests sitting PROVISIONAL awaiting ratification, surfaced by nothing;
+1 open PR; 0 overdue balls (only because ball_scan now exists); 2 uncommitted
+mailbox writes; 4 pushes held. In VSM terms this is the S3→S5 channel: the
+fleet already attenuates 65 repos into severity rows, but the *human's*
+obligations are not a severity class, they are a distinct signal that today
+leaks out through the sweep as INFO/WARN noise or not at all.
+
+Path, each rung earned by the one before it:
+
+- **T0 — collector (deterministic, in the governor).** `todo_scan.py`
+  reads the existing signals — `ball_scan` (balls on us / overdue),
+  `s4_scan` (open PRs, unmerged audits), manifest `status` (PROVISIONAL /
+  awaiting ratification), `dormant.review_by` expiries, `LEAK`-class HIGH
+  findings, uncommitted mailbox writes, unpushed commits on public repos —
+  and emits ONE list with a stable schema: `{source, repo, item, since,
+  action, urgency}`. Nothing new is detected; everything is re-read through
+  the lens "does this need a human?" Renders as its own STATUS.md section
+  and the session brief. **Gate:** every item on the list is something the
+  human, not an agent, must do — no agent-actionable item may appear (that
+  is the leak_gate of this surface: an agent chore on the human's list
+  trains the human to skip the list).
+- **T1 — schema + STATUS-surface contract.** The list becomes a
+  `todo.1` artifact alongside `status.1`, so consumers render rather than
+  re-collect. **This is where dispatch enters** — a "waiting on you" block
+  in the daily digest is a *rendering* of `todo.1`, never a second
+  collector (dispatch's own E-phase rule). Requires the `status.1` writer
+  gap (Decision 45) to close first, or `todo.1` is the second contract with
+  zero producers.
+- **T2 — project-level TODOs.** Today the fleet-level signals are
+  protocol obligations. Per-project TODOs (a ROADMAP phase gated on a human
+  ruling; a DECISIONS "open question" awaiting the human) need a
+  declaration form — likely a `human_gate:` field on a ROADMAP phase or a
+  manifest `open_rulings` list — so residents can raise their hand in a
+  shape T0 can read. Ratify the field shape before any repo writes it.
+- **T3 — the loop closes.** Marking an item done is *the human doing the
+  thing* (merging, ratifying, pushing) and the next sweep observing it gone
+  — never a checkbox. Assert the effective state, not the declared one (kit
+  gate rule): the TODO list has no "done" button by construction.
+
+Non-goals, stated: no AI in the collector (deterministic by contract, same
+as monitor); no per-item nagging or notifications beyond the existing
+session brief + algedonic channel; no separate task tracker — the fleet's
+files ARE the tracker, this is a lens over them.
 
 ## Deferred / demoted
 

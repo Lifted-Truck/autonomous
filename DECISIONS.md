@@ -116,6 +116,35 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+50. **New-project sweep clean; the human-TODO surface is on the roadmap as a
+    lens, not a tracker** (2026-08-15, human-directed). Sweep: 12 repos
+    created since the session opened (root-commit date — the first heuristic,
+    `git log --reverse --max-count=1`, returned the NEWEST commit and put
+    autonomous's birthday at 2026-08-15; corrected to `rev-list
+    --max-parents=0` before trusting a single row). All 12 carry the full
+    harness; 10/12 have CI (the two without are the two with no remote —
+    showcase, resume-workshop — a Windows-clone concern already on record).
+    Four were not in the execution-project registry and now are: plainsynth
+    (FOUNDATIONS' validation canary), spectral-morph, mind-lathe (private;
+    carries Life-OS's hidden-hub-path constraint, and its vite.config names
+    the prefix — harmless while private, a finding on flip), juce-rag (the
+    high-risk MCP shape, first in the L0003 sweep line).
+    **Human TODO.** The human wants one list of everything waiting on them.
+    Measured: 8 manifests PROVISIONAL awaiting ratification and NOTHING
+    surfaces them; 1 open PR; 4 pushes held; 2 uncommitted mailbox writes.
+    The signals exist across six mechanisms; what is missing is one
+    collector that re-reads them through "does this need a human?" Queued as
+    T0–T3 in ROADMAP: T0 deterministic collector in the governor with a gate
+    that NO agent-actionable item may appear (an agent chore on the human's
+    list trains the human to skip the list); T1 a `todo.1` contract so
+    dispatch RENDERS it in the digest rather than re-collecting (blocked on
+    the status.1 producer gap, Decision 45 — otherwise it is the second
+    contract with zero producers); T2 a ratified declaration form so
+    residents can raise a human-gated item; T3 done = the sweep observing
+    the item gone, never a checkbox. Non-goals stated: no AI in the
+    collector, no nagging beyond the session brief + algedonic channel, no
+    separate tracker — the files are the tracker, this is a lens.
+
 49. **autonomous gets its own LIBRARY.md/INDEX.md — the standards repo had
     nowhere to file a lesson** (2026-08-14). Surfaced when the Life-OS
     resident closed autonomous-lifeos-001 with a lesson explicitly offered
