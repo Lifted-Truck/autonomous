@@ -109,8 +109,12 @@ not for cross-track sequencing):
   Spun up 2026-08-15, manifest PROVISIONAL awaiting ratification. Consumes
   autonomous + life-os tooling conventions. **Standing constraint carried
   from its Life-OS brief:** the hidden hub path must never appear in public
-  output — noted here because `vite.config.ts` names the prefix in a
-  comment today; harmless while private, a finding the moment it flips.
+  OUTPUT. Note the object of that rule is the *built artifact* — the repo is
+  private and can stay so indefinitely; what is public is the served page.
+  Checked 2026-08-15: `vite.config.ts` names the prefix in a source
+  comment, and `dist/` (index.html + bundle) contains the domain only, no
+  `/lathe` path. Clean. The check worth keeping is "grep the build, not the
+  source" — a comment never ships; a `base`/route string does.
 - **juce-rag** (`~/Documents/Claude/juce-rag/`) — deterministic grounding
   layer over JUCE documentation, built for coding agents. Manifest
   structured (`ratified: null`). Full harness + CI. Its retrieval tools are
