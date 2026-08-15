@@ -116,6 +116,35 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+48. **VSM amendments A–D built** (2026-08-14, human ratified all four in one
+    word; each was designed as a separate gate and the human collapsed them —
+    recorded as one entry so the collapse is visible). **A** — `s4_scan.py`:
+    S4-STALE (research artifact age), S4-UNMERGED (a `landscape-audit/*`
+    branch on the remote with no merged PR — reads the REMOTE, not local refs),
+    OPEN-PR (any open PR here is an obligation on the human nothing else
+    surfaces); network failure yields S4-UNKNOWN, never quiet. Fired on its
+    first run against exactly the state under dispute at the time: PR #2 open,
+    branch stranded. Session brief now names S4 findings, not counts. **B** —
+    "Outside & then" section in STATUS.md above the exchanges. **C** —
+    environment-watch remit in the audit prompt (protocol cadence, platform
+    shifts, provider policy, CI economics: four collisions, now watched).
+    **D** — `algedonic.py` + weekly GitHub Actions cron, DETERMINISTIC (no
+    model in the signal path — a pain signal that depends on judgement can be
+    talked out of firing or fire on a hallucination), scope stated as
+    GitHub-visible only. Notification is the failed run itself: no webhook, no
+    third-party notifier, nothing extra to fail silently; a broken check exits
+    1 and is ALSO red. **First live run: 5 pain signals** — the known
+    Audiology leak, a previously UNKNOWN 35-line public leak in `life-os-app`
+    including a Windows path with a second username (the Windows pattern from
+    Decision 34 paying for itself; the local sweep never scanned it because of
+    the wrapper bug), and red default-branch CI on quantum-morph, edgewise,
+    catena. Empty repos excluded after two reported as "unknown" — noise
+    dressed as uncertainty is how a pain channel gets muted.
+    **Also recorded:** the human said "Merged" of PR #2 and GitHub said OPEN
+    (`mergedAt: null`, verified after fetch + wait). Treated as unmerged. That
+    is transducer distortion, Beer's exact term, and it is why the pr-status
+    hook and s4_scan read the remote and never the human's recollection.
+
 47. **Beer's Viable System Model adopted as the governor's vocabulary;
     machinery queued, not built** (2026-08-14, human-directed after reading
     Beer; session model Fable, explicitly human-selected). The framework

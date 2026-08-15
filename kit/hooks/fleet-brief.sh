@@ -29,11 +29,17 @@ age_h=$(( (now - mtime) / 3600 ))
 overdue=$(grep -c '^- \*\*[0-9]*d overdue\*\*' "$STATUS" 2>/dev/null || echo 0)
 uncommitted=$(sed -n '/### Uncommitted mailbox writes/,/^### /p' "$STATUS" 2>/dev/null | grep -c '^- `' || echo 0)
 high=$(grep -cE '^\| *HIGH' "$STATUS" 2>/dev/null || echo 0)
+# S4 (VSM amendment A): the intelligence organ's delivery state. Reported by
+# NAME, not count — "1 S4 finding" tells the human nothing, "S4-UNMERGED"
+# tells them the audit ran and nobody read it. The 2026-08 audit sat four days.
+s4=$(sed -n '/## Outside & then/,/^## /p' "$STATUS" 2>/dev/null \
+     | grep -oE '`(S4-[A-Z]+|OPEN-PR)`' | tr -d '`' | sort -u | tr '\n' ',' | sed 's/,$//; s/,/, /g')
 
 msg=""
 [ "$overdue" -gt 0 ] 2>/dev/null && msg="$msg ${overdue} OVERDUE exchange(s);"
 [ "$uncommitted" -gt 0 ] 2>/dev/null && msg="$msg ${uncommitted} uncommitted mailbox write(s);"
 [ "$high" -gt 0 ] 2>/dev/null && msg="$msg ${high} HIGH finding(s);"
+[ -n "$s4" ] && msg="$msg S4: ${s4};"
 
 # Stale cache is itself worth saying: >48h means the scheduled sweep is not
 # running, and every number below is therefore unreliable.

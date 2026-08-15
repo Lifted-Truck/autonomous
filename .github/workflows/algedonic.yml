@@ -1,0 +1,53 @@
+# Algedonic channel — VSM amendment D (Decision 47).
+#
+# A weekly pain check over what GitHub can see: red default-branch CI on any
+# roster repo, and machine-identity leaks in any PUBLIC roster repo. No model
+# calls anywhere in the signal path — this is `gh` and `git grep`, so it can
+# neither be talked out of firing nor fire on a hallucination.
+#
+# Earned by the 19-day public leak (Audiology), remote-visible the entire time
+# while every local sweep pointed one directory too high. First live run of
+# the script found that one plus a 35-line public leak nobody knew about
+# (life-os-app) and three silently-red CI branches.
+#
+# CI-minutes budget (Decision 31): weekly, ~1 minute, `concurrency` so a
+# re-run cancels a stale one. Well inside the free tier.
+#
+# Notification: a failed workflow run is itself the alarm — GitHub emails the
+# repo owner on failure by default, and the run's log carries the PAIN lines.
+# That is deliberate: no webhook, no third-party notifier, nothing extra to
+# fail silently. If it goes red, the notification is the pain signal; if the
+# check itself breaks (exit 1), that is ALSO red — a dead alarm must not read
+# as quiet.
+name: algedonic
+
+on:
+  schedule:
+    - cron: "17 13 * * 1"       # Mondays 13:17 UTC — off the hour, off the herd
+  workflow_dispatch:            # and on demand
+
+concurrency:
+  group: algedonic
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: governor/algedonic.py
+          sparse-checkout-cone-mode: false
+      - name: algedonic check (deterministic — no model)
+        env:
+          # A fine-grained PAT with read access to org repos + actions.
+          # GITHUB_TOKEN cannot see private repos outside this one, so
+          # private-repo CI state would silently read as UNKNOWN without it.
+          # Set as a repo secret; the check reports UNKNOWN (not quiet) if
+          # it is missing.
+          GH_TOKEN: ${{ secrets.ALGEDONIC_READ_TOKEN || secrets.GITHUB_TOKEN }}
+        run: python3 governor/algedonic.py

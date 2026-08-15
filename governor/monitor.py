@@ -38,6 +38,7 @@ import sweep        # noqa: E402  (roster enumeration + derive_status)
 sys.path.insert(0, _HERE)
 import leak_scan    # noqa: E402  (the leak content scan, kept consistent with the gate)
 import ball_scan    # noqa: E402  (open INTEGRATIONS exchanges — who owes whom)
+import s4_scan      # noqa: E402  (VSM S4: is the intelligence organ alive and consumed?)
 
 # Progress content that belongs in ROADMAP, not the manifest status field
 # (Decision 28). Case-sensitive DONE/CLOSED + the ✅/🟡 status glyphs catch real
@@ -241,6 +242,26 @@ def render_exchanges(projects, today):
     return out, len(overdue)
 
 
+def render_s4(repo, today, s4_days):
+    """VSM amendment B — the 'Outside & then' block. Its OWN section, beside
+    the health rows and above the exchanges: Beer's core claim is that
+    adaptation fails when inside-and-now crowds out outside-and-then, and in
+    this fleet nearly all agent time IS inside-and-now. Making the S3–S4
+    confrontation visible where the human already looks costs zero agents.
+    """
+    findings = s4_scan.scan(repo, today, s4_days)
+    newest = s4_scan.newest_research_date(repo)
+    out = ["", "## Outside & then (VSM S4 — intelligence organ)", ""]
+    out.append(f"- newest research artifact: {newest or 'none'}")
+    if not findings:
+        out += ["- audit delivery: current · no open PRs", ""]
+        return out, findings
+    for k, (sev, d) in findings.items():
+        out.append(f"- **{sev}** `{k}` — {d}")
+    out.append("")
+    return out, findings
+
+
 def render_status(rows, today, stale_days):
     sev = {"HIGH": 0, "WARN": 0, "INFO": 0}
     for _, checks in rows:
@@ -278,6 +299,8 @@ def render_status(rows, today, stale_days):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="monitor")
     ap.add_argument("--registry", required=True)
+    ap.add_argument("--s4-days", type=int, default=35,
+                    help="WARN when the newest research artifact is older than this")
     ap.add_argument("--stale-days", type=int, default=30)
     ap.add_argument("--today", help="ISO date override (default: system date)")
     ap.add_argument("--out", default=None, help="write STATUS markdown here")
@@ -300,13 +323,15 @@ def main(argv=None):
     projects = list(sweep.resolve(registry))
     rows = [(p["name"], _guarded(p)) for p in projects]
     exchange_md, n_overdue = render_exchanges(projects, today)
+    s4_md, s4_findings = render_s4(os.path.join(_HERE, ".."), today, args.s4_days)
 
     if args.json:
         json.dump({n: c for n, c in rows}, sys.stdout, indent=2, sort_keys=True)
         sys.stdout.write("\n")
         return 0
 
-    md = render_status(rows, today, args.stale_days) + "\n".join(exchange_md)
+    md = (render_status(rows, today, args.stale_days)
+          + "\n".join(s4_md) + "\n".join(exchange_md))
     if args.out:
         with open(args.out, "w", encoding="utf-8") as fh:
             fh.write(md)
@@ -318,6 +343,7 @@ def main(argv=None):
     print(f"monitor: {sev['HIGH']} HIGH · {sev['WARN']} WARN · {sev['INFO']} INFO "
           f"across {len(rows)} repos"
           + (f" · {n_overdue} OVERDUE ball(s)" if n_overdue else "")
+          + (f" · S4: {', '.join(s4_findings)}" if s4_findings else "")
           + (f" → {args.out}" if args.out else " (use --out to write STATUS.md)"))
     for name, checks in rows:
         hi = [k for k, v in checks.items() if v[0] == "HIGH"]

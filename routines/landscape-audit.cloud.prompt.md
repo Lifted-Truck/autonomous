@@ -62,6 +62,27 @@ are acting as a resident of the standards repo
      testing for agent code, flaky management, review automation)
    - Context engineering and harness design (Anthropic engineering posts,
      context-rot research, harness patterns)
+   - **Operating environment (VSM S4 environment-watch — Decision 47,
+     amendment C).** Not research findings but *changes in the ground the
+     fleet stands on*, each of which burned it once and was discovered by
+     collision rather than by watching:
+     - **Protocol cadence** — MCP spec revisions and deprecation windows
+       (the 2026-07-28 stateless revision was found by an ad-hoc question);
+       A2A/agent-protocol movement only insofar as it changes MCP's status.
+     - **Platform shifts** — macOS/Windows permission and sandbox changes
+       that break scheduled or hook-driven automation (the TCC class:
+       launchd lost `~/Documents` access and the sweep failed silently);
+       Claude Code hook/settings/permission-model changes; git-for-Windows
+       defaults.
+     - **Provider policy** — model availability, tier/routing rules,
+       usage-limit or safety-classifier changes that could re-tier a session
+       or block a class of query (the demotion-incident class); Claude Code
+       release notes touching sub-agents, messaging, or scheduling.
+     - **CI economics** — GitHub Actions free-tier minutes/pricing,
+       runner-image changes, default-branch protection changes.
+     Report as a dated "Environment deltas" section: what changed, since
+     when, which fleet mechanism it touches. No recommendation needed unless
+     it contradicts a Decision; the point is that these stop being surprises.
    - One open-scope agent: significant NEW categories the above miss (new
      tooling paradigms, major model-capability shifts that make existing
      guardrails obsolete).
