@@ -116,6 +116,30 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+52. **K1 built — `/retrofit` is a CHANGELOG-driven migration; the standards
+    repo failed its own first check** (2026-08-17). `kit/currency.py` is the
+    deterministic half: reads the declared `kit_version`, diffs against
+    CHANGELOG, emits the ordered delta with a presence check per requirement.
+    `REQUIREMENTS` in that file is the GATE per version and the CHANGELOG
+    prose is the explanation; a test pins that every CHANGELOG version has a
+    row, so a migration cannot be silently skipped. `/retrofit` opens by
+    running it, works the delta, and closes by running it again requiring
+    `nothing to do` — the K1 gate ("re-running is a no-op") is CHECKED, not
+    hoped. Its five behaviours are unchanged; only the target changed.
+    **First real run found autonomous itself in drift:** declared 2.0.0 one
+    hour earlier (Decision 51) with no root CLAUDE.md. The `declared_but_
+    missing` check exists for exactly this and fired on its first subject.
+    Fixed by writing the CLAUDE.md the check demanded (lean root: pointers +
+    six gotchas each of which cost an incident), NOT by loosening the check;
+    `./verify fast` now runs autonomous's own currency and goes red on
+    drift, proven by hiding CLAUDE.md and watching it fire. Also: `./verify`
+    checks EXECUTABILITY of verify, not existence — the Write tool does not
+    set the exec bit (retrofit gotcha 2026-07-12), and a verify that exists
+    but cannot run is not a verify. **TOOL_ONLY versions:** 2.0.1 changes the
+    retrofit tool and asks nothing of repos; a repo at 2.0.0 reads CURRENT
+    against it, or the checker manufactures 46 rows of behind-by-nothing —
+    noise that gets a tool ignored (L0002's cousin).
+
 51. **Phase K opened — kit currency toward one structure at every level;
     K0 (kit version) built** (2026-08-17, human-directed; session model
     Fable, explicitly selected). Five directives arrived at once — uniform

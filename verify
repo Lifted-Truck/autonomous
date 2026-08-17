@@ -71,6 +71,14 @@ fast() {
   # — the shipped-untested case is worse than the untested-local one.
   (cd kit/gates && python3 -m unittest discover -q .) \
     || { echo "verify[fast]: kit gate tests red" >&2; ok=1; }
+  # kit/currency.py drives every /retrofit in the fleet; its REQUIREMENTS
+  # table must stay in lockstep with CHANGELOG.md (a test pins that).
+  (cd kit && python3 -m unittest -q test_currency) \
+    || { echo "verify[fast]: kit currency tests red" >&2; ok=1; }
+  # And the standards repo must pass its own checker — a false declaration
+  # here is the one place it would be indefensible.
+  python3 kit/currency.py . --json | python3 -c 'import json,sys; r=json.load(sys.stdin); sys.exit(0 if r["current"] and not r.get("declared_but_missing") else 1)' \
+    || { echo "verify[fast]: autonomous is not current against its own kit (run kit/currency.py .)" >&2; ok=1; }
   # 2. Machine-readable artifacts parse
   python3 - <<'EOF' || ok=1
 import json, sys
