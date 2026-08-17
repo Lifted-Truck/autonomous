@@ -141,9 +141,26 @@ def derive_status(path, with_visibility=False):
         if actual and actual[0] != base:
             case_mismatch = actual[0]
 
+    # Kit currency (Phase K0). Read from the manifest, never inferred: a repo
+    # that has not DECLARED a kit_version is `pre-2.0.0`, not "probably fine".
+    # Absence-read-as-current is the exact silence that hid five wrapper
+    # repos; here it would hide every un-retrofit repo behind a green sweep.
+    kit_version = None
+    mpath = os.path.join(path, "project.manifest.json")
+    if os.path.isfile(mpath):
+        try:
+            with open(mpath, encoding="utf-8") as fh:
+                kv = json.load(fh).get("kit_version")
+            kit_version = kv if isinstance(kv, str) and kv else None
+        except (ValueError, OSError):
+            kit_version = None
+
     out = {
         "git": has(".git"),
         "remote": remote,  # None = local-only; a URL = has a remote
+        # "pre-2.0.0" when the manifest declares nothing. `/retrofit` and the
+        # K4 currency audit key off this; monitor reports it.
+        "kit_version": kit_version or "pre-2.0.0",
         # Non-None = the registry's spelling differs from disk's. Portability
         # bug, not cosmetic: this path does not exist on a case-sensitive FS.
         "path_case_mismatch": case_mismatch,

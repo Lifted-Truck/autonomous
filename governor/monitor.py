@@ -189,6 +189,12 @@ def check_repo(proj, today, stale_days):
     if prose:
         out["STATUS-PROSE"] = ("WARN", "manifest status carries progress content")
 
+    # Kit currency (K0). INFO, not WARN: today 46/47 repos are pre-2.0.0
+    # and a WARN on all of them is noise that buries real WARNs. It becomes
+    # WARN when the K4 catch-up leaves a repo behind by choice.
+    if st.get("kit_version", "pre-2.0.0") == "pre-2.0.0" and st.get("claude_md"):
+        out["KIT-PRE"] = ("INFO", "no kit_version declared — pre-2.0.0")
+
     gaps = [k for k in ("claude_md", "roadmap", "traces", "manifest", "library")
             if not st.get(k)]
     if gaps and (st["claude_md"] or st["verify"]):  # only for partially-harnessed repos

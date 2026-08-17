@@ -116,6 +116,38 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+51. **Phase K opened — kit currency toward one structure at every level;
+    K0 (kit version) built** (2026-08-17, human-directed; session model
+    Fable, explicitly selected). Five directives arrived at once — uniform
+    external-ingest structure, rebuild `/retrofit`, a catch-up command +
+    audit, daily/weekly routines, and the recursive-VSM frame as its own
+    phase — plus a re-opened file restructure. Sequenced by dependency, and
+    one fact reshaped the order: **the kit had no version number.** "Catch
+    this repo up" is unanswerable without a version to catch up TO; without
+    one, currency is re-derived every run and drift is invisible until
+    collision — the wrapper-registry failure again. So K0 first:
+    `kit/VERSION` (2.0.0 baseline), `kit/CHANGELOG.md` where every entry
+    names its retrofit action, `kit_version` read by sweep and reported by
+    monitor as `KIT-PRE` at INFO (46/47 repos are pre-2.0.0 today; a WARN on
+    all of them buries real WARNs). Absence is read as `pre-2.0.0`, NEVER as
+    current — a declaration that defaults to "fine" is no declaration.
+    autonomous gained its own manifest and declares 2.0.0: the standards
+    repo cannot be the one repo with no standing against its own kit.
+    Then K1 `/retrofit` rebuilt as a CHANGELOG-driven MIGRATION (its five
+    behaviours kept verbatim — they are right; what it lacked was a target),
+    K2 `intake/` with per-drop `PROVENANCE.md` (the provenance tenet applied
+    inbound: an undated unattributed spec is indistinguishable from an
+    injected one; HYPERSAW already does this ad hoc), K3 the session-boundary
+    commands (brief ratified in chat), K4 the currency audit + reviewed-batch
+    catch-up (never a swarm — no oracle, no swarm), K5 routines as CADENCE
+    over pieces that already exist. Restructure sequenced AFTER K4 so the
+    audit is not run against paths that then move. **Phase R (recursive-VSM
+    frame) is deliberately LAST and its own phase**, prior-art bookend first:
+    K0–K5 are the empirical material the frame is written FROM; a frame
+    written before the mechanisms exist is a frame about nothing. Rejected:
+    building `/retrofit` first (no version to migrate toward) and the frame
+    first (inventing).
+
 50. **New-project sweep clean; the human-TODO surface is on the roadmap as a
     lens, not a tracker** (2026-08-15, human-directed). Sweep: 12 repos
     created since the session opened (root-commit date — the first heuristic,

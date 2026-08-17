@@ -1,0 +1,23 @@
+{
+  "schema": "project-manifest.0 (draft — kit v2 will formalize)",
+  "status": "RATIFIED by construction 2026-08-17 (Decision 51) — the standards repo declares itself against its own kit. Phase state lives in ROADMAP.md only.",
+  "kit_version": "2.0.0",
+  "survey": {
+    "what_is_it": "standards + kit + governor — the canonical home of cross-project doctrine, the harness kit, memory loops, and the deterministic fleet watchdog (see README)",
+    "architecture_rung": {
+      "choice": 1,
+      "menu": ["1: single thread", "2: thread + subagents/verifier", "3: organ fleet"],
+      "earned_by": "a standing single integrator session; research fan-out is read-only scouting, not parallel writes. Rung 2 would be earned by a resident verifier over the governor's checks; not yet."
+    },
+    "domain_core_llm_must_not_own": "every governor check (monitor, leak_scan, ball_scan, s4_scan, algedonic), the sweep primitive, verify gates, kit version/CHANGELOG semantics, contract validators. AI proposes rulings; deterministic code decides state.",
+    "oracle_shape": {"goldens": "unit tests per governor module + planted-known-bad gate proofs (L0002)", "ci": "verify fast on ubuntu; full is local"},
+    "second_implementation": false,
+    "consumers_and_providers": {
+      "consumes": ["landscape audit (Track D, propose-only)", "every resident's briefs via integrations/"],
+      "consumed_by": ["every kit-scaffolded repo (doctrine import, kit, contracts)", "distillery (library-entry, sweep)", "dispatch (status.1, registry)", "the human at every ratification gate"]
+    },
+    "parallel_audit_thread": false,
+    "knowledge_loop_tags": ["gate-blindness", "detector-calibration", "channel-noise", "cloud-image", "mcp-sdk", "protocol"],
+    "lifespan_autonomy": {"lifespan": "permanent — the fleet's S5", "autonomy_tier": "resident commits + pushes to its own main; every doctrine change is a versioned commit; visibility flips, credentials, and cross-repo pushes are the human's"}
+  }
+}

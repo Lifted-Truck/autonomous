@@ -249,3 +249,36 @@ class TestPathCaseMismatch(unittest.TestCase):
     def test_missing_dir_reports_nothing(self):
         st = sweep.derive_status(os.path.join(self.tmp, "absent"))
         self.assertIsNone(st["path_case_mismatch"])
+
+
+class TestKitVersion(unittest.TestCase):
+    """K0: currency is DECLARED, never inferred. A missing declaration reads
+    as pre-2.0.0 — the failure mode this guards is a green sweep over a fleet
+    nobody has actually retrofit."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _manifest(self, obj):
+        with open(os.path.join(self.tmp, "project.manifest.json"), "w") as f:
+            json.dump(obj, f)
+
+    def test_declared_version_is_read(self):
+        self._manifest({"kit_version": "2.0.0"})
+        self.assertEqual(sweep.derive_status(self.tmp)["kit_version"], "2.0.0")
+
+    def test_missing_manifest_is_pre(self):
+        self.assertEqual(sweep.derive_status(self.tmp)["kit_version"], "pre-2.0.0")
+
+    def test_manifest_without_field_is_pre(self):
+        self._manifest({"survey": {}})
+        self.assertEqual(sweep.derive_status(self.tmp)["kit_version"], "pre-2.0.0")
+
+    def test_malformed_values_are_pre_not_crash(self):
+        for bad in ("", None, 2, ["2.0.0"]):
+            with self.subTest(bad=bad):
+                self._manifest({"kit_version": bad})
+                self.assertEqual(sweep.derive_status(self.tmp)["kit_version"], "pre-2.0.0")

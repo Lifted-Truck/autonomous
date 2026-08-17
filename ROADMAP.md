@@ -269,6 +269,89 @@ as monitor); no per-item nagging or notifications beyond the existing
 session brief + algedonic channel; no separate task tracker — the fleet's
 files ARE the tracker, this is a lens over them.
 
+**Phase K — Kit currency: one structure at every level (Decision 51,
+human-directed 2026-08-17). Six items, ordered by dependency; each gated.**
+
+The human's directive, restated as the phase's purpose: *a human should
+learn ONE structure and one command set, and it should hold at every level
+of abstraction — session, project, group, fleet.* Everything below is
+sequenced so the later items have something concrete to stand on; the last
+item is the philosophical frame, deliberately last, because a frame written
+before the mechanisms exist is a frame written about nothing.
+
+- **K0 — Kit version, declared.** `kit/VERSION` (semver) + `kit_version` in
+  every scaffolded manifest + a `kit/CHANGELOG.md` where every entry names the
+  retrofit action it implies. **Why first:** "catch this repo up" is
+  unanswerable without a version to catch up TO — today the only way to know
+  a repo is behind is to re-derive it (the wrapper-registry failure again:
+  no declaration, so drift is invisible until collision). *Gate:* sweep
+  reports `kit_version` per repo; a repo with none reads as `pre-K0`, never
+  as current.
+- **K1 — `/retrofit` rebuilt around K0.** The five behaviours it has are
+  right (infer-first, plan-then-pause, append-never-rewrite, never-hide-red,
+  the override clause) and are KEPT verbatim; what changes is that it now
+  reads the target's `kit_version` and applies CHANGELOG entries in order —
+  a *migration*, not a re-scaffold. Idempotent by construction: re-running on
+  a current repo is a no-op. Adds the session-boundary artifacts (K3) and
+  the ingest structure (K2) as migrations. *Gate:* re-run on a just-retrofit
+  repo produces zero diff.
+- **K2 — Uniform external-ingest structure.** The human workshops ideas in
+  fresh Claude sessions and downloads recommendations, specs, and prototypes
+  into repos with no known landing zone. Standard: `intake/` at repo root,
+  `intake/README.md` stating the contract, one subdirectory per drop dated
+  `YYYY-MM-DD-<slug>/` with the source file(s) untouched + a `PROVENANCE.md`
+  (where it came from, which session/model, human's one-line intent) — the
+  provenance tenet applied to inbound artifacts, since an undated
+  unattributed spec in a repo is indistinguishable from an injected one.
+  Contract: **`intake/` is read-mostly and never authoritative** — a resident
+  *promotes* from it into ROADMAP/DECISIONS/specs by explicit act, and the
+  drop stays as the citable original. HYPERSAW already does this ad hoc
+  (dated ingests named in CLAUDE.md as "they ARE the reference"); K2 makes
+  it uniform. Gate check in `./verify`: every `intake/*/` has a
+  `PROVENANCE.md`. *Gate:* one repo runs it end-to-end (drop → promote →
+  cite) before it ships in the kit.
+- **K3 — Session-boundary commands** (briefs/2026-08-17-session-boundary.md,
+  proposal ratified in chat): shared read+render routine → `/reorient` →
+  registry (dedicated private repo; existence-only rows keyed by session_id;
+  named INTEGRATIONS §3 exception) → `/wakeup` → `/breakdown`. `/breakdown`
+  is `status.1`'s FIRST PRODUCER (closes the Decision 45 gap);
+  `REFLECTIONS.md` is the new root artifact, feeding DECISIONS/ROADMAP/
+  LIBRARY by graduation. Commit yes, push no. *Gate:* one full open→close
+  cycle on this repo with STATUS.json validating against dispatch's fixtures.
+- **K4 — Currency audit + fleet catch-up.** Once K0–K3 exist, ONE sweep
+  answers "which repos are behind, and by which entries." Read-only first
+  (report), then catch-up in reviewed batches — never a swarm, per the
+  no-oracle-no-swarm rule: a repo without `./verify` cannot be gated on the
+  thing being installed. *Gate:* the currency report + a batch plan the
+  human ratifies.
+- **K5 — Routines: daily/weekly fleet coordination.** The pieces exist
+  (monitor, ball_scan, s4_scan, algedonic, session brief); K5 is the
+  *cadence* and the *rendering*. Daily: the sweep + T0 human-TODO (Decision
+  50) rendered into the session brief and, via dispatch, the digest.
+  Weekly: algedonic (already cron), currency report (K4), open-session
+  registry age. **Constraint carried from Decision 42:** local sweeps run
+  from session hooks (TCC), remote ones from Actions; nothing scheduled
+  needs Full Disk Access. *Gate:* one week of routines producing artifacts
+  the human actually read — measured by the human, not asserted.
+
+**Also opened by this directive, NOT in Phase K:**
+- **The file-restructuring sweep is back on the table** — the human's own
+  reasoning: a clean layout "translates optimally to the other computer."
+  Still Phase 0–4 as designed (worktrees → registry → move → venvs → retrofit);
+  now sequenced AFTER K4, since a currency audit before the move would be
+  audited against paths that then change.
+- **Phase R — Recursive VSM: the philosophical frame.** Its own phase, as
+  the human said. Prior-art bookend FIRST (Beer, Ashby, Espejo, the
+  Cybersyn record, plus modern recursive-governance and "one grammar at
+  every level" systems — Nix/Guix, Kubernetes operators, Unison, capability
+  systems). Then the frame: what is invariant across levels (the command
+  set, the artifact set, the gate rule), what is per-level (the S1
+  content), and the rule for when a level earns its own metasystem vs
+  borrows the parent's. K0–K5 are the empirical material this frame is
+  written FROM; writing it first would be inventing. *Gate:* the frame
+  document + a demonstration that `/wakeup`/`/breakdown` run unchanged at
+  fleet level over registry rows (the brief's §7 item 7).
+
 ## Deferred / demoted
 
 - **Live agent-to-agent messaging** — deliberately excluded; published
