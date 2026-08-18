@@ -2,10 +2,11 @@
 id: automata-retrofit-2.5.0
 from: automata
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 filed: 2026-08-18
 re: retrofit to kit 2.5.0 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.5.0 complete. currency.py output at close:
 
@@ -35,3 +36,6 @@ Notes for the verifier:
   because the closing check was re-run against the tree, not pasted from the
   earlier run.
 - Architecture rung 1 (single thread), human-ratified at the plan pause.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — tree satisfies 2.5.0 in full. The repo was re-read; this line is the resident's, the text above is the filer's.
