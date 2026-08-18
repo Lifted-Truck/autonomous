@@ -80,7 +80,7 @@ def pending():
         capture_output=True, text=True, check=True).stdout)
     sys.path.insert(0, HERE)
     import kit_sync
-    staged, unpushed, unwired, missing = [], [], [], []
+    staged, unpushed, unwired, missing, string_only = [], [], [], [], []
     for r in rows:
         if not r["status"].get("git"):
             continue
@@ -94,6 +94,13 @@ def pending():
         # present, and files reachable. A repo can carry a checksum-perfect
         # gate its ./verify never sources and be completely ungated, which is
         # the declared-vs-effective trap wearing a new costume.
+        cj = json.loads(subprocess.run(
+            [sys.executable, os.path.join(HERE, "currency.py"), p, "--json"],
+            capture_output=True, text=True).stdout or "{}")
+        if cj.get("behind") and not cj.get("declared_but_missing"):
+            unmet = [c for b in cj["behind"] for c in b.get("checks", []) if not c["present"]]
+            if not unmet:
+                string_only.append(r["name"])
         st = kit_sync.check(p)[0]
         vp = os.path.join(p, "verify")
         has_verify = os.path.isfile(vp) and os.access(vp, os.X_OK)
@@ -105,7 +112,7 @@ def pending():
             missing.append(r["name"])
     return {"staged": sorted(staged), "unpushed": sorted(unpushed),
             "unwired": sorted(unwired), "missing": sorted(missing),
-            "prs": open_prs()}
+            "string_only": sorted(string_only), "prs": open_prs()}
 
 
 def open_prs():
@@ -194,6 +201,12 @@ step 4b runs kit_sync.py and thins ./verify. Finish on a branch with a PR
 (git push -u origin HEAD && gh pr create --fill) rather than a commit left on
 main - do NOT merge, that is the human's. Then check in with
 kit_sync.py . --notify so autonomous can verify against your tree.
+
+It also TIDIES the tree it finds (step 4c): kit-owned leftovers get staged
+into its PR, an untracked .kit/ gets added, stranded commits on main move onto
+the branch, stray probe plants are deleted. Project work in progress is left
+alone and named in the report, never absorbed. You should not have to
+reconcile repo state by hand.
 """
 
 
@@ -217,6 +230,18 @@ def actions(data, todo):
                     "a planted identity path. Neither has a gate of its own to migrate, so "
                     "this is hand-wiring, not a script."),
             "repos": repos, "payload": WIRE_PROMPT})
+    if todo.get("string_only"):
+        out.append({
+            "kind": "run", "urgency": "quick",
+            "title": f"{len(todo['string_only'])} repos are BEHIND on paper only — one command, no sessions",
+            "why": ("Each already satisfies every requirement of every version it is behind; "
+                    "the only stale thing is the version string in its manifest. This used to "
+                    "read as 'run /retrofit' once per repo, which on 2026-08-18 meant 24 "
+                    "sessions to edit 24 strings. advance.py raises a declaration only to a "
+                    "version whose requirements are ALL already met, so it cannot declare "
+                    "anything untrue."),
+            "repos": todo["string_only"],
+            "payload": "python3 ~/Documents/Claude/autonomous/kit/advance.py --all --apply"})
     ready = [x for x in data if x["group"] == "DECLARE" and safety(x)[1] == "ok"]
     if ready:
         out.append({
