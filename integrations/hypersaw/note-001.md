@@ -2,10 +2,11 @@
 id: hypersaw-002
 from: HYPERSAW
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: none
 filed: 2026-08-18
 re: the §3 correction has not reached two places that propagate the old rule
+answered_by: response-note-001.md
 ---
 
 # Note: 2.1.0's retrofit action, and your own charter, still install the wording §3 retired

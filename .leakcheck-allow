@@ -7,3 +7,9 @@
 # examples (/Users/[A-Za-z]+, /Users/|/home/) that are docs, not leaks.
 governor/REPO-HYGIENE.md
 governor/HISTORY-REMEDIATION.md
+# spectral-morph-001 (2026-08-17): a brief ABOUT the leak gate that quotes the
+# escaped Windows form as an example of the self-match trap it is warning
+# about. Visitor's words; the resident does not edit a brief body to satisfy
+# a gate. Allowlisting the one file is the honest fix; the quoted form is a
+# placeholder in intent, just not in the exempt spelling.
+integrations/spectral-morph/brief.md

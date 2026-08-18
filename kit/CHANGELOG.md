@@ -58,7 +58,11 @@ kit-v2 core install carries as of this date:
 - **Retrofit action:** append a `## Mailbox` section to `CLAUDE.md` naming
   (a) `integrations/` in THIS repo as the only place briefs to us land,
   (b) that responses to OUR briefs live in the PROVIDER's tree and must be
-  pulled and read, (c) that exchanges between other repos are ignored.
+  pulled and read, (c) that exchanges between other repos may be READ freely
+  but never ACTED on or raised to the human as ours — if one concerns us, we
+  file a brief. (Corrected 2026-08-18 per hypersaw-001/002: an earlier draft
+  said "ignored", which over-reached into informational quarantine; a repo that
+  retrofit before the correction should re-read this clause.)
   Marker-delimited, append-only; if a `## Mailbox` section already exists,
   leave it alone and report the difference.
 - **Verify gate:** none — this is a charter statement, and gating prose on
@@ -67,6 +71,24 @@ kit-v2 core install carries as of this date:
 - **Why:** on 2026-08-17 agents in several unrelated projects each warned the
   human about one brief in autonomous's mailbox. Tooling caused it; the rule
   was never written down either way.
+
+## 2.2.0 — 2026-08-18 — the leak gate must FIRE, not merely exist (spectral-morph-001)
+
+- `currency.py` now asserts gate BEHAVIOUR: it plants a POSIX identity path
+  and a Windows identity path in a scratch file inside the repo, runs the
+  repo's own `./verify fast`, and requires the gate to name the file. The
+  plant is created and removed inside one call. Previously it checked that
+  `verify` CONTAINED the string `leak_gate` — a presence check on the gate's
+  name, and the one place the kit violated its own "assert the effective state"
+  rule. `harness/verify` — the template every new project is born from —
+  shipped a POSIX-only pattern for a month and read as compliant.
+- **Retrofit action:** if either plant fails to fire, replace the repo's
+  `leak_gate` pattern with `autonomous/verify`'s (both identity forms, both
+  placeholder exclusions). Three detectors, one policy: `verify`,
+  `harness/verify`, `governor/leak_scan.py` carry the same regex.
+- **Verify gate:** the two `gate-fires:` checks. A repo already declaring
+  2.0.0/2.1.0 on a POSIX-only gate now reads BEHIND — correct, and this entry is
+  what makes that a migration rather than a silent tightening.
 
 <!-- Next entries append BELOW, newest last, so the migration order reads
      top-to-bottom. K2 (intake/), K3 (session-boundary artifacts) will land

@@ -94,6 +94,36 @@ def main():
     except Exception:
         pass
 
+    # 4. Installed slash commands vs the kit. Commands are USER-level
+    #    (~/.claude/commands/), copied from kit/commands/ by hand (INSTALL-GLOBAL
+    #    §3), so a kit change leaves the installed copy stale until someone
+    #    re-copies — the same silent-currency gap K0 closed for repos, one level
+    #    up. Reported in EVERY session because it is machine-wide, not
+    #    repo-scoped, and it is the human's install to fix.
+    try:
+        import filecmp
+        kit_cmds = os.path.join(AUT, "kit", "commands")
+        inst = os.path.join(HOME, ".claude", "commands")
+        stale, missing = [], []
+        for f in sorted(os.listdir(kit_cmds)):
+            if not f.endswith(".md"):
+                continue
+            k, i = os.path.join(kit_cmds, f), os.path.join(inst, f)
+            if not os.path.isfile(i):
+                missing.append(f[:-3])
+            elif not filecmp.cmp(k, i, shallow=False):
+                stale.append(f[:-3])
+        if stale or missing:
+            parts = []
+            if stale:
+                parts.append("stale: /" + ", /".join(stale))
+            if missing:
+                parts.append("not installed: /" + ", /".join(missing))
+            bits.append("commands " + "; ".join(parts)
+                        + " — cp ~/Documents/Claude/autonomous/kit/commands/*.md ~/.claude/commands/")
+    except Exception:
+        pass
+
     # 4. Fleet roll-up: ONLY in the standards repo.
     if os.path.realpath(root) == os.path.realpath(AUT):
         st = os.path.join(AUT, "governor", "STATUS.md")

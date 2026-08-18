@@ -69,6 +69,13 @@ def changelog_entries(kit_dir):
 TOOL_ONLY = {"2.0.1"}
 
 REQUIREMENTS = {
+    # 2.2.0: the leak gate must FIRE, not merely exist. Behavioural, per
+    # spectral-morph-001. A repo at 2.1.0 with a POSIX-only gate is correctly
+    # BEHIND this — that is the migration, not a silent tightening.
+    "2.2.0": [
+        ("leak_gate fires on POSIX identity", "verify", "gate-fires:posix"),
+        ("leak_gate fires on Windows identity", "verify", "gate-fires:windows"),
+    ],
     # 2.1.0 asks for a CLAUDE.md section; presence of the FILE is already
     # required by 2.0.0, and gating on the section's prose would reward the
     # words over the understanding (see CHANGELOG). So: no new mechanical
@@ -93,7 +100,63 @@ REQUIREMENTS = {
 }
 
 
+def _gate_fires(repo, plant_lines):
+    """Does the repo's OWN ./verify leak_gate go red on planted known-bad lines?
+
+    spectral-morph-001 ask 2: `contains:leak_gate` was a presence check on the
+    gate's NAME. A repo with a POSIX-only pattern (harness/verify shipped that
+    for a month) read as compliant while blind to the Windows form. Kit README
+    says every gate asserts the EFFECTIVE state; the currency checker was the
+    exception. This plants each identity family in a scratch file inside the
+    repo, runs `./verify fast`, and requires the gate to name the file. The
+    plant is created and removed inside one call; the repo is left untouched.
+    """
+    import subprocess
+    # RECURSION GUARD. autonomous's own ./verify runs `currency.py .`, and this
+    # check runs `./verify fast` — so without a guard, checking autonomous is a
+    # fork bomb: verify → currency → verify → currency … (it happened; ~100
+    # nested plants before it was killed). An env var marks "we are already
+    # inside a currency behavioural check"; a nested invocation must return the
+    # honest answer for the outer one, and the honest answer for "does the gate
+    # fire" cannot be established from inside the gate. So a nested call reports
+    # NOT-fired, which makes the outer check fail loud rather than loop silent —
+    # and verify's own self-check reads currency's --json, which the outer call
+    # still produces correctly because it is not nested.
+    if os.environ.get("KIT_CURRENCY_NESTED"):
+        return False
+    v = os.path.join(repo, "verify")
+    if not (os.path.isfile(v) and os.access(v, os.X_OK)):
+        return False
+    name = f".kit-currency-plant-{os.getpid()}.md"
+    path = os.path.join(repo, name)
+    try:
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write("\n".join(plant_lines) + "\n")
+        env = dict(os.environ, KIT_CURRENCY_NESTED="1")
+        r = subprocess.run(["./verify", "fast"], cwd=repo, capture_output=True,
+                           text=True, timeout=120, env=env)
+        return name in (r.stderr + r.stdout)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    finally:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+
+# Planted lines are ASSEMBLED, never written as literals: this file is greppable
+# by every leak gate in the fleet, and a literal identity path here would make
+# the currency checker itself the leak (Decision 55's test fixture lesson).
+_POSIX_PLANT = "/" + "Users" + "/someone/secret"
+_WIN_PLANT = "C:" + "\\" + "Users" + "\\someone\\secret"
+
+
 def _present(repo, target, kind):
+    if kind == "gate-fires:posix":
+        return _gate_fires(repo, [f"plant {_POSIX_PLANT}"])
+    if kind == "gate-fires:windows":
+        return _gate_fires(repo, [f"plant {_WIN_PLANT}"])
     p = os.path.join(repo, target)
     if kind == "file":
         return os.path.isfile(p)
@@ -155,10 +218,18 @@ def report(repo, kit_dir):
     # manifest, or an item deleted since). Report that as drift, loudly —
     # a declaration the checks contradict is worse than no declaration.
     if out["current"]:
-        # check against the newest version that HAS requirements
-        newest_req = max((v for v in REQUIREMENTS if REQUIREMENTS[v]), key=parse_version)
-        reqs = REQUIREMENTS.get(newest_req, [])
-        missing = [lbl for lbl, tgt, kind in reqs if not _present(repo, tgt, kind)]
+        # Drift is checked against EVERY version's requirements up to the
+        # declared one, not only the newest — a repo declaring 2.2.0 that has
+        # lost its CLAUDE.md (a 2.0.0 requirement) is in drift. Checking only
+        # the newest version made exactly that invisible the moment 2.2.0
+        # shipped with requirements of its own (test caught it).
+        missing = []
+        for ver in sorted(REQUIREMENTS, key=parse_version):
+            if parse_version(ver) > parse_version(declared):
+                continue
+            for lbl, tgt, kind in REQUIREMENTS[ver]:
+                if not _present(repo, tgt, kind):
+                    missing.append(lbl)
         out["declared_but_missing"] = missing
     return out
 

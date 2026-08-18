@@ -9,6 +9,7 @@ safe to run repeatedly on 46 repos.
 import json
 import os
 import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -38,7 +39,15 @@ def _full_baseline(root):
     _touch(root, "project.manifest.json",
            json.dumps({"kit_version": currency.kit_version(_KIT)}))
     os.makedirs(os.path.join(root, "traces"), exist_ok=True)
-    _touch(root, "verify", "#!/bin/bash\nleak_gate() { :; }\n", exe=True)
+    # A REAL gate, not a stub: 2.2.0 asserts the gate FIRES on planted
+    # identity paths, so a `leak_gate() { :; }` placeholder now correctly
+    # reads as behind. The fixture's verify is autonomous's own leak_gate,
+    # lifted verbatim, so the fixture is current for the same reason a real
+    # repo is.
+    real = os.path.join(_KIT, "..", "harness", "verify")
+    with open(real, encoding="utf-8") as fh:
+        _touch(root, "verify", fh.read(), exe=True)
+    subprocess.run(["git", "init", "-q", root], check=True)   # leak_gate uses git grep
     _touch(root, ".github/workflows/ci.yml", "name: ci")
     _touch(root, ".gitattributes", "* text=auto eol=lf")
 

@@ -116,6 +116,41 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+62. **Kit 2.2.0: the leak gate must FIRE, not exist; template lag fixed;
+    a rule corrected where read was still wrong where installed**
+    (2026-08-18, spectral-morph-001 + hypersaw-002, both found by residents
+    running `/retrofit`). **spectral-morph:** `harness/verify` — the template
+    every new project is born from — carried the POSIX pattern only for a
+    month after Decision 34; every spinup since was born half-gated. Fixed;
+    three detectors now match byte-for-byte. Their sharper ask: `currency.py`
+    checked that `verify` CONTAINED the string `leak_gate` — a presence check
+    on the gate's NAME, the one place the kit violated its own "assert the
+    effective state" rule. Now it plants each identity family in a scratch
+    file, runs the repo's OWN `./verify fast`, and requires the gate to name
+    the file. **It fork-bombed on first run** — autonomous's verify runs
+    currency, which now runs verify — ~100 nested plants before I killed it.
+    Guarded by an env marker: nested returns NOT-fired, so the outer check
+    fails loud rather than loops silent. Also exposed: `declared_but_missing`
+    checked only the newest version's rows, so once 2.2.0 had rows a current
+    repo missing CLAUDE.md read clean; now spans every version ≤ declared. My
+    own test caught it, because its fixture had a stub gate and the
+    behavioural check refused to call a stub a gate. Shipped as 2.2.0 with a
+    retrofit action — a migration, not a silent tightening, per their ask 3.
+    Their brief's own line 72 trips the gate by quoting the escaped form; NOT
+    edited (visitor's words), allowlisted with reason.
+    **hypersaw-002:** the §3 correction (hypersaw-001 Q3) had reached the
+    doctrine and not the two artifacts that INSTALL it — CHANGELOG 2.1.0's
+    retrofit action still said "ignored", and autonomous's own charter still
+    carried the retired phrase verbatim. Same failure as hypersaw-001, one
+    layer down: correct where read, wrong where copied. Both fixed. Their
+    closing observation ("the retired phrases are literal strings") is now a
+    verify gate: installing artifacts are grepped for every retired phrase;
+    records may quote, installers may not.
+    **The pattern across both:** two residents, running the retrofit I built,
+    each found a place where the kit failed its own rule. That is the K1
+    design working — the retrofit is the first party to WRITE against the kit
+    in each repo, and the first writer walks a surface the author never does.
+
 61. **K4 batch 1 shipped (.gitattributes, 27 commits + 15 writes); the
     retrofit checklist is DERIVED, never maintained** (2026-08-18). The batch:
     43 repos lacked the CRLF guard, not the 20 I had been quoting — every

@@ -75,6 +75,19 @@ fast() {
   # table must stay in lockstep with CHANGELOG.md (a test pins that).
   (cd kit && python3 -m unittest -q test_currency) \
     || { echo "verify[fast]: kit currency tests red" >&2; ok=1; }
+  # Retired doctrine phrases must not survive in INSTALLING artifacts
+  # (hypersaw-002): a rule corrected where it is READ but left in the charter
+  # and CHANGELOG action that COPY it is correct where nobody looks and wrong
+  # where everybody inherits it. Records (integrations/, DECISIONS, research)
+  # may quote retired text; kit/, doctrine/, CLAUDE.md, ONBOARDING may not.
+  # Add a phrase here whenever a ruling retires one; the string is the gate.
+  local retired hits
+  retired='not a to-do, not a warning, not context|between other repos are ignored'
+  hits=$(git grep --untracked -nIE "$retired" -- . ':(exclude)integrations/*' ':(exclude)DECISIONS.md' ':(exclude)research/*' ':(exclude)briefs/*' ':(exclude)verify' 2>/dev/null || true)
+  if [ -n "$hits" ]; then
+    echo "verify: RETIRED PHRASE — a rule the doctrine corrected still appears in an installing artifact:" >&2
+    echo "$hits" | sed 's/^/    /' >&2; ok=1
+  fi
   # Exchange frontmatter must not lie about its own state (Decision 57).
   python3 - <<'PYEOF2' || ok=1
 import sys, os
