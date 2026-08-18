@@ -2,10 +2,11 @@
 id: distillery-004
 from: distillery
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-12
 re: library-entry.2 — consolidation semantics (`supersedes: absorbs …`)
+answered_by: response-004.md
 ---
 
 # Brief: LIBRARY consolidation has no grammar slot — `supersedes: absorbs X, Y, Z`

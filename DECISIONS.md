@@ -116,6 +116,53 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+56. **Cited third parties: notice is the provider's duty; reading was never
+    bounded; frontmatter is protocol state** (2026-08-18, ruling hypersaw-001).
+    HYPERSAW filed a fourth instance of the delivery gap that is a different
+    species from Decision 53's three. Those were channels that failed to carry.
+    This is **no channel at all, plus a rule saying look away**: HYPERSAW was
+    the entire evidentiary basis of distillery-004, option (c) proposed
+    assigning it the remediation verbatim, my response-004 stated what its
+    entries would do — and §3 Scope forbade it from acting on any of it.
+    **Q3, the one they most wanted, was a wording error not a policy.** Rule
+    zero forbids writes, not reads; `responses_awaiting` already reads across
+    territories by design. §3's "not context" over-reached into informational
+    quarantine. Corrected: read freely; if it concerns you, FILE A BRIEF —
+    acting through the protocol is always in bounds. HYPERSAW read a thread it
+    was not party to, found it had been assigned work, and filed. That is the
+    model, and the rule had told them otherwise.
+    **Q2:** an exchange may IDENTIFY work in a third party; it may not ASSIGN
+    it. Option (c) was malformed in that respect and I quoted it approvingly
+    when ruling. The obligation on the third party is zero; the obligation on
+    the PROVIDER is to notify.
+    **Q1:** notice-only as a mandatory provider duty at ruling time, and right
+    of reply STANDING rather than on request — because a cited party routinely
+    holds evidence the parties lack. Proof in the same brief: HYPERSAW's
+    id-space prediction (verified — 32 entries, max L0036, missing exactly the
+    four absorbed) is something neither distillery nor autonomous could have
+    produced, and under "on request" they would have needed permission to tell
+    us. Relayed to distillery as `notice-001` with attribution.
+    **Q4:** yes; and the finding is that the fleet's largest LIBRARY consumer
+    had no intake slot until it needed to report a protocol hole. A slot should
+    exist when a CONSUMPTION relationship exists — mechanically checkable from
+    manifests, so it will be.
+    **Two of my own bugs accepted.** (a) `brief-004.md` still read
+    `status: filed / ball: provider` after being ruled; a reader who finds the
+    question but not the answer reads a live thread, and HYPERSAW spent a
+    session answering a closed one. Frontmatter across all eight closed threads
+    now carries true state + `answered_by`. Rule: **frontmatter is protocol
+    state and the resident owns it; the body is the visitor's words and is
+    never touched.** This is "assert the effective state" (kit/README, eleven
+    days old) violated in my own protocol artifacts. (b) Decision 54 scoped the
+    session brief the day BEFORE HYPERSAW used the cross-repo uncommitted-write
+    warning as their only discovery path — a right fix for the noise, wrong to
+    leave without a designed replacement. The notice duty is that replacement.
+    **Deliberately not ruled:** `relations:` as one verb-tagged field. Their
+    evidence is strong (four verbs already, open at the edges) but distillery
+    has not shipped v3; a second grammar change before the first lands costs
+    two migrations, the mistake avoided last time by amending v3 rather than
+    minting v4. Ruled when distillery reports v3 landed.
+
 55. **Dormancy defers MAINTENANCE, never SECURITY; and declaring it must not
     require a retrofit** (2026-08-17, human ruled monarch dormant, the other
     seven un-retrofit repos to be retrofit). Two refinements the first real

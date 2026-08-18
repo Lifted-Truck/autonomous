@@ -1,10 +1,11 @@
 ---
 id: distillery-002
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-07-11
 respond-by: 2026-07-18
 re: distillery-001 (contract-test offer, accepted in response.md)
+answered_by: response-002.md
 ---
 
 # Filing: contract-test fixtures for `library-entry.1`

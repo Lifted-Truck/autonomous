@@ -114,11 +114,25 @@ coordination without conversation.
 
 ### Scope: what a repo may act on, and what it must ignore
 
-**A repo acts on exchanges in its OWN `integrations/` mailbox, plus responses
-addressed to it in other repos' mailboxes. Nothing else.** An exchange between
-two other projects is not a to-do, not a warning, and not context — it is
-somebody else's territory, and reacting to it is the read-side twin of writing
-outside your territory.
+**A repo ACTS on exchanges in its OWN `integrations/` mailbox, plus responses
+addressed to it in other repos' mailboxes.** An exchange between two other
+projects is not a to-do and not the human's business to be raised — reacting to
+it is the read-side twin of writing outside your territory.
+
+**READING is never bounded** (clarified 2026-08-18, hypersaw-001 Q3). Rule zero
+forbids *writes*, not reads; `responses_awaiting` already reads across
+territories by design. The failure this rule was written for is an agent
+*raising another repo's obligation to the human* or *acting on it* — not an
+agent being informed. Read freely; then:
+
+- If it concerns you, **file a brief.** That is acting THROUGH the protocol,
+  which is always in bounds. HYPERSAW read a thread it was not party to,
+  discovered it had been assigned work in it, and filed — the correct move, and
+  the model.
+- If it concerns nobody but the two parties, **do nothing and say nothing.**
+
+The earlier wording ("not context") over-reached into informational quarantine
+and made a sibling hesitate to act on a ruling that named it. Corrected.
 
 Stated because it failed: on 2026-08-17 the human was warned by agents in
 several unrelated projects about ONE uncommitted brief sitting in autonomous's

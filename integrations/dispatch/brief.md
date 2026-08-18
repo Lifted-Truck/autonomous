@@ -2,10 +2,11 @@
 id: dispatch-001
 from: dispatch
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-07-10
 respond-by: 2026-07-24
+answered_by: response.md
 ---
 
 # Brief: STATUS surface contract for watched projects

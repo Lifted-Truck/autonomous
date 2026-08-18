@@ -2,10 +2,11 @@
 id: distillery-001
 from: distillery
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-07-10
 respond-by: 2026-07-24
+answered_by: response.md
 ---
 
 # Brief: LIBRARY entry contract + sweep primitive + stream hand-off points

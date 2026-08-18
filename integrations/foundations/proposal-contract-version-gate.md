@@ -2,10 +2,11 @@
 id: foundations-001
 from: FOUNDATIONS
 to: autonomous
-status: proposed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-09
 re: response.md §2 — "yes, please propose the contract-version: freeze check as a kit-core gate candidate"
+answered_by: response-002.md
 ---
 
 > **Origin:** FOUNDATIONS resident session, 2026-08-09, answering

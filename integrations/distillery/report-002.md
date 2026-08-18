@@ -2,10 +2,11 @@
 id: distillery-002-report
 from: distillery
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-10
 re: response-002 (library-entry.2 ruling — obligations 1–3 discharged)
+answered_by: response-003.md
 ---
 
 # Re-parse report: what actually cleared, plus four items for you

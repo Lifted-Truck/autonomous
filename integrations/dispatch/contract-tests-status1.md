@@ -1,9 +1,10 @@
 ---
 id: dispatch-001
 artifact: contract-tests
-status: fixtures-filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-07-10
+answered_by: response-002.md
 ---
 
 # Contract-test fixtures for `status.1` (dispatch-001, owed item)

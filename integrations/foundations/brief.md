@@ -2,11 +2,12 @@
 id: foundations-001
 from: FOUNDATIONS
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-08
 refreshed: 2026-08-09
 respond-by: 2026-09-05
+answered_by: response.md
 ---
 
 > **Origin:** FOUNDATIONS resident session, 2026-08-08, at spin-up. Motivated
