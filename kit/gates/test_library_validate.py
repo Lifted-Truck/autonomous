@@ -83,12 +83,39 @@ class TestRealNonConformance(unittest.TestCase):
 
 
 class TestOwnCorpus(unittest.TestCase):
+    """PAIRED control (HYPERSAW round 4). The clean read alone cannot fail:
+    if `validate_file` became a no-op it would still return [], and the whole
+    suite passed 12/12 against a neutered one — every other test exercises
+    `validate_entry` and never touches the file-level path. A validator that
+    stops crying wolf is indistinguishable from one that stopped looking, so
+    the zero must be paired with a corruption of the SAME file that must
+    read non-zero."""
+
+    def setUp(self):
+        here = os.path.dirname(os.path.abspath(__file__))
+        self.lib = os.path.join(here, "..", "..", "LIBRARY.md")
+
     def test_autonomous_library_conforms_to_its_own_contract(self):
         """The standards repo must not ship a LIBRARY that fails the contract
         it authored — the same self-check as kit currency."""
-        here = os.path.dirname(os.path.abspath(__file__))
-        lib = os.path.join(here, "..", "..", "LIBRARY.md")
-        self.assertEqual(lv.validate_file(lib), [])
+        self.assertEqual(lv.validate_file(self.lib), [])
+
+    def test_the_zero_is_earned_not_vacuous(self):
+        """Corrupt a copy of the real file and require the file-level path to
+        notice. This is the control that makes the test above mean something."""
+        with open(self.lib, encoding="utf-8") as fh:
+            text = fh.read()
+        broken = text.replace("| canonical |", "| retracted |", 1)
+        self.assertNotEqual(broken, text, "fixture no longer matches the corpus")
+        with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False,
+                                         encoding="utf-8") as fh:
+            fh.write(broken)
+            path = fh.name
+        try:
+            self.assertTrue(lv.validate_file(path),
+                            "file-level path did not notice a planted defect")
+        finally:
+            os.unlink(path)
 
 
 if __name__ == "__main__":
