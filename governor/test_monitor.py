@@ -190,14 +190,15 @@ class TestDormancyDefersMaintenanceNotSecurity(unittest.TestCase):
     def test_a_leak_still_fires_while_dormant(self):
         """A dormant PUBLIC repo that leaks is not less exposed for being
         quiet. If this ever passes, dormancy has become a hiding place."""
-        # Built at runtime, never written as a literal: this repo's own
-        # leak_gate greps its tracked source, so a planted literal here is a
-        # real leak by its definition — CI caught exactly that on the first
-        # push. Same trick `verify` uses on its own pattern comments. The
-        # FILE on disk still contains the literal, which is what leak_scan
-        # reads, so the test still plants a genuine leak.
-        _write(self.tmp, "notes.md",
-               "path " + "/Users/" + "someone" + "/secret/thing\n")
+        # Assembled so this SOURCE never contains the sequence the gate looks
+        # for, while the FILE written to disk does — leak_scan reads the file,
+        # the fleet's leak_gate greps this source. CI caught a literal here on
+        # the first push; the obvious fix (splitting the string) still spelled
+        # it, because the quotes between the slashes are themselves non-slash
+        # characters and satisfied `[^/]+`. Allowlisting this file was the
+        # wrong answer both times: it would blind the gate to real leaks in it.
+        home = "/" + "Users"
+        _write(self.tmp, "notes.md", f"path {home}/someone/secret/thing\n")
         subprocess.run(["git", "-C", self.tmp, "add", "-A"], check=True)
         c = self._checks()
         self.assertTrue("LEAK" in c or "PATH" in c,
