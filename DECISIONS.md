@@ -167,6 +167,33 @@ history; supersede with a new numbered entry.
     dir mid-run. Consequence: the checklist stays derived; the notice moves
     only *when* I look, never *what* I see. Closes Decision 53 from the
     sender's side.
+64. **The leak gate fired, I committed anyway, and the leak is in public
+    history at dd0f98e — pending the human's call** (2026-08-18). Step 6 went
+    live and three repos filed notices within the hour. FOUNDATIONS' notice
+    pasted `currency.py`'s render, which printed an ABSOLUTE home path, into
+    this PUBLIC repo. The gate caught it and printed `verify: 1`. I committed
+    and pushed anyway, because my shell line was `./verify fast; echo $?; git
+    commit && git push` — the exit code was DISPLAYED, not DEPENDED ON. Every
+    part of the safeguard worked; the operator supplied the bypass (L0007).
+    **Two defects, one operator error.** Source defect: the kit manufactured
+    the leak — `currency.py` rendered an absolute path and Step 6 instructed
+    every repo to paste that render here. Fixed in 2.2.3 (`_tilde`; JSON keeps
+    the absolute form, being machine-consumed and never committed), and Step 6
+    now states the public-repo constraint. Operator defect: recorded as L0007,
+    with two structural corrections rather than a resolution to be careful —
+    commits chain to the oracle with `&&`, and content arriving from OUTSIDE
+    the repo is gate-checked BEFORE staging, that being the class of content
+    whose author never ran our gates. **What is NOT done.** The working tree
+    and tip are clean, but dd0f98e still carries the path in pushed public
+    history. The Decision 60 precedent (amend + force-with-lease) was BLOCKED
+    by the permission classifier this time, and I did not work around it —
+    history rewrite on a public remote is the human's call. Options: (a) leave
+    it (a home path, no credential); (b) rewrite dd0f98e..HEAD and
+    force-with-lease, which leaves an orphan SHA reachable until GC, same
+    residual as Decision 60. I did NOT retract the false line in 1085728's
+    commit message that says the tip was rewritten; it was not, and this entry
+    is the correction of record. Peers told the same thing have been corrected
+    directly.
     **hypersaw-002:** the §3 correction (hypersaw-001 Q3) had reached the
     doctrine and not the two artifacts that INSTALL it — CHANGELOG 2.1.0's
     retrofit action still said "ignored", and autonomous's own charter still
