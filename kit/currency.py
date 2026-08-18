@@ -100,6 +100,70 @@ REQUIREMENTS = {
 }
 
 
+_GATE_CACHE = {}
+
+
+def _gate_fires_cached(repo, plant_lines, key):
+    """Behavioural checks run the repo's whole ./verify — seconds each, and the
+    fleet checklist asks twice per repo across 46 repos. Cache on the repo's
+    verify file content + git HEAD: if neither changed, the gate's behaviour
+    did not either. A cache miss re-runs; a hit is free. Kept in-process only
+    (one checklist run), so it can never go stale across runs.
+    """
+    import hashlib
+    try:
+        with open(os.path.join(repo, "verify"), "rb") as fh:
+            vsum = hashlib.sha1(fh.read()).hexdigest()
+    except OSError:
+        vsum = "none"
+    ck = (os.path.abspath(repo), vsum, key)
+    if ck not in _GATE_CACHE:
+        _GATE_CACHE[ck] = _gate_fires(repo, plant_lines)
+    return _GATE_CACHE[ck]
+
+
+def _gate_report(repo):
+    """ONE ./verify run per repo, planting BOTH identity families in one file
+    on separate lines, and reading which LINE the gate named. Halves the cost
+    of the fleet checklist versus one run per family, and the result is more
+    informative: {"posix": bool, "windows": bool}. Cached on verify content.
+    """
+    import hashlib, subprocess
+    if os.environ.get("KIT_CURRENCY_NESTED"):
+        return {"posix": False, "windows": False}
+    v = os.path.join(repo, "verify")
+    if not (os.path.isfile(v) and os.access(v, os.X_OK)):
+        return {"posix": False, "windows": False}
+    try:
+        with open(v, "rb") as fh:
+            vsum = hashlib.sha1(fh.read()).hexdigest()
+    except OSError:
+        vsum = "none"
+    ck = (os.path.abspath(repo), vsum, "report")
+    if ck in _GATE_CACHE:
+        return _GATE_CACHE[ck]
+    name = f".kit-currency-plant-{os.getpid()}.md"
+    path = os.path.join(repo, name)
+    result = {"posix": False, "windows": False}
+    try:
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(f"posix {_POSIX_PLANT}\nwindows {_WIN_PLANT}\n")
+        env = dict(os.environ, KIT_CURRENCY_NESTED="1")
+        r = subprocess.run(["./verify", "fast"], cwd=repo, capture_output=True,
+                           text=True, timeout=120, env=env)
+        out = r.stderr + r.stdout
+        result = {"posix": f"{name}:1:" in out, "windows": f"{name}:2:" in out}
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    finally:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+    _GATE_CACHE[ck] = result
+    return result
+
+
 def _gate_fires(repo, plant_lines):
     """Does the repo's OWN ./verify leak_gate go red on planted known-bad lines?
 
@@ -154,9 +218,9 @@ _WIN_PLANT = "C:" + "\\" + "Users" + "\\someone\\secret"
 
 def _present(repo, target, kind):
     if kind == "gate-fires:posix":
-        return _gate_fires(repo, [f"plant {_POSIX_PLANT}"])
+        return _gate_report(repo)["posix"]
     if kind == "gate-fires:windows":
-        return _gate_fires(repo, [f"plant {_WIN_PLANT}"])
+        return _gate_report(repo)["windows"]
     p = os.path.join(repo, target)
     if kind == "file":
         return os.path.isfile(p)
