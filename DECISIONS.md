@@ -116,6 +116,38 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+53. **`absorbs` ruled into library-entry.3 (not v4); and a RESPONSE-DELIVERY
+    gap found in the INTEGRATIONS protocol** (2026-08-17, distillery-004).
+    Ruling: distillery's option (b), a distinct `absorbs: L0011, L0021,
+    L0034` reference list, semantically *folded in, not invalidated* —
+    because the distinction is load-bearing downstream. `supersedes` means
+    the target was WRONG (do not promote); `absorbs` means the target is now
+    a SPECIAL CASE whose evidence contributes to the survivor's weight.
+    Option (a) (multi-valued supersedes) would make a consolidation
+    indistinguishable from a multi-way invalidation to an analyst walking the
+    chains; option (c) pushes a real graph edge into prose, the loss v2
+    already rejected for annotated placeholders. One bad element quarantines
+    the entry — a half-parsed consolidation is a lie about the graph.
+    **Landed as an AMENDMENT to v3, not a v4**, and the licence is narrow and
+    stated in the contract: no consumer had implemented v3 yet (distillery's
+    parser still declares `library-entry.2`), so amending cost zero
+    migrations where a v4 would have cost two. Amending a contract a consumer
+    HAS implemented is a different act and is not licensed by this.
+    **The larger finding:** brief-004 (filed 2026-08-12) listed
+    distillery-003 and report-002 §3 as "still open" — both were ruled
+    2026-08-10 in `response-003.md`. Verified: the response is committed and
+    pushed here; their parser has no v3 reference. **A response lands in the
+    PROVIDER's repo and nothing signals the consumer it arrived.** `ball_scan`
+    reads a repo's own mailbox, so from the consumer's side an answered
+    thread and an ignored one are identical until someone pulls and reads.
+    Third instance of this shape in two weeks (Life-OS could not locate a
+    brief filed into its own tree; two mailbox writes sat untracked twelve
+    days). The `ball:` field assigns responsibility; the protocol has no
+    DELIVERY signal. Fix is autonomous's to design — candidate: ball_scan
+    reads the mailboxes addressed TO a repo in other roster repos, not only
+    its own, which is a read across territories and therefore needs a
+    doctrine ruling rather than just code. Queued, not built.
+
 52. **K1 built — `/retrofit` is a CHANGELOG-driven migration; the standards
     repo failed its own first check** (2026-08-17). `kit/currency.py` is the
     deterministic half: reads the declared `kit_version`, diffs against

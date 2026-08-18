@@ -14,6 +14,25 @@
 >    invisible under v1 AND v2 — a larger silent loss than v2's ruling recovered.
 >    The line form stays canonical for writing.
 >
+> **Amendment, 2026-08-17 (distillery-004): `absorbs`.** Added to v3 rather
+> than minted as v4 — deliberately, and this is the one time it is legitimate:
+> **no consumer has implemented v3 yet** (distillery's parser is still
+> `library-entry.2`), so amending costs zero migrations while a v4 would cost
+> two. Amending a contract that a consumer HAS implemented would be a
+> different act and is not licensed by this.
+>
+> `absorbs: L0011, L0021, L0034` — an optional comma-separated reference list,
+> semantically *folded in, not invalidated*. Distinct from `supersedes`
+> because the distinction is load-bearing downstream: a superseded lesson was
+> WRONG and must not be promoted; an absorbed lesson is now a special case of
+> a broader one and its evidence CONTRIBUTES to the survivor's weight. Collapsing
+> them into a multi-valued `supersedes` (distillery's option (a)) would make a
+> consolidation indistinguishable from a multi-way invalidation to any analyst
+> walking the chains. Forbidding it (option (c)) would push a real graph edge
+> into prose — the same loss v2 rejected for annotated placeholders.
+> Free-text remainder after the references is preserved as `absorbs_note`,
+> same rule as the other reference fields.
+
 > **Correction to the distillery-002 response letter:** that letter said the bare
 > tier is recognized "by matching the tier enum, not by position." That was
 > wrong; this contract said segment-1 AND enum-match, and distillery implemented
@@ -206,6 +225,12 @@ is a quality gate, not a formatting convention.
     "evidence":  {"type": "string", "minLength": 1},
     "falsifier": {"type": "string", "minLength": 1},
     "supersedes": {"type": "string", "pattern": "^L\\d{4}$"},
+    "absorbs": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^L\\d{4}$"},
+      "description": "v3 amendment: lessons folded INTO this one by consolidation. NOT supersedes — absorbed evidence contributes to this entry's weight; superseded content was invalidated. Many-to-one by nature, which is why supersedes (single-valued) had no slot for it."
+    },
+    "absorbs_note": {"type": "string"},
     "recurred":  {"type": "string"},
 
     "origin_note":     {"type": "string"},
@@ -241,8 +266,10 @@ field is not a format variant:
    `evidence`, `falsifier`).
 3. A REQUIRED field whose value is a placeholder (`—`, `-`, empty).
 4. A `tier` outside the enum, a malformed `added` date, or an `origin`/
-   `supersedes` value that is neither a valid `L\d{4}` reference nor a
-   placeholder.
+   `supersedes`/`absorbs` value that is neither a valid `L\d{4}` reference nor a
+   placeholder. (`absorbs` is a LIST — every element must be a valid reference;
+   one bad element quarantines the entry rather than silently dropping a
+   graph edge.)
 
 Everything v2 newly accepts is a *formatting* variation that carries the same
 information. Everything v2 still rejects is *missing information*. If a future
