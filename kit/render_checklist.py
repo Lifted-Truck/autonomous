@@ -107,6 +107,122 @@ def pending():
             "unwired": sorted(unwired), "missing": sorted(missing)}
 
 
+_PLANT_PATH = "/" + "Users" + "/somebody/private"   # assembled: this gate greps itself
+
+WIRE_PROMPT = """From the autonomous resident, 2026-08-18 (Decision 65). Your repo carries the
+vendored kit gates at .kit/kit-gates.sh but your ./verify never sources them,
+so the leak gate does not run at all — you are ungated right now. You have no
+leak_gate of your own to migrate, so this is added by hand, not by the script.
+
+1. In ./verify, after HARNESS_DIR is set, add:
+
+   if [ -r .kit/kit-gates.sh ]; then
+     . .kit/kit-gates.sh
+   else
+     echo "verify: .kit/kit-gates.sh missing - run kit_sync.py" >&2
+     exit 1
+   fi
+
+   A missing .kit/ must be a hard exit, never a degraded run.
+
+2. In fast(), alongside your existing checks:
+     kit_integrity || ok=1
+     leak_gate     || ok=1
+   Keep every project gate you already have; they are yours.
+
+3. Prove all three, because they come apart:
+   - ./verify fast is green
+   - grep -c 'kit/kit-gates.sh' verify   is >= 1
+   - it FIRES:
+       printf 'x {plant}\\n' > audit-plant.md
+       ./verify fast 2>&1 | grep audit-plant.md    # must print a hit
+       rm audit-plant.md
+
+Commit when green. Do not push - pushes are the human's. Then check in:
+   python3 ~/Documents/Claude/autonomous/kit/kit_sync.py . --notify
+""".replace("{plant}", _PLANT_PATH)
+
+RETROFIT_PROMPT = """From the autonomous resident, 2026-08-18. Please bring this repo up to the
+current kit version:
+
+   /retrofit
+
+It runs kit/currency.py first, shows you the exact delta, and PAUSES for
+approval before writing anything. Gate code is vendored now, never copied -
+step 4b runs kit_sync.py and thins ./verify. Commit when green; do not push
+(pushes are the human's), and check in at the end with
+kit_sync.py . --notify so autonomous can verify against your tree.
+"""
+
+
+def actions(data, todo):
+    """What the HUMAN does next, ordered by consequence — not by repo class.
+
+    The page used to be organised the way the fleet is organised, which is the
+    resident's mental model, not the human's. A human has exactly three kinds
+    of move: relay a prompt to a repo's session, run something themselves, or
+    wait. Everything else is reference.
+    """
+    by = {x["name"]: x for x in data}
+    out = []
+    if todo["unwired"] or todo["missing"]:
+        repos = sorted(set(todo["unwired"]) | set(todo["missing"]))
+        out.append({
+            "kind": "relay", "urgency": "now",
+            "title": "Wire the leak gate in these repos — they are ungated",
+            "why": ("They carry a checksum-perfect copy of the gate that their ./verify "
+                    "never sources, so nothing runs. A sampled probe caught one silent on "
+                    "a planted identity path. Neither has a gate of its own to migrate, so "
+                    "this is hand-wiring, not a script."),
+            "repos": repos, "payload": WIRE_PROMPT})
+    ready = [x for x in data if x["group"] == "DECLARE" and safety(x)[1] == "ok"]
+    if ready:
+        out.append({
+            "kind": "relay", "urgency": "quick",
+            "title": "Run /retrofit — zero gaps, about two minutes each",
+            "why": ("These have every baseline item already. The retrofit writes the kit "
+                    "version and the Mailbox section, vendors the gates, and stops."),
+            "repos": sorted(x["name"] for x in ready), "payload": RETROFIT_PROMPT})
+    if todo["staged"]:
+        out.append({
+            "kind": "run", "urgency": "whenever",
+            "title": "Review and commit an uncommitted ./verify change",
+            "why": ("Left by a kit update. Nothing is ever committed in a repo whose "
+                    "residents are not us. Where the repo has since been migrated, the "
+                    "older patch is subsumed — only the migration diff is worth reading."),
+            "repos": todo["staged"],
+            "payload": "\n".join(f"cd ~/Documents/Claude/{n} && git diff verify"
+                                  for n in todo["staged"])})
+    rest = [x for x in data if x["group"] in ("LIGHT", "FULL") and safety(x)[1] == "ok"]
+    if rest:
+        out.append({
+            "kind": "relay", "urgency": "bulk",
+            "title": "Run /retrofit — real gaps, longer sessions",
+            "why": ("Each needs a survey and your approval on the architecture rung. "
+                    "Work them in any order; the ones marked public are a security fix "
+                    "rather than housekeeping."),
+            "repos": sorted(x["name"] for x in rest), "payload": RETROFIT_PROMPT})
+    waiting = sorted(x["name"] for x in data
+                     if x["group"] in ("DECLARE", "LIGHT", "FULL") and safety(x)[1] == "warn")
+    if waiting:
+        out.append({
+            "kind": "wait", "urgency": "none",
+            "title": "Nothing to do — a resident is mid-flight",
+            "why": ("Dirty tree or a working branch. Ask that session to run /retrofit "
+                    "when it lands, or wait. Reaching in is what buries work."),
+            "repos": waiting, "payload": None})
+    if todo["unpushed"]:
+        tot = sum(c for _, c in todo["unpushed"])
+        out.append({
+            "kind": "run", "urgency": "backlog",
+            "title": f"Push {tot} commits across {len(todo['unpushed'])} repos",
+            "why": ("Agents commit, you push, so this accrues. Not urgent and not all "
+                    "from today."),
+            "repos": [f"{n} ({c})" for n, c in sorted(todo["unpushed"], key=lambda t: -t[1])],
+            "payload": None})
+    return out
+
+
 ORDER = ["DECLARE", "LIGHT", "FULL", "DONE", "DORMANT"]
 LABEL = {
     "DECLARE": ("Declare", "Zero baseline gaps. /retrofit writes kit_version and the ## Mailbox section, then reads “nothing to do”. Two minutes each."),
@@ -115,54 +231,6 @@ LABEL = {
     "DONE":    ("Done", "Declares the current kit version and passes its own currency check."),
     "DORMANT": ("Dormant", "Declared dormant with a review date. Off the list until it wakes or the date passes (Decision 55)."),
 }
-
-
-def _todo_html(t):
-    out = []
-    if t["unwired"]:
-        out.append('<h4>1 · Carrying the gate but not sourcing it — UNGATED</h4>'
-                   '<p>These repos have a checksum-perfect <code>.kit/kit-gates.sh</code> that their '
-                   '<code>./verify</code> never sources, so the leak gate does not run at all. '
-                   '"Files installed" and "protection installed" are different facts and this page '
-                   'now reports them separately — a sampled probe found one of these silent on a '
-                   'planted identity path.</p><ul>'
-                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["unwired"])
-                   + '</ul><p>Fix: <code>migrate_to_vendored.py . --apply</code>, or where it refuses, '
-                   'add <code>. .kit/kit-gates.sh</code> by hand per '
-                   '<code>kit/templates/verify.project</code>.</p>')
-    if t["missing"]:
-        out.append(f'<h4>{len(out)+1} · Has a ./verify but no vendored gate at all</h4>'
-                   '<p>Never synced, or synced and then lost. One of these filed a check-in claiming '
-                   '<code>current</code> while its <code>.kit/</code> does not exist — which is the '
-                   'case the verification step exists to catch.</p><ul>'
-                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["missing"])
-                   + '</ul><p>Fix: <code>kit_sync.py .</code> then wire it.</p>')
-    if t["staged"]:
-        out.append(f'<h4>{len(out)+1} · Uncommitted change to a repo\'s ./verify</h4>'
-                   '<p>Left in the tree by a kit update or a migration; nothing is ever committed '
-                   'in a repo whose residents are not us. Where the repo has since been migrated to '
-                   'vendored gates, the older 2.3.0 patch is <em>subsumed</em> — the migration deletes '
-                   'the block it patched, so only the migration diff is worth reading.</p><ul>'
-                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["staged"])
-                   + '</ul><p>Per repo: <code>git diff verify</code>, then commit. '
-                   'Repos with a live session may prefer to commit it themselves.</p>')
-    if t["unpushed"]:
-        # Standing state, NOT a today-list: this accumulates because pushes are
-        # the human's by charter, and most of it is other residents' own work,
-        # not anything this session touched. Presented as a backlog with a
-        # count so it cannot masquerade as an urgent queue.
-        tot = sum(c for _, c in t["unpushed"])
-        big = ", ".join(f"{html.escape(n)} ({c})" for n, c in
-                        sorted(t["unpushed"], key=lambda x: -x[1])[:4])
-        out.append(f'<h4>Standing backlog · {len(t["unpushed"])} repos hold {tot} unpushed commit(s)</h4>'
-                   f'<p>Not a queue for today, and not all from this session — agents commit, '
-                   f'you push, so this accrues. Largest: {big}. '
-                   f'Full list: <code>python3 kit/render_checklist.py</code> or '
-                   f'<code>governor/monitor.py</code>.</p>')
-    if not out:
-        out.append('<p class="none">Nothing waiting: every repo with a ./verify carries the '
-                   'vendored gate AND sources it.</p>')
-    return "".join(out)
 
 
 def safety(x):
@@ -178,9 +246,42 @@ def safety(x):
     return ("clean, on default — run any time", "ok")
 
 
+def _actions_html(acts):
+    kinds = {"relay": ("Relay", "Paste into that repo's Claude session"),
+             "run": ("You", "Run in your terminal"),
+             "wait": ("Wait", "No action — a resident holds it")}
+    cards = []
+    for i, a in enumerate(acts, 1):
+        label, hint = kinds[a["kind"]]
+        repos = "".join(f"<code>{html.escape(r)}</code>" for r in a["repos"])
+        pay = ""
+        if a["payload"]:
+            pid = f"p{i}"
+            pay = (f'<div class="copywrap"><button class="copy" data-t="{pid}">Copy</button>'
+                   f'<pre id="{pid}">{html.escape(a["payload"])}</pre></div>')
+        cards.append(f"""<article class="act act-{a['kind']}">
+  <header><span class="kind kind-{a['kind']}">{label}</span>
+    <h3>{i}. {html.escape(a['title'])}</h3></header>
+  <p class="hint">{hint} · {len(a['repos'])} repo(s)</p>
+  <p class="why">{html.escape(a['why'])}</p>
+  <div class="repos">{repos}</div>
+  {pay}
+</article>""")
+    return "".join(cards)
+
+
 def render(data, todo=None):
     todo = todo or {"staged": [], "unpushed": [], "unwired": [], "missing": []}
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    acts = actions(data, todo)
+    n_relay = sum(1 for a in acts if a["kind"] == "relay")
+    n_run = sum(1 for a in acts if a["kind"] == "run")
+    n_wait = sum(1 for a in acts if a["kind"] == "wait")
+    n_ungated = len(todo["unwired"]) + len(todo["missing"])
+    # An ungated repo is the only number here that is a live risk rather than a
+    # queue depth; colour it as such and let zero read as calm.
+    warnungated = " warn" if n_ungated else ""
+    warnrelay = " warn" if any(a["urgency"] == "now" for a in acts) else ""
     total = len(data)
     settled = sum(1 for x in data if x["group"] in ("DONE", "DORMANT"))
     ready = sum(1 for x in data if x["group"] in ("DECLARE", "LIGHT", "FULL") and safety(x)[1] == "ok")
@@ -277,6 +378,33 @@ tr:last-child td {{ border-bottom:0; }}
 .todo ul {{ margin:4px 0; padding-left:20px; }} .todo li {{ margin:2px 0; font-size:13.5px; }}
 .todo code {{ font:12.5px var(--mono); background:var(--bg); padding:1px 5px; }}
 .todo .none {{ color:var(--ok); }}
+.secttl {{ font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2);
+  margin:34px 0 4px; padding-bottom:8px; border-bottom:1px solid var(--line); }}
+.sectsub {{ color:var(--ink-2); font-size:13.5px; max-width:74ch; margin:0 0 20px; }}
+.act {{ background:var(--panel); border:1px solid var(--line); border-left:3px solid var(--line);
+  padding:16px 18px; margin:0 0 14px; }}
+.act-relay {{ border-left-color:var(--accent); }}
+.act-run {{ border-left-color:var(--warn); }}
+.act-wait {{ border-left-color:var(--line); opacity:.8; }}
+.act header {{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }}
+.act h3 {{ font-size:16.5px; margin:0; text-wrap:balance; }}
+.kind {{ font:600 10px var(--mono); letter-spacing:.08em; text-transform:uppercase;
+  padding:3px 8px; border:1px solid currentColor; white-space:nowrap; }}
+.kind-relay {{ color:var(--accent); }} .kind-run {{ color:var(--warn); }} .kind-wait {{ color:var(--ink-2); }}
+.hint {{ margin:6px 0 0; font:600 11px var(--mono); letter-spacing:.04em; color:var(--ink-2);
+  text-transform:uppercase; }}
+.why {{ margin:8px 0 10px; font-size:14px; color:var(--ink); max-width:76ch; }}
+.repos {{ display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px; }}
+.repos code {{ font:12px var(--mono); background:var(--bg); border:1px solid var(--line);
+  padding:2px 7px; }}
+.copywrap {{ position:relative; }}
+.copywrap pre {{ margin:0; padding:14px 16px; background:var(--bg); border:1px solid var(--line);
+  overflow-x:auto; font:12.5px/1.55 var(--mono); white-space:pre; }}
+button.copy {{ position:absolute; top:8px; right:8px; font:600 10px var(--mono);
+  letter-spacing:.06em; text-transform:uppercase; padding:5px 10px; cursor:pointer;
+  color:var(--accent); background:var(--panel); border:1px solid var(--accent); }}
+button.copy:hover, button.copy:focus-visible {{ background:var(--accent); color:var(--panel); }}
+button.copy:focus-visible {{ outline:2px solid var(--accent-ink); outline-offset:2px; }}
 .foot {{ color:var(--ink-2); font-size:13px; border-top:1px solid var(--line); padding-top:16px; margin-top:8px; }}
 </style>
 <div class="wrap">
@@ -284,31 +412,40 @@ tr:last-child td {{ border-bottom:0; }}
 <p class="sub">Derived from the fleet at <code>{now}</code> · nothing here is stored — every row is re-read from the repo. Refresh: <code>python3 kit/render_checklist.py</code>, then republish.</p>
 
 <div class="summary">
+  <div class="stat"><div class="n{warnrelay}">{n_relay}</div><div class="l">to relay to a session</div></div>
+  <div class="stat"><div class="n">{n_run}</div><div class="l">for you to run</div></div>
+  <div class="stat"><div class="n">{n_wait}</div><div class="l">waiting on a resident</div></div>
+  <div class="stat"><div class="n{warnungated}">{n_ungated}</div><div class="l">ungated right now</div></div>
+</div>
+
+<h2 class="secttl">What to do next</h2>
+<p class="sectsub">In order. Each card says who acts — you, or a repo's session — and gives the exact text. Nothing here is stored; re-running the generator re-reads every repo.</p>
+{_actions_html(acts)}
+
+<h2 class="secttl">Reference — full fleet state</h2>
+<p class="sectsub">The same repos, grouped by how much work a retrofit is. You should not need this to act; it is here to answer "why is that repo in that list".</p>
+
+<div class="summary">
   <div class="stat"><div class="n">{settled}<span style="font-size:16px;color:var(--ink-2)"> / {total}</span></div><div class="l">settled (done + dormant)</div></div>
   <div class="stat"><div class="n">{counts['DECLARE']}</div><div class="l">declare — two minutes each</div></div>
   <div class="stat"><div class="n">{counts['LIGHT']}</div><div class="l">light — under an hour</div></div>
   <div class="stat"><div class="n">{counts['FULL']}</div><div class="l">full retrofit</div></div>
-  <div class="stat"><div class="n">{ready}</div><div class="l">safe to run right now</div></div>
   <div class="stat"><div class="n warn">{public_gaps}</div><div class="l">public repos without a leak gate</div></div>
-</div>
-
-<div class="todo">
-  <h3>Before you resume — {len(todo['unwired']) + len(todo['missing'])} repo(s) not actually protected</h3>
-  {_todo_html(todo)}
-</div>
-
-<div class="how">
-  <h3>How to work this list</h3>
-  <ol>
-    <li>Pick a row whose <b>Safe to run now?</b> is green. A yellow row has a resident mid-flight — do it from <em>that</em> session, or after they merge.</li>
-    <li>Open a session in the repo and run <code>/retrofit</code>. It shows the currency delta, plans, and <b>pauses for your approval</b> before writing anything.</li>
-    <li>It closes by re-running the checker and requiring <code>nothing to do</code>. Commit; the push is yours.</li>
-    <li>Regenerate this page. The row moves to <b>Done</b> because the repo <em>reads</em> as done — no tick-box, no notice.</li>
-  </ol>
 </div>
 
 {''.join(group_table(g) for g in ORDER)}
 
+<script>
+document.querySelectorAll("button.copy").forEach(function (b) {{
+  b.addEventListener("click", function () {{
+    var el = document.getElementById(b.dataset.t);
+    navigator.clipboard.writeText(el.textContent).then(function () {{
+      var was = b.textContent; b.textContent = "Copied";
+      setTimeout(function () {{ b.textContent = was; }}, 1400);
+    }});
+  }});
+}});
+</script>
 <p class="foot">Groups: <b>Declare</b> = zero gaps, only the version + Mailbox section · <b>Light</b> = 1–3 gaps · <b>Full</b> = 4+ gaps, real survey. Public repos missing the leak gate are flagged because for them the retrofit is a security fix, not housekeeping. Source: <code>kit/retrofit_checklist.py</code>, <code>kit/currency.py</code>.</p>
 </div>
 """
