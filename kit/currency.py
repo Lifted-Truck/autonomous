@@ -66,13 +66,18 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2"}
+TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3"}   # 2.3.0 is NOT tool-only
 
 REQUIREMENTS = {
     # 2.2.1: tool-only — /retrofit Step 6 (completion notice) + retrofit_verify.
     # Asks nothing of the repo tree; a 2.2.0 repo is CURRENT against it.
     "2.2.1": [],
     "2.2.2": [],   # tool-only — probe restores .harness/ (L0006)
+    "2.2.3": [],   # tool-only — currency renders ~/ ; Step 6 notices are public
+    # 2.3.0: the gate must hide OTHER sessions' probe plants. Behavioural and
+    # checkable: with a plant present and no KIT_LEAK_PLANT, the gate must NOT
+    # fire. A repo whose gate still reds on a foreign plant is correctly BEHIND.
+    "2.3.0": [("gate ignores foreign probe plants", None, "plant-invisible")],
     # 2.2.0: the leak gate must FIRE, not merely exist. Behavioural, per
     # spectral-morph-001. A repo at 2.1.0 with a POSIX-only gate is correctly
     # BEHIND this — that is the migration, not a silent tightening.
@@ -126,6 +131,12 @@ def _gate_fires_cached(repo, plant_lines, key):
     return _GATE_CACHE[ck]
 
 
+def _tilde(path):
+    """`<home>/x` -> `~/x`. Never commit machine identity (doctrine)."""
+    home = os.path.expanduser("~")
+    return "~" + path[len(home):] if path.startswith(home + os.sep) else path
+
+
 def _harness_snapshot(repo):
     """Snapshot what the repo's OWN ./verify writes as a side effect, so a probe
     can put it back. juce-rag (2026-08-18): the gate-fires probe runs the
@@ -170,10 +181,10 @@ def _gate_report(repo):
     """
     import hashlib, subprocess
     if os.environ.get("KIT_CURRENCY_NESTED"):
-        return {"posix": False, "windows": False}
+        return {"posix": False, "windows": False, "plant_invisible": False}
     v = os.path.join(repo, "verify")
     if not (os.path.isfile(v) and os.access(v, os.X_OK)):
-        return {"posix": False, "windows": False}
+        return {"posix": False, "windows": False, "plant_invisible": False}
     try:
         with open(v, "rb") as fh:
             vsum = hashlib.sha1(fh.read()).hexdigest()
@@ -184,16 +195,31 @@ def _gate_report(repo):
         return _GATE_CACHE[ck]
     name = f".kit-currency-plant-{os.getpid()}.md"
     path = os.path.join(repo, name)
-    result = {"posix": False, "windows": False}
+    result = {"posix": False, "windows": False, "plant_invisible": False}
     snap = _harness_snapshot(repo)
     try:
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"posix {_POSIX_PLANT}\nwindows {_WIN_PLANT}\n")
-        env = dict(os.environ, KIT_CURRENCY_NESTED="1")
+        # KIT_LEAK_PLANT: kit >=2.3.0 gates hide plant files from every run
+        # EXCEPT the one that owns them, so our probe cannot red a concurrent
+        # session's verify on this tree (mind-lathe, 2026-08-18). Older gates
+        # ignore the variable and stay collision-prone — that is the retrofit.
+        env = dict(os.environ, KIT_CURRENCY_NESTED="1", KIT_LEAK_PLANT=name)
         r = subprocess.run(["./verify", "fast"], cwd=repo, capture_output=True,
                            text=True, timeout=120, env=env)
         out = r.stderr + r.stdout
-        result = {"posix": f"{name}:1:" in out, "windows": f"{name}:2:" in out}
+        # Second run, SAME plant, WITHOUT the ownership marker: this is what a
+        # concurrent session's verify sees while we probe. It must NOT name the
+        # plant — otherwise our probe reds their run on a file that vanishes
+        # (mind-lathe, 2026-08-18). Costs one extra verify per repo, cached
+        # with the rest; the alternative is grepping the gate's source, which
+        # is the presence check 2.2.0 exists to reject.
+        env2 = dict(os.environ, KIT_CURRENCY_NESTED="1")
+        env2.pop("KIT_LEAK_PLANT", None)
+        r2 = subprocess.run(["./verify", "fast"], cwd=repo, capture_output=True,
+                            text=True, timeout=120, env=env2)
+        result = {"posix": f"{name}:1:" in out, "windows": f"{name}:2:" in out,
+                  "plant_invisible": name not in (r2.stderr + r2.stdout)}
     except (OSError, subprocess.TimeoutExpired):
         pass
     finally:
@@ -240,7 +266,7 @@ def _gate_fires(repo, plant_lines):
     try:
         with open(path, "w", encoding="utf-8") as fh:
             fh.write("\n".join(plant_lines) + "\n")
-        env = dict(os.environ, KIT_CURRENCY_NESTED="1")
+        env = dict(os.environ, KIT_CURRENCY_NESTED="1", KIT_LEAK_PLANT=name)
         r = subprocess.run(["./verify", "fast"], cwd=repo, capture_output=True,
                            text=True, timeout=120, env=env)
         return name in (r.stderr + r.stdout)
@@ -266,6 +292,8 @@ def _present(repo, target, kind):
         return _gate_report(repo)["posix"]
     if kind == "gate-fires:windows":
         return _gate_report(repo)["windows"]
+    if kind == "plant-invisible":
+        return _gate_report(repo)["plant_invisible"]
     p = os.path.join(repo, target)
     if kind == "file":
         return os.path.isfile(p)
@@ -304,6 +332,10 @@ def report(repo, kit_dir):
               if parse_version(e[0]) > parse_version(declared)
               and e[0] not in TOOL_ONLY]          # tool-only bumps ask nothing
     out = {
+        # Absolute in JSON (machine-consumed, never committed); the human-facing
+        # render tildes it. /retrofit Step 6 pastes that render into a notice
+        # filed in the PUBLIC standards repo, where an absolute path is a leak
+        # the gate correctly rejects (2026-08-18, FOUNDATIONS' first notice).
         "repo": os.path.abspath(repo),
         "kit_version": kv,
         "declared": declared or "pre-2.0.0",
@@ -344,7 +376,7 @@ def report(repo, kit_dir):
 
 
 def render(r):
-    lines = [f"kit currency — {r['repo']}",
+    lines = [f"kit currency — {_tilde(r['repo'])}",
              f"  kit: {r['kit_version']}   declared: {r['declared']}   "
              + ("CURRENT" if r["current"] else f"BEHIND by {len(r['behind'])} entr{'y' if len(r['behind'])==1 else 'ies'}")]
     if r.get("declared_but_missing"):

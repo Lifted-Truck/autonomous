@@ -174,3 +174,41 @@ class TestProbeLeavesHarnessAlone(unittest.TestCase):
             currency._gate_report(root)
             self.assertFalse(os.path.exists(os.path.join(root, ".harness", "last-verify.json")))
 
+
+class TestForeignPlantIsInvisible(unittest.TestCase):
+    """mind-lathe, 2026-08-18: the probe plants INSIDE the target tree, so a
+    concurrent `./verify fast` there read the plant and reported a leak in a
+    file that vanished seconds later. The gate must be blind to a plant it
+    does not own, and must still see the one it does."""
+
+    def setUp(self):
+        self.root = tempfile.mkdtemp()
+        _full_baseline(self.root)
+        self.plant = ".kit-currency-plant-99999.md"
+        with open(os.path.join(self.root, self.plant), "w") as fh:
+            fh.write("x " + "/" + "Users" + "/nobody/secret\n")   # assembled, never literal
+
+    def tearDown(self):
+        shutil.rmtree(self.root, ignore_errors=True)
+
+    def _verify(self, own=None):
+        env = dict(os.environ)
+        env.pop("KIT_LEAK_PLANT", None)
+        if own:
+            env["KIT_LEAK_PLANT"] = own
+        return subprocess.run(["./verify", "fast"], cwd=self.root, env=env,
+                              capture_output=True, text=True)
+
+    def test_unowned_plant_does_not_red_a_concurrent_verify(self):
+        # The assertion is that the gate never NAMES the foreign plant. Exit
+        # code is not usable here: the baseline fixture's verify is the kit
+        # template, which exits 1 with NOT IMPLEMENTED by design. (Checked on
+        # a real repo separately: autonomous exits 0 with a foreign plant.)
+        r = self._verify()
+        self.assertNotIn(self.plant, r.stderr + r.stdout)
+
+    def test_owned_plant_still_fires(self):
+        r = self._verify(own=self.plant)
+        self.assertIn(self.plant, r.stderr + r.stdout)
+        self.assertNotEqual(r.returncode, 0)
+

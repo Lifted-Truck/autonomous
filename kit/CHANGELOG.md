@@ -122,3 +122,41 @@ kit-v2 core install carries as of this date:
 - **Retrofit action:** none — tool-only. A repo at 2.2.0 is CURRENT.
 - **Verify gate:** `kit/test_currency.py::TestProbeLeavesHarnessAlone`.
 
+## 2.2.3 — 2026-08-18 — currency renders `~/`; Step 6 notices land in a PUBLIC repo (tool-only)
+
+- `currency.py`'s human-facing render tildeizes the repo path (`_tilde`). The
+  JSON keeps the absolute path — machine-consumed, never committed. Step 6
+  tells every repo to paste that render into a notice filed in autonomous,
+  which is PUBLIC, so an absolute home path is a leak the gate correctly
+  rejects. FOUNDATIONS' first notice tripped it within the hour.
+- `/retrofit` Step 6 now says so explicitly, and says the ping may need the
+  ` [ref]` from `ListAgents` when the bare name does not resolve (juce-rag).
+- **Retrofit action:** none — tool-only. A repo at 2.2.0 is CURRENT.
+- **Verify gate:** the existing `leak_gate` (it caught this unaided).
+
+## 2.3.0 — 2026-08-18 — the leak gate hides OTHER sessions' probe plants
+
+Found by mind-lathe, hours after 2.2.2 fixed the record clobber — a second,
+independent race the record fix does not touch. `currency.py` proves a gate
+FIRES by planting identity paths in `.kit-currency-plant-*` INSIDE the target
+working tree. Any concurrent `./verify fast` on that tree reads the other
+run's plant and goes red on a file that no longer exists by the time anyone
+looks — and a retrofit ends by forcing a verify, which is exactly when the
+probe runs. mind-lathe's Stop hook reported two hits on
+`.kit-currency-plant-37128.md`, then a clean tree.
+
+- `leak_gate` (in `verify`, `harness/verify`, and any repo's copy) excludes
+  `.kit-currency-plant-*` unless `KIT_LEAK_PLANT` names that exact file —
+  so the plant is invisible to every run except the probe that owns it. Not
+  a weakening: the excluded name is a fixed dot-prefixed pattern no project
+  file uses, and the owning run still sees it.
+- `currency.py` sets `KIT_LEAK_PLANT` on its own probe run, then runs the
+  target's verify a SECOND time without it and requires the plant to be
+  unnamed — the behavioural check for this entry.
+- **Retrofit action:** add the `KIT_LEAK_PLANT` branch to the repo's
+  `leak_gate` (copy the block from `harness/verify`; the three detectors stay
+  byte-identical). A repo without it still reds a concurrent session while
+  being probed — that is what BEHIND means here.
+- **Verify gate:** `plant-invisible` in `currency.py`'s REQUIREMENTS; the
+  fleet checklist will show every repo lacking it.
+

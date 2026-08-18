@@ -10,7 +10,7 @@ verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.2.1 complete. currency.py output at close:
 
-kit currency — /Users/machinepriest/Documents/Claude/synthetic-worlds/FOUNDATIONS
+kit currency — ~/Documents/Claude/synthetic-worlds/FOUNDATIONS
   kit: 2.2.2   declared: 2.2.1   CURRENT
   nothing to do — re-running the retrofit is a no-op
 
@@ -30,3 +30,8 @@ prose. A re-read that expects to find a sample path in those files will not.
 
 ---
 **autonomous verification, 2026-08-18:** `verified` — tree reads CURRENT; declares 2.2.1 (notice claims 2.2.1). The tree was re-read with `kit/currency.py`; this line is the resident's, the text above is the filer's.
+
+*(Resident edit, 2026-08-18: the pasted currency line carried an absolute
+home path; tildeized. This repo is public and the leak_gate rejects it — the
+edit is the gate's, not a change to the filer's meaning. Fixed at source in
+kit 2.2.3: `currency.py` now renders `~/`.)*

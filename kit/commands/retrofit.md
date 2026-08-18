@@ -106,7 +106,10 @@ is a request that the effective-state check run now. Two channels, both:
    ---
    Retrofit to <kit-version> complete. currency.py output at close:
 
-   <paste the final currency output — must read CURRENT / nothing to do>
+   <paste the final currency output — must read CURRENT / nothing to do.
+   autonomous is PUBLIC: the path must read `~/…`, never an absolute home
+   path. kit >=2.2.3 renders it that way; if yours prints an absolute path,
+   tildeize it by hand — the leak_gate will reject the notice otherwise.>
 
    Committed: <sha> on <branch>. Pushed: <yes/no — pushes are the human's>.
    ```
@@ -116,7 +119,9 @@ is a request that the effective-state check run now. Two channels, both:
    claim, and claims are exactly what this step exists to replace.
 
 2. **Ping it** (only if a session is live). Run `ListAgents`; if a session
-   whose name contains `autonomous` is listed, `SendMessage` it one line:
+   whose name contains `autonomous` is listed, `SendMessage` it one line
+   (if the bare name does not resolve, append the ` [ref]` that `ListAgents`
+   printed for that row — juce-rag hit this on the first live run):
    `<this-repo> retrofit to <kit-version> filed at integrations/<this-repo>/retrofit-<kit-version>.md — please verify.`
    If no such session is listed, skip this — the file already carries it.
 
