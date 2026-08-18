@@ -19,7 +19,7 @@ pattern languages, SECI, CoP, Spotify model, golden paths, Tech Radar/ADR;
 Generative Agents, ExpeL, AWM, RAPTOR, G-Memory, Agent-KB, H²R, Zep/Graphiti,
 LongMemEval; PoisonedRAG, AgentPoison, MINJA, RobustRAG, OWASP ASI06).
 Canonical annotated list: `audit-loop-research.md` in
-[agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)
+[agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop) *(archived 2026-08-18; now autonomous/loops/audit-loop/)*
 (not duplicated here).
 
 ## 2026-07-10 — Multi-agent systems survey

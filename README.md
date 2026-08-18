@@ -167,7 +167,7 @@ forever. In autonomous operation, REFLECT is hook-enforced, never voluntary.
 ### 4b. Spinning up an audit loop (cross-project harvest)
 
 **When:** a parent directory has ≥2 children running knowledge loops.
-**How:** (canonical: [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop))
+**How:** (canonical: [loops/audit-loop/](loops/audit-loop/))
 1. Run `integrate-audit-loop.prompt.md` at the parent scope — installs the
    AUDIT-LOOP protocol block, INDEX/LIBRARY, and `AUDIT-STATE.json` (the
    hash ledger that makes passes incremental and idempotent).
@@ -274,7 +274,7 @@ by **reversibility of the change**, not trust in the model.
 | [doctrine/](doctrine/) | Doctrine (auto-loaded) + INTEGRATIONS + CONVENTIONS (JIT) + global-install guide | current |
 | [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`), sweep primitive, CI template, leak gate shipped |
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
-| [loops/](loops/) | Memory loops (leaf here; audit loop → [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)) | current |
+| [loops/](loops/) | Memory loops (leaf + audit loop, both canonical here)  <!--xruck/agent-knowledge-loop)) | current |
 | [governor/](governor/) | Watchdog · curator · coherence critic | **~10%** — `leak_scan.py` (privacy watchdog) + `HISTORY-REMEDIATION.md` live; rest designed (DESIGN §4) |
 | [integrations/](integrations/) | Intake channel — one dir per consumer (briefs from `distillery`, `dispatch`) | live |
 | [registry.json](registry.json) | Canonical sweep/watch allowlist for ecosystem processes (Decision 14) | live |

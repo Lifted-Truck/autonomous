@@ -15,7 +15,7 @@ them are files, not conversations.
 | Repo | Role | Remote |
 |---|---|---|
 | **autonomous** (this repo) | Standards: doctrine, integrations policy, harness kit, governor spec, ecosystem roadmap | github.com/Lifted-Truck/autonomous |
-| **agent-knowledge-loop** | The cross-project audit loop (promote-up memory) | github.com/Lifted-Truck/agent-knowledge-loop |
+| *(retired)* | The cross-project audit loop now lives in `autonomous/loops/audit-loop/` (Decision 58); its former repo is archived. |
 | **distillery** | Global memory: append-only stream + analyst + distilled pool | github.com/Lifted-Truck/distillery |
 | **dispatch** | Daily progress publishing: collector → FACTS → digest → gated publish | github.com/Lifted-Truck/dispatch |
 | **ai-integration-methodology** | The human-epistemics sibling: the collaboration methodology + consulting offering | github.com/Lifted-Truck/ai-integration-methodology |
@@ -41,7 +41,7 @@ The full orientation to layers/protocols/cycles: [README.md](README.md).
    global file stay machine-local; never copy them between machines.
 3. **Clone the audit loop:**
    ```bash
-   git clone https://github.com/Lifted-Truck/agent-knowledge-loop.git ~/Documents/Claude/agent-knowledge-loop
+   # (agent-knowledge-loop is ARCHIVED — its content is in autonomous/loops/audit-loop/)
    ```
 4. **Clone the execution tracks:**
    ```bash
@@ -49,10 +49,10 @@ The full orientation to layers/protocols/cycles: [README.md](README.md).
    git clone https://github.com/Lifted-Truck/dispatch.git   ~/Documents/Claude/dispatch
    ```
 5. **Optional — the weekly audit-loop cron.** Copy
-   `agent-knowledge-loop/audit-loop.config.example` →
+   `autonomous/loops/audit-loop/audit-loop.config.example` →
    `audit-loop.config` (same dir, git-ignored, machine-local scopes), then:
    ```
-   0 9 * * 0 $HOME/Documents/Claude/agent-knowledge-loop/audit-loop.sh >> $HOME/Documents/Claude/audit-loop.cron.log 2>&1
+   0 9 * * 0 $HOME/Documents/Claude/autonomous/loops/audit-loop/audit-loop.sh >> $HOME/Documents/Claude/audit-loop.cron.log 2>&1
    ```
    It is propose-only by design — it never mutates shared stores.
 6. **Verify:** start a fresh Claude Code session anywhere; ask what the

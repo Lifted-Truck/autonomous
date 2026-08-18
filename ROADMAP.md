@@ -138,7 +138,7 @@ not for cross-track sequencing):
 1. Kit v2 core's STATUS + LIBRARY-schema artifacts unblock dispatch E1
    (fully) and distillery D1 (validation half) — answer both briefs early.
 2. The sweep primitive should be extracted ONCE (Track A, from
-   agent-knowledge-loop's SCAN) before D1/E1 build their own — or D1/E1
+   loops/audit-loop's SCAN) before D1/E1 build their own — or D1/E1
    build minimal local versions behind the same interface and swap in
    (degrade-visibly rule applies to internal seams too).
 3. autonomous P3 must NOT build a second distilled pool — it consumes

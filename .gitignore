@@ -4,3 +4,4 @@
 governor/STATUS.md
 __pycache__/
 *.pyc
+loops/audit-loop/audit-loop.config

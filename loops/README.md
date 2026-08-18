@@ -6,12 +6,14 @@ Two loops, one entry format, self-similar at every level.
   [knowledge-loop/integrate-knowledge-loop.prompt.md](knowledge-loop/integrate-knowledge-loop.prompt.md).
   ORIENT → ACT → REFLECT → WRITE with tiers, falsifiers, and the
   anti-poisoning write gate.
-- **Cross-project audit loop** (parent scopes, promote-up): canonical at
-  **[github.com/Lifted-Truck/agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)**
-  (already published; its copies are newer than any others on disk — do not
-  edit audit-loop files anywhere else). Includes the research synthesis
-  (`audit-loop-research.md`), the integrate/run prompts, and the headless
-  runner (`audit-loop.sh`, propose-only staging by default).
+- **Cross-project audit loop** (parent scopes, promote-up): canonical here at
+  [audit-loop/](audit-loop/) since 2026-08-18 (Decision 58, superseding
+  Decision 2). Includes the research synthesis (`audit-loop-research.md`), the
+  integrate/run prompts, and the headless runner (`audit-loop.sh`,
+  propose-only staging by default). `audit-loop.config` is machine-local and
+  git-ignored — copy `audit-loop.config.example` and edit. The former home,
+  github.com/Lifted-Truck/agent-knowledge-loop, is ARCHIVED and carries a
+  tombstone pointing here.
 
 New-research deltas to fold into the loop design (selective-memory numbers,
 CLAUDE.md slot ceiling, Reflexion/Voyager priorities, down-propagation spec):

@@ -27,7 +27,7 @@ it and reads its per-topic last-checked dates.
   taxonomy, each mapped to the autonomous doctrine it grounds. Primary of
   DELEGATE-52 flagged attributed-not-verified (landscape-audit to confirm).
 - **Audit-loop research** (2026-07-08) — canonical in
-  [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop)
+  [agent-knowledge-loop](https://github.com/Lifted-Truck/agent-knowledge-loop) *(archived 2026-08-18; now autonomous/loops/audit-loop/)*
   (`audit-loop-research.md`): promote-up loops across LLM-memory and
   human-organization literatures; memory-poisoning defenses; the 12 design
   principles.

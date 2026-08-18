@@ -37,7 +37,7 @@ The knowledge loop (CLAUDE.md/INDEX.md/LIBRARY.md self-improving loop —
 canonical: `loops/knowledge-loop/`) installs per-project durable lessons with
 an anti-poisoning write gate. Offer it when a project becomes long-lived or
 accumulates hard-won lessons. The cross-project audit loop (canonical:
-github.com/Lifted-Truck/agent-knowledge-loop) harvests and promotes lessons
+`loops/audit-loop/`) harvests and promotes lessons
 up a tree of projects.
 
 ## AI/deterministic boundary

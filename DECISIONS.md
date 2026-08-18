@@ -116,6 +116,28 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+58. **agent-knowledge-loop consolidated into `autonomous/loops/audit-loop/`
+    and ARCHIVED — supersedes Decision 2** (2026-08-18, human-directed after
+    asking whether the separation still had a reason). It did not. Decision 2
+    carved it out on two premises, both since expired: *"already public"* —
+    but autonomous is public too, so it never distinguished them; and *"newer
+    than the root copies"* — a fact about that week, and the root copies are
+    gone (verified: zero file overlap). What remained was two homes for
+    harness doctrine, precisely what Decision 1 exists to prevent. Empirics
+    were unambiguous: 0 stars, 0 forks, 0 views in 14 days, 5 clones (own
+    machines), two commits on one day, no license on either side, nothing
+    outside autonomous citing the URL except dispatch's regenerated digests.
+    **The replacement test, which is the durable part:** a repo stays separate
+    if it has **its own residents and its own lifecycle**, NOT because it has
+    been published. distillery and dispatch pass and remain separate; this had
+    neither. Decision 2's error was using publication as a proxy for autonomy.
+    Ordering mattered: tombstone written and pushed BEFORE archiving, since an
+    archived repo is read-only. `audit-loop.config` deliberately not moved —
+    machine-local operator config, gitignored class; the `.example` is what
+    ships. Historical records (research/README, BIBLIOGRAPHY) were ANNOTATED
+    rather than rewritten, and DECISIONS #2 stands verbatim: append-only means
+    superseded, never edited.
+
 57. **The `absorbs` amendment was inert; the frontmatter fix missed its own
     thread; citation-time notice accepted** (2026-08-18, ruling hypersaw-001
     round 2 — all three items verified in-tree before answering).
