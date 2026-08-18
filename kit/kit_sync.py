@@ -112,7 +112,14 @@ def install(repo):
     return check(repo)[0]
 
 
-def receipt(repo, autonomous_root=None):
+def _tilde(path):
+    """`<home>/x` -> `~/x`. Receipts land in a PUBLIC repo and the leak gate
+    rejects absolute home paths — 2.2.3 shipped after exactly this."""
+    home = os.path.expanduser("~")
+    return "~" + path[len(home):] if path.startswith(home + os.sep) else path
+
+
+def receipt(repo, autonomous_root=None, note=None):
     """File a check-in in the standards repo's mailbox after an update.
 
     Not a claim that the update worked — a request that it be CHECKED, and a
@@ -126,7 +133,8 @@ def receipt(repo, autonomous_root=None):
     act, not the visitor's.
     """
     root = autonomous_root or os.path.abspath(_ROOT)
-    name = os.path.basename(os.path.abspath(repo))
+    abspath = os.path.abspath(repo)
+    name = os.path.basename(abspath)
     st, d = check(repo)
     man = os.path.join(repo, ".kit", "MANIFEST")
     body = open(man, encoding="utf-8").read() if os.path.isfile(man) else "(no MANIFEST)"
@@ -140,9 +148,19 @@ from: {name}
 to: autonomous
 status: filed
 ball: provider
+repo_path: {_tilde(abspath)}
 re: kit_sync to {kit_version()} — please verify against the tree
 ---
-kit_sync reports `{st}` at kit {kit_version()}. MANIFEST as written:
+kit_sync reports `{st}` at kit {kit_version()} for `{_tilde(abspath)}`.
+
+`repo_path` above is the directory this run ACTUALLY wrote, resolved at run
+time — not the one anyone intended. `.` resolves against the caller's working
+directory, so a run launched from elsewhere would sync some other repo and
+still report success; autonomous compares this line against its registry and
+disputes a mismatch. (Residuum, 2026-08-18: a receipt read `current` while the
+named repo had no `.kit/` at all, and nothing in the receipt could show why.)
+
+MANIFEST as written:
 
 ```
 {body.strip()}
@@ -150,6 +168,11 @@ kit_sync reports `{st}` at kit {kit_version()}. MANIFEST as written:
 
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
 """)
+        if note:
+            # The filer's own words. Without this the receipt is a fixed template
+            # with nowhere to answer a question, which is how a direct question
+            # to Residuum went unanswered in the very channel it was asked in.
+            fh.write(f"\n## From the filer\n\n{note.strip()}\n")
     return out
 
 
@@ -167,6 +190,9 @@ def main():
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--notify", action="store_true",
                     help="file a check-in in autonomous's mailbox after updating")
+    ap.add_argument("--note", metavar="TEXT",
+                    help="include your own words in the check-in (answers, caveats, "
+                         "what you found) — the receipt is otherwise a fixed template")
     ap.add_argument("--registry", default=os.path.join(_ROOT, "registry.json"))
     a = ap.parse_args()
     targets = _repos(a.registry) if a.all else [(os.path.basename(os.path.abspath(a.repo)), a.repo)]
@@ -182,7 +208,7 @@ def main():
         if d.get("files"):
             note = " — " + ", ".join(d["files"])
         if a.notify and not a.check:
-            print(f"  {'filed':18} {os.path.relpath(receipt(path))}")
+            print(f"  {'filed':18} {os.path.relpath(receipt(path, note=a.note))}")
         if a.all and st.startswith("current"):
             continue                      # only report what needs attention
         print(f"  {st:18} {name}{note}")

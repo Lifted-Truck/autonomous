@@ -113,6 +113,21 @@ class RetrofitVerify(unittest.TestCase):
         self.assertEqual(r["kit-sync-lie.md"]["verdict"], "disputed")
         self.assertIn("absent", r["kit-sync-lie.md"]["note"])
 
+    def test_receipt_naming_another_directory_is_disputed(self):
+        """A `.`-relative run launched from the wrong cwd syncs some other repo
+        and still reports `current`. The receipt records the path it ACTUALLY
+        wrote, so the mismatch is detectable instead of silent (Residuum,
+        2026-08-18, where nothing in the receipt could show what went wrong)."""
+        with open(os.path.join(self.mail, "kit-sync-elsewhere.md"), "w") as fh:
+            fh.write(f"---\nid: truth-kit-sync-{KIT_VERSION}\nfrom: truth\nto: autonomous\n"
+                     f"status: filed\nball: provider\nrepo_path: {self.liar}\n"
+                     f"re: kit_sync\n---\nclaimed.\n")
+        r = {os.path.basename(x["file"]): x for x in
+             rv.verify_all(self.registry, dry=True, mail_root=os.path.join(self.tmp, "mail"))}
+        row = r["kit-sync-elsewhere.md"]
+        self.assertEqual(row["verdict"], "disputed")
+        self.assertIn("targeted another directory", row["note"])
+
     def test_dry_run_writes_nothing(self):
         f = os.path.join(self.mail, "retrofit-lie.md")
         with open(f) as fh:

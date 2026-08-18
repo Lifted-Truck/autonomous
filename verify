@@ -38,7 +38,11 @@ fast() {
     || { echo "verify[fast]: kit gate tests red" >&2; ok=1; }
   # kit/currency.py drives every /retrofit in the fleet; its REQUIREMENTS
   # table must stay in lockstep with CHANGELOG.md (a test pins that).
-  (cd kit && python3 -m unittest -q test_currency) \
+  # test_kit_sync is named as 2.4.0's gate in the CHANGELOG; it must therefore
+  # actually RUN here. It did not, for three commits — and thinning
+  # harness/verify quietly broke three of its cases while this stayed green.
+  # A gate a CHANGELOG claims but no oracle invokes is a claim, not a gate.
+  (cd kit && python3 -m unittest -q test_currency test_kit_sync) \
     && (cd governor && python3 -m unittest -q test_retrofit_verify) \
     || { echo "verify[fast]: kit currency tests red" >&2; ok=1; }
   # Retired doctrine phrases must not survive in INSTALLING artifacts

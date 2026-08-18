@@ -223,3 +223,25 @@ judgment-bearing retrofit. Only mechanism goes through the new path.
   COPYABLE GATE check in autonomous's `verify` — no file under `harness/` or
   `kit/templates/` may define `leak_gate`/`record`, so this cannot recur.
 
+## 2.4.1 — 2026-08-18 — a check-in names the directory it actually wrote (tool-only)
+
+Residuum filed a receipt reading `current` while the named repo had no `.kit/`
+at all, and nothing in the receipt could show why — `.` resolves against the
+caller's working directory, so a run launched from elsewhere syncs a different
+repo and still reports success. The receipt now records the absolute path the
+run resolved to (tilde-form: it lands in a PUBLIC repo), and `retrofit_verify`
+disputes it when that path is not where the registry has that repo. A silent
+wrong-target becomes a detectable one.
+
+- `kit_sync.py --note TEXT` — the filer's own words in the receipt. Without it
+  the check-in is a fixed template with nowhere to answer a question, which is
+  how a direct question to Residuum went unanswered in the very channel it was
+  asked in.
+- `verify` now RUNS `kit/test_kit_sync.py`. The 2.4.0 entry named it as that
+  entry's gate and no oracle invoked it, so thinning `harness/verify` broke
+  three of its cases while everything stayed green for three commits. Its
+  migration fixture no longer copies `harness/verify` either — a fixture must
+  not depend on the artifact under reform.
+- **Retrofit action:** none — tool-only. A repo at 2.4.0 is CURRENT.
+- **Verify gate:** `kit/test_kit_sync.py`, now actually wired.
+

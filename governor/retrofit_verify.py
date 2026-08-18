@@ -77,7 +77,20 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                 sys.path.insert(0, os.path.join(_ROOT, "kit"))
                 import kit_sync
                 st, _d = kit_sync.check(path)
-                if st == "current" and kit_sync.kit_version() == claimed:
+                # A receipt names the directory it actually wrote. If that is not
+                # the repo the registry knows by that name, the run targeted
+                # somewhere else and its `current` is about a different tree —
+                # silent before, disputed now.
+                declared_path = re.search(r"^repo_path:\s*(\S+)\s*$", fm, re.M)
+                mismatch = (declared_path and
+                            os.path.realpath(os.path.expanduser(declared_path.group(1)))
+                            != os.path.realpath(path))
+                if mismatch:
+                    verdict = "disputed"
+                    note = (f"receipt was written for {declared_path.group(1)}, but the "
+                            f"registry has {sender} at a different path — the run "
+                            f"targeted another directory")
+                elif st == "current" and kit_sync.kit_version() == claimed:
                     verdict, note = "verified", f".kit/ matches canonical at {claimed} (hash)"
                 else:
                     verdict, note = "disputed", (f"kit_sync reads {st!r}; kit is at "

@@ -66,12 +66,13 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3"}   # 2.3.0/2.4.0 are NOT tool-only
+TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3", "2.4.1"}  # 2.3.0/2.4.0 are NOT
 
 REQUIREMENTS = {
     # 2.4.0: kit-owned gate code is VENDORED into .kit/ and checksum-pinned,
     # not copied. Checked by hash against the kit, which is also how the repo
     # proves it — no probe, no plant, no subprocess.
+    "2.4.1": [],   # tool-only — receipts name the path they wrote; filer notes
     "2.4.0": [("kit gates vendored (.kit/ matches canonical)", None, "vendored")],
     # 2.2.1: tool-only — /retrofit Step 6 (completion notice) + retrofit_verify.
     # Asks nothing of the repo tree; a 2.2.0 repo is CURRENT against it.

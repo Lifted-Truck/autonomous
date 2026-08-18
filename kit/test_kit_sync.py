@@ -59,11 +59,76 @@ class KitSync(unittest.TestCase):
         self.assertEqual(before, open(os.path.join(self.repo, ".kit", "MANIFEST")).read())
 
 
+class Receipt(unittest.TestCase):
+    def setUp(self):
+        self.repo = tempfile.mkdtemp()
+        self.aut = tempfile.mkdtemp()
+        kit_sync.install(self.repo)
+
+    def tearDown(self):
+        shutil.rmtree(self.repo, ignore_errors=True)
+        shutil.rmtree(self.aut, ignore_errors=True)
+
+    def test_records_the_path_it_actually_wrote(self):
+        out = kit_sync.receipt(self.repo, autonomous_root=self.aut)
+        text = open(out).read()
+        self.assertIn("repo_path:", text)
+        self.assertIn(os.path.realpath(self.repo).split(os.sep)[-1], text)
+
+    def test_filers_note_survives_into_the_receipt(self):
+        out = kit_sync.receipt(self.repo, autonomous_root=self.aut,
+                               note="ran from the wrong cwd the first time")
+        self.assertIn("ran from the wrong cwd the first time", open(out).read())
+
+    def test_receipt_carries_no_absolute_home_path(self):
+        """Receipts land in a PUBLIC repo whose leak gate rejects them (2.2.3)."""
+        out = kit_sync.receipt(self.repo, autonomous_root=self.aut)
+        self.assertNotIn(os.path.expanduser("~") + os.sep, open(out).read())
+
+
+# A pre-2.4.0 `verify`: the copied shape the migrator knows how to rewrite.
+# Built here rather than copied from harness/verify, because that template is
+# now THIN by design — using it as the fixture silently turned three of these
+# tests into no-ops the moment it was thinned, and ./verify did not notice
+# because test_kit_sync was named as 2.4.0's gate in the CHANGELOG and never
+# actually wired in. A fixture must not depend on the artifact under reform.
+LEGACY_VERIFY = """#!/usr/bin/env bash
+set -uo pipefail
+TARGET="${1:-fast}"
+HARNESS_DIR=".harness"
+mkdir -p "$HARNESS_DIR"
+
+record() { # record <target> <exit_code>
+  local git_hash; git_hash=$(git rev-parse --short HEAD 2>/dev/null || echo "no-git")
+  printf '{"target":"%s","exit":%d}\\n' "$1" "$2" > "$HARNESS_DIR/last-verify.json"
+  return "$2"
+}
+
+# --- leak gate (kit-core — DO NOT delete; keep self-contained) --------------
+leak_gate() {
+  local hits
+  hits=$(git grep --untracked -nIE 'PATTERN' -- . 2>/dev/null || true)
+  [ -z "$hits" ] && return 0
+  return 1
+}
+
+fast() {
+  local ok=0
+  leak_gate     || ok=1
+  return "$ok"
+}
+
+case "$TARGET" in
+  fast) fast; record fast $? ;;
+esac
+"""
+
+
 class Migration(unittest.TestCase):
     def setUp(self):
         self.repo = tempfile.mkdtemp()
-        shutil.copy(os.path.join(HERE, "..", "harness", "verify"),
-                    os.path.join(self.repo, "verify"))
+        with open(os.path.join(self.repo, "verify"), "w") as fh:
+            fh.write(LEGACY_VERIFY)
 
     def tearDown(self):
         shutil.rmtree(self.repo, ignore_errors=True)
