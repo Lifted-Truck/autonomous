@@ -140,7 +140,15 @@ def receipt(repo, autonomous_root=None, note=None):
     Written uncommitted — committing into the standards repo is its resident's
     act, not the visitor's.
     """
-    root = autonomous_root or os.path.abspath(_ROOT)
+    # KIT_MAILBOX_ROOT exists so a TEST can file a receipt without writing into
+    # the live standards repo. The absence of this override let
+    # test_notify_does_not_write file real receipts from real temp dirs into
+    # the real mailbox on every ./verify run — the notice loop then dutifully
+    # judged them `unresolvable`, working perfectly on my own litter. A test
+    # that writes into the artifact it is testing is the fixture-coupling
+    # failure again, one layer out.
+    root = (autonomous_root or os.environ.get("KIT_MAILBOX_ROOT")
+            or os.path.abspath(_ROOT))
     abspath = os.path.abspath(repo)
     name = os.path.basename(abspath)
     st, d = check(repo)

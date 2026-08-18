@@ -66,7 +66,9 @@ class KitSync(unittest.TestCase):
             before = open(man).read()
             r = sp.run([sys.executable, os.path.join(HERE, "kit_sync.py"), self.repo,
                         "--notify"], capture_output=True, text=True,
-                       env=dict(os.environ, HOME=os.environ.get("HOME", "")))
+                       env=dict(os.environ, KIT_MAILBOX_ROOT=aut))
+            self.assertTrue(os.path.isdir(os.path.join(aut, "integrations")),
+                            "receipt did not land in the redirected mailbox")
             self.assertEqual(before, open(man).read(), "--notify rewrote the manifest")
         finally:
             shutil.rmtree(aut, ignore_errors=True)
