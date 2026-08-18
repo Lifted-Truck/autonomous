@@ -43,3 +43,16 @@ Finish by reporting: the manifest for ratification, the green
 and whether the project should be registered in autonomous's ecosystem
 tracks. Reference implementations: `~/Documents/Claude/distillery/`,
 `~/Documents/Claude/dispatch/`.
+
+## Gates are vendored, never copied (kit >= 2.4.0)
+
+`harness/verify` is a THIN template: it contains no gate code. After copying it
+to `./verify`, run
+
+    python3 ~/Documents/Claude/autonomous/kit/kit_sync.py <new repo>
+
+which writes `.kit/kit-gates.sh` + `.kit/MANIFEST`, sha256-pinned and checked by
+`kit_integrity` on every run. Never paste gate code into `./verify`: that is
+what produced ten drifted `leak_gate` variants across the fleet, nine of them
+missing the Windows identity pattern while declaring a kit_version that
+promised it (Decision 65).

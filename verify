@@ -54,6 +54,19 @@ fast() {
     echo "verify: RETIRED PHRASE — a rule the doctrine corrected still appears in an installing artifact:" >&2
     echo "$hits" | sed 's/^/    /' >&2; ok=1
   fi
+  # No INSTALLING artifact may ship copyable gate code (Decision 65). The kit
+  # can fix a rule where it is READ and leave it wrong where it is INHERITED —
+  # that is hypersaw-002's lesson, and 2.4.0 reproduced it: the doctrine moved
+  # to vendoring while harness/verify still carried an inline leak_gate, so
+  # every fresh retrofit would have manufactured the drift 2.4.0 exists to end.
+  # Canonical gate code lives in ONE place, kit/vendor/, and is vendored from
+  # there. A definition anywhere a repo copies from is the bug.
+  local gatedefs
+  gatedefs=$(git grep --untracked -nE '^(leak_gate|record)\(\) \{' -- harness/ kit/templates/ 2>/dev/null || true)
+  if [ -n "$gatedefs" ]; then
+    echo "verify: COPYABLE GATE — an installing artifact defines gate code; it belongs in kit/vendor/:" >&2
+    echo "$gatedefs" | sed 's/^/    /' >&2; ok=1
+  fi
   # Exchange frontmatter must not lie about its own state (Decision 57).
   python3 - <<'PYEOF2' || ok=1
 import sys, os

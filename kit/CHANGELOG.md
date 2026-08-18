@@ -212,5 +212,14 @@ judgment-bearing retrofit. Only mechanism goes through the new path.
   `python3 <kit>/migrate_to_vendored.py <repo> --apply`. Both deterministic
   and idempotent; neither commits. After this, kit mechanism updates need no
   agent session at all — `kit_sync.py --all` is the whole update.
-- **Verify gate:** `vendored` in REQUIREMENTS; `kit/test_kit_sync.py`.
+- `harness/verify` is now THIN — it ships no gate code at all. Until this,
+  the doctrine had moved to vendoring while the template every repo is born
+  from still carried an inline `leak_gate`, so every fresh `/retrofit` and
+  `/spinup` would have manufactured the exact drift 2.4.0 exists to end. Same
+  shape as hypersaw-002: a rule corrected where it is READ and left standing
+  where it is INHERITED. `ONBOARDING.md` Part 2, `/retrofit` (new Step 4b) and
+  `/spinup` now instruct `kit_sync.py` and forbid pasting gate code.
+- **Verify gate:** `vendored` in REQUIREMENTS; `kit/test_kit_sync.py`; and a
+  COPYABLE GATE check in autonomous's `verify` — no file under `harness/` or
+  `kit/templates/` may define `leak_gate`/`record`, so this cannot recur.
 

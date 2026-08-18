@@ -62,6 +62,23 @@ gap table. Five behaviors are non-negotiable and unchanged:
    anything is deleted. Unmappable content is surfaced to the human, never
    silently discarded. Map first, replace second, delete only what's mapped.
 
+## Step 4b — vendor the kit-owned gates (kit >= 2.4.0)
+
+Gate code is NEVER copied into a repo. Run:
+
+    python3 ~/Documents/Claude/autonomous/kit/kit_sync.py <target>
+    python3 ~/Documents/Claude/autonomous/kit/migrate_to_vendored.py <target> --apply
+
+The first writes `.kit/kit-gates.sh` + `.kit/MANIFEST` (sha256-pinned); the
+second thins `./verify` to source them. If the migrator REFUSES, wire
+`. .kit/kit-gates.sh` by hand per `kit/templates/verify.project` and keep every
+project gate — refusal means it will not guess at your oracle, which is right.
+
+Then prove all three, because they come apart: `./verify fast` is green, the
+verify actually SOURCES `.kit/kit-gates.sh` (a checksum-perfect copy nothing
+sources leaves the repo ungated — three repos read `current` while completely
+unprotected), and the gate FIRES on a planted identity path.
+
 ## Step 5 — declare, then prove the declaration
 
 Only when EVERY `[ ]` in the delta is `[x]`: write `"kit_version": "<kit

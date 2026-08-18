@@ -149,7 +149,13 @@ new project" to land here. The procedure itself, mirroring what built
    9 questions); write answers to `project.manifest.json`, marked
    provisional until ratified.
 2. Copy the harness: `autonomous/harness/.claude` → `.claude/`,
-   `autonomous/harness/verify` → `./verify` (chmod +x). Implement `fast()`
+   `autonomous/harness/verify` → `./verify` (chmod +x) — the THIN template: it
+   carries no gate code. Then vendor the kit-owned gates, which is what
+   actually installs the leak gate:
+   `python3 ~/Documents/Claude/autonomous/kit/kit_sync.py <repo>` (writes
+   `.kit/kit-gates.sh` + `.kit/MANIFEST`, sha256-pinned). Never copy gate code
+   into `./verify` — that is what produced ten drifted variants (Decision 65).
+   Implement `fast()`
    with at least a structure/manifest sanity check — a green-from-day-zero
    oracle, honestly scoped, beats an aspirational red one.
 3. Write `CLAUDE.md` from [harness/CLAUDE.md](harness/CLAUDE.md): the
