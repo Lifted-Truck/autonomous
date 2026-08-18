@@ -79,7 +79,44 @@ verify actually SOURCES `.kit/kit-gates.sh` (a checksum-perfect copy nothing
 sources leaves the repo ungated — three repos read `current` while completely
 unprotected), and the gate FIRES on a planted identity path.
 
+## Step 4c — TIDY THE TREE YOU FOUND. Do not report it; resolve it.
+
+A retrofit inherits whatever state the repo is in, and the human should not be
+the one reconciling it. Before declaring, deal with everything loose:
+
+- **Uncommitted work that belongs to the kit** — a `.kit/` synced by the
+  standards repo, a `verify` patched by a batch, a `.gitattributes` written
+  and never staged: `git add` it and carry it in this PR. It is the same
+  change you are making.
+- **Uncommitted work that is the PROJECT'S** — someone's half-finished
+  feature: leave it alone, do not stage it, and name it in your report so the
+  human knows it is there. Yours to notice, not to absorb.
+- **Untracked `.kit/`** — `git add .kit`. An untracked vendored gate reaches
+  no clone and no CI, so the repo is ungated everywhere but this disk
+  (kit 2.5.1).
+- **Commits sitting on `main` unpushed** — move them onto your branch so they
+  ride this PR rather than waiting for someone to find them.
+- **Stray probe plants** (`.kit-currency-plant-*`) — delete them. They are
+  another session's litter, untracked and unignored, and one `git add -A`
+  from committing identity paths the gate ignores by design.
+
+Report what you tidied in the PR body. The rule: after your PR, `git status`
+in that repo should be clean except for work that is genuinely someone else's
+in progress.
+
 ## Step 5 — declare, then prove the declaration
+
+**If the delta has no `[ ]` at all — every requirement already met and only
+the version string stale — you do not need this procedure.** Run
+
+    python3 ~/Documents/Claude/autonomous/kit/advance.py <target> --apply
+
+which raises the declaration to the highest version whose requirements are ALL
+already satisfied, and can therefore only ever declare something already true.
+Commit that with a PR and stop. A retrofit is for closing GAPS; when there is
+no gap, editing a version string should not cost a session. (2026-08-18: 24
+repos were BEHIND for exactly this reason, all 24 with zero unmet
+requirements, and the ledger was asking for 24 sessions to change 24 strings.)
 
 Only when EVERY `[ ]` in the delta is `[x]`: write `"kit_version": "<kit
 version>"` into `project.manifest.json`. A partial retrofit writes
