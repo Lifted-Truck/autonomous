@@ -11,7 +11,7 @@ them into one number:
   sync      .kit/ vs the kit — current | stale | edited | absent  (hash)
   wired     ./verify actually SOURCES the vendored gates          (reachability)
   oracle    the repo's own ./verify fast exit code                (behaviour)
-  scope     working-tree changes confined to .kit/ and verify     (blast radius)
+  scope     working-tree changes outside .kit/ and verify        (INFORMATIONAL)
 
 `sync` without `wired` is the old trap in a new costume: a repo can carry a
 perfect, checksum-verified copy of the gate and still be completely ungated,
@@ -61,8 +61,17 @@ def _scope(path):
 
 
 def _wired(path):
-    """Does this repo's verify actually reach the vendored gates?"""
+    """Does this repo's verify reach the vendored gates?
+
+    Three states, not two — collapsing them made this report cry wolf:
+      True   verify exists and sources .kit/kit-gates.sh
+      False  verify EXISTS and does not source it — the real defect
+      None   no verify at all: nothing to wire, and the repo's gap is the
+             baseline retrofit, which is a different item on a different list
+    """
     v = os.path.join(path, "verify")
+    if not os.path.isfile(v):
+        return None
     try:
         with open(v, encoding="utf-8") as fh:
             return ".kit/kit-gates.sh" in fh.read()
@@ -141,22 +150,31 @@ def main():
     print(f"  {'repo':34} {'sync':9} {'wired':6} {'oracle':7} {'probe':6} scope")
     bad = 0
     for r in rows:
-        ok = (r["sync"] == "current" and r["wired"]
-              and not r["stray"] and r["behaves"] is not False)
+        # `stray` is NOT a health criterion. It was written as the blast-radius
+        # check for a batch write — "did my edit touch anything it should not"
+        # — and left in as a pass/fail, where it flagged 26 repos for having
+        # ordinary uncommitted work. A repo mid-feature is not unhealthy, and
+        # an audit that says so trains its reader to ignore it.
+        ok = (r["sync"] == "current" and r["wired"] is not False
+              and r["behaves"] is not False)
         bad += 0 if ok else 1
         probe = {True: "fires", False: "SILENT", None: "—"}[r["behaves"]]
         oracle = "green" if r["oracle"] == 0 else (f"red({r['oracle']})" if r["oracle"] is not None else "—")
-        scope = "clean" if not r["stray"] else f"STRAY: {', '.join(r['stray'][:3])}"
-        wired = "yes" if r["wired"] else "NO"
+        scope = "clean" if not r["stray"] else f"{len(r['stray'])} uncommitted"
+        wired = {True: "yes", False: "NO", None: "n/a"}[r["wired"]]
         print(f"  {r['repo']:34} {r['sync']:9} {wired:6} {oracle:7} {probe:6} {scope}")
     sampled = [r for r in rows if r["behaves"] is not None]
     print(f"\n  behavioural sample: {sum(1 for r in sampled if r['behaves'])}/{len(sampled)} "
           f"gates fired on a planted identity path")
-    unwired = [r["repo"] for r in rows if not r["wired"]]
+    unwired = [r["repo"] for r in rows if r["wired"] is False]
+    no_oracle = [r["repo"] for r in rows if r["wired"] is None]
     if unwired:
         print(f"\n  {len(unwired)} repo(s) carry the vendored gate but do NOT source it — "
               f"files installed, protection not. Run migrate_to_vendored.py there,\n"
               f"  or (where it refuses) wire `. .kit/kit-gates.sh` by hand.")
+    if no_oracle:
+        print(f"\n  {len(no_oracle)} repo(s) have .kit/ but no ./verify at all — not a wiring "
+              f"defect; their gap is the baseline retrofit: {', '.join(no_oracle)}")
     print(f"  {'ALL CLEAR' if not bad else str(bad) + ' repo(s) need attention'}")
     # A red oracle is reported, never judged: a repo may be red for its own
     # reasons, and that is its resident's call, not this audit's.
