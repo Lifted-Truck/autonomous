@@ -116,6 +116,33 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+61. **K4 batch 1 shipped (.gitattributes, 27 commits + 15 writes); the
+    retrofit checklist is DERIVED, never maintained** (2026-08-18). The batch:
+    43 repos lacked the CRLF guard, not the 20 I had been quoting — every
+    behind repo, not just the "nearly" bucket. `kit/batch_gitattributes.py`
+    committed only where a resident would not be disturbed (clean tree, on the
+    default branch: 27), WROTE the file and left it for the resident where a
+    branch or dirty tree was live (15 — HYPERSAW mid-flight on its absorbs
+    branch, Tonality on a fix branch, FOUNDATIONS on a suite branch), and
+    skipped the archived repo. Nothing pushed; every push is the human's. This
+    is writes-stay-home honoured, not waived: a resident's branch gets a
+    resident's commit. **The checklist.** The human asked for a list that
+    updates as each retrofit happens, suggesting each repo "send a notice" I
+    would tick. That is a DECLARED-state design, and Decisions 53–57 are a list
+    of declared states that lied. A notice is one more declaration. The
+    EFFECTIVE state already exists — `currency.py` reads each repo's manifest
+    and tree — so `kit/retrofit_checklist.py` derives the list from the fleet
+    every run: no tick-box, no notice channel, no state file. It cannot go
+    stale because it is not stored, and cannot be wrong about a repo because
+    it re-reads the repo. Grouped by what the retrofit will actually involve
+    (DECLARE / LIGHT / FULL / DORMANT / DONE) so the human picks a batch, and
+    appended to STATUS.md so it lands where the human already looks. First
+    run caught what a hand list would not: Antiphon reads DORMANT (correct,
+    off the list); the archived repo was still on the roster and read as
+    behind by everything — now excluded in registry.json. Fleet after batch 1:
+    3/46 settled; 11 DECLARE (zero gaps — retrofit writes kit_version +
+    ## Mailbox only); 11 LIGHT; 21 FULL.
+
 60. **Filed an INTERNAL document into the PUBLIC repo; rewrote the tip commit
     to remove it** (2026-08-18, human caught it: "remembering it's an internal
     document and probably shouldn't make it to the public repo"). I committed

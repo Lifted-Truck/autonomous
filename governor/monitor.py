@@ -30,6 +30,7 @@ import datetime
 import json
 import os
 import re
+import subprocess
 import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -343,8 +344,19 @@ def main(argv=None):
         sys.stdout.write("\n")
         return 0
 
+    # K4 checklist — DERIVED from the fleet each run, never stored. It is
+    # appended to STATUS.md so it lands where the human already looks; the
+    # human asked for a list that "updates as each retrofit happens," and this
+    # is that, minus the notice channel: a repo is done when it READS as done.
+    try:
+        checklist = subprocess.run(
+            [sys.executable, os.path.join(_HERE, "..", "kit", "retrofit_checklist.py"), "--md"],
+            capture_output=True, text=True, timeout=120).stdout
+    except Exception:
+        checklist = ""
     md = (render_status(rows, today, args.stale_days)
-          + "\n".join(s4_md) + "\n".join(exchange_md))
+          + "\n".join(s4_md) + "\n".join(exchange_md)
+          + ("\n\n" + checklist if checklist else ""))
     if args.out:
         with open(args.out, "w", encoding="utf-8") as fh:
             fh.write(md)
