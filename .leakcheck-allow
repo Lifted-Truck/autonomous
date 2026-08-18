@@ -13,3 +13,12 @@ governor/HISTORY-REMEDIATION.md
 # a gate. Allowlisting the one file is the honest fix; the quoted form is a
 # placeholder in intent, just not in the exempt spelling.
 integrations/spectral-morph/brief.md
+
+# The vendoring prompts (2026-08-18, Decision 65) tell each repo to PLANT an
+# identity path and require its gate to name it. A placeholder form would be
+# filtered by the gate's own `[<$@{%]` class, so the plant would silently not
+# fire and the instruction would teach a check that cannot fail (L0002). The
+# path is fictional ("somebody"); these two files are docs ABOUT the pattern.
+# Named individually, not by directory: a future prompt must earn its own line.
+kit/prompts/vendor-migration.md
+kit/prompts/vendor-migration-judgment.md

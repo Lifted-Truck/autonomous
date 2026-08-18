@@ -95,9 +95,12 @@ def audit(registry, sample=3):
     rows = []
     for p in sorted(vend, key=lambda x: x["name"]):
         st, d = kit_sync.check(p["path"])
+        # isfile AND executable: one repo has a DIRECTORY named `verify`, which
+        # os.access(X_OK) happily calls executable.
+        vp = os.path.join(p["path"], "verify")
         oracle = subprocess.run(["./verify", "fast"], cwd=p["path"],
                                 capture_output=True, text=True).returncode \
-            if os.access(os.path.join(p["path"], "verify"), os.X_OK) else None
+            if os.path.isfile(vp) and os.access(vp, os.X_OK) else None
         rows.append({"repo": p["name"], "sync": st, "wired": _wired(p["path"]), "oracle": oracle,
                      "stray": _scope(p["path"]),
                      "behaves": _behaves(p["path"]) if p["name"] in sampled else None})
