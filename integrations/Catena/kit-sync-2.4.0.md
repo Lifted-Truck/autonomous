@@ -1,6 +1,6 @@
 ---
-id: Tonality-Live-kit-sync-2.4.0
-from: Tonality-Live
+id: Catena-kit-sync-2.4.0
+from: Catena
 to: autonomous
 status: verified
 ball: none

@@ -78,7 +78,9 @@ def pending():
         [sys.executable, os.path.join(HERE, "sweep", "sweep.py"),
          "--registry", os.path.join(ROOT, "registry.json"), "list"],
         capture_output=True, text=True, check=True).stdout)
-    staged, unpushed = [], []
+    sys.path.insert(0, HERE)
+    import kit_sync
+    staged, unpushed, unwired, missing = [], [], [], []
     for r in rows:
         if not r["status"].get("git"):
             continue
@@ -88,7 +90,21 @@ def pending():
         n = git(p, "rev-list", "--count", "@{u}..HEAD")
         if n.isdigit() and int(n):
             unpushed.append((r["name"], int(n)))
-    return {"staged": sorted(staged), "unpushed": sorted(unpushed)}
+        # Vendoring has TWO states that both look fine from a distance: files
+        # present, and files reachable. A repo can carry a checksum-perfect
+        # gate its ./verify never sources and be completely ungated, which is
+        # the declared-vs-effective trap wearing a new costume.
+        st = kit_sync.check(p)[0]
+        vp = os.path.join(p, "verify")
+        has_verify = os.path.isfile(vp) and os.access(vp, os.X_OK)
+        if st == "current" and has_verify:
+            with open(vp, encoding="utf-8", errors="ignore") as fh:
+                if ".kit/kit-gates.sh" not in fh.read():
+                    unwired.append(r["name"])
+        elif st == "absent" and has_verify:
+            missing.append(r["name"])
+    return {"staged": sorted(staged), "unpushed": sorted(unpushed),
+            "unwired": sorted(unwired), "missing": sorted(missing)}
 
 
 ORDER = ["DECLARE", "LIGHT", "FULL", "DONE", "DORMANT"]
@@ -103,12 +119,30 @@ LABEL = {
 
 def _todo_html(t):
     out = []
+    if t["unwired"]:
+        out.append('<h4>1 · Carrying the gate but not sourcing it — UNGATED</h4>'
+                   '<p>These repos have a checksum-perfect <code>.kit/kit-gates.sh</code> that their '
+                   '<code>./verify</code> never sources, so the leak gate does not run at all. '
+                   '"Files installed" and "protection installed" are different facts and this page '
+                   'now reports them separately — a sampled probe found one of these silent on a '
+                   'planted identity path.</p><ul>'
+                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["unwired"])
+                   + '</ul><p>Fix: <code>migrate_to_vendored.py . --apply</code>, or where it refuses, '
+                   'add <code>. .kit/kit-gates.sh</code> by hand per '
+                   '<code>kit/templates/verify.project</code>.</p>')
+    if t["missing"]:
+        out.append(f'<h4>{len(out)+1} · Has a ./verify but no vendored gate at all</h4>'
+                   '<p>Never synced, or synced and then lost. One of these filed a check-in claiming '
+                   '<code>current</code> while its <code>.kit/</code> does not exist — which is the '
+                   'case the verification step exists to catch.</p><ul>'
+                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["missing"])
+                   + '</ul><p>Fix: <code>kit_sync.py .</code> then wire it.</p>')
     if t["staged"]:
-        out.append('<h4>1 · Review and commit the kit 2.3.0 gate change</h4>'
-                   '<p>Applied by <code>kit/batch_leak_plant.py</code>: 19 lines added, 0 removed, '
-                   'one file (<code>verify</code>), byte-identical in every repo. Verified per repo — '
-                   'a foreign probe plant goes unnamed, a real leak still fires. '
-                   'Nothing was committed: writes stay home.</p><ul>'
+        out.append(f'<h4>{len(out)+1} · Uncommitted change to a repo\'s ./verify</h4>'
+                   '<p>Left in the tree by a kit update or a migration; nothing is ever committed '
+                   'in a repo whose residents are not us. Where the repo has since been migrated to '
+                   'vendored gates, the older 2.3.0 patch is <em>subsumed</em> — the migration deletes '
+                   'the block it patched, so only the migration diff is worth reading.</p><ul>'
                    + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["staged"])
                    + '</ul><p>Per repo: <code>git diff verify</code>, then commit. '
                    'Repos with a live session may prefer to commit it themselves.</p>')
@@ -126,8 +160,8 @@ def _todo_html(t):
                    f'Full list: <code>python3 kit/render_checklist.py</code> or '
                    f'<code>governor/monitor.py</code>.</p>')
     if not out:
-        out.append('<p class="none">Nothing waiting. Every batch change is committed and every '
-                   'repo is level with its remote.</p>')
+        out.append('<p class="none">Nothing waiting: every repo with a ./verify carries the '
+                   'vendored gate AND sources it.</p>')
     return "".join(out)
 
 
@@ -145,7 +179,7 @@ def safety(x):
 
 
 def render(data, todo=None):
-    todo = todo or {"staged": [], "unpushed": []}
+    todo = todo or {"staged": [], "unpushed": [], "unwired": [], "missing": []}
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     total = len(data)
     settled = sum(1 for x in data if x["group"] in ("DONE", "DORMANT"))
@@ -259,7 +293,7 @@ tr:last-child td {{ border-bottom:0; }}
 </div>
 
 <div class="todo">
-  <h3>Before you resume — {len(todo['staged'])} thing(s) to decide</h3>
+  <h3>Before you resume — {len(todo['unwired']) + len(todo['missing'])} repo(s) not actually protected</h3>
   {_todo_html(todo)}
 </div>
 

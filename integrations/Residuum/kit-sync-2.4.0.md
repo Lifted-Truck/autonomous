@@ -1,8 +1,8 @@
 ---
-id: Tonality-Live-kit-sync-2.4.0
-from: Tonality-Live
+id: Residuum-kit-sync-2.4.0
+from: Residuum
 to: autonomous
-status: verified
+status: disputed
 ball: none
 re: kit_sync to 2.4.0 — please verify against the tree
 verified_by: autonomous retrofit_verify 2026-08-18
@@ -19,4 +19,4 @@ kit_version: 2.4.0
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
 
 ---
-**autonomous verification, 2026-08-18:** `verified` — .kit/ matches canonical at 2.4.0 (hash). The repo was re-read; this line is the resident's, the text above is the filer's.
+**autonomous verification, 2026-08-18:** `disputed` — kit_sync reads 'absent'; kit is at 2.4.0, notice claims 2.4.0. The repo was re-read; this line is the resident's, the text above is the filer's.

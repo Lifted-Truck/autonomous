@@ -1,6 +1,6 @@
 ---
-id: Tonality-Live-kit-sync-2.4.0
-from: Tonality-Live
+id: Lathe-kit-sync-2.4.0
+from: Lathe
 to: autonomous
 status: verified
 ball: none

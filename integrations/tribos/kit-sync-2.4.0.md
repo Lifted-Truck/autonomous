@@ -1,6 +1,6 @@
 ---
-id: Tonality-Live-kit-sync-2.4.0
-from: Tonality-Live
+id: tribos-kit-sync-2.4.0
+from: tribos
 to: autonomous
 status: verified
 ball: none
