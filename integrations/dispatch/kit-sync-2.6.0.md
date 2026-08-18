@@ -2,10 +2,11 @@
 id: dispatch-kit-sync-2.6.0
 from: dispatch
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 repo_path: ~/Documents/Claude/dispatch
 re: kit_sync to 2.6.0 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 kit_sync reports `current` at kit 2.6.0 for `~/Documents/Claude/dispatch`.
 
@@ -26,3 +27,6 @@ kit_version: 2.5.0
 ```
 
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — .kit/ matches canonical bytes exactly. The repo was re-read; this line is the resident's, the text above is the filer's.
