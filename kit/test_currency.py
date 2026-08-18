@@ -58,6 +58,13 @@ def _full_baseline(root):
     subprocess.run(["git", "init", "-q", root], check=True)   # leak_gate uses git grep
     _touch(root, ".github/workflows/ci.yml", "name: ci")
     _touch(root, ".gitattributes", "* text=auto eol=lf")
+    # 2.5.0 asks whether .gitattributes is TRACKED, not merely on disk — an
+    # untracked one reaches no clone and no CI. The fixture must therefore
+    # stage its files to represent a real current repo; before this it did
+    # not, and the new check caught the fixture rather than the code, which
+    # is the check working.
+    subprocess.run(["git", "-C", root, "add", "-A"], check=True,
+                   capture_output=True)
 
 
 class TestVersionOrdering(unittest.TestCase):

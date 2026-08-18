@@ -69,6 +69,13 @@ def changelog_entries(kit_dir):
 TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3", "2.4.1"}  # 2.3.0/2.4.0 are NOT
 
 REQUIREMENTS = {
+    # 2.5.0: .gitattributes must be TRACKED, not merely present. Tonality found
+    # their own repo declaring 2.4.1 with an untracked one — the check read [x]
+    # while the LF policy could not reach a clone or CI, so the Windows-CRLF
+    # hazard it exists to close was fully live. Shipped as a version with a
+    # retrofit action rather than folded into 2.0.0: a tightening that flips
+    # repos to BEHIND is a migration, and 2.2.0 set that precedent.
+    "2.5.0": [(".gitattributes is TRACKED", ".gitattributes", "tracked")],
     # 2.4.0: kit-owned gate code is VENDORED into .kit/ and checksum-pinned,
     # not copied. Checked by hash against the kit, which is also how the repo
     # proves it — no probe, no plant, no subprocess.
@@ -348,6 +355,7 @@ _WIN_PLANT = "C:" + "\\" + "Users" + "\\someone\\secret"
 
 
 def _present(repo, target, kind):
+    import subprocess
     if kind == "gate-fires:posix":
         return _gate_report(repo)["posix"]
     if kind == "gate-fires:windows":
@@ -364,6 +372,15 @@ def _present(repo, target, kind):
     if kind == "dir-nonempty":
         return os.path.isdir(p) and any(
             f.endswith((".yml", ".yaml")) for f in os.listdir(p))
+    if kind == "tracked":
+        # Presence is not policy: an UNTRACKED .gitattributes never reaches a
+        # clone or CI, so the Windows-CRLF hazard it claims to close stays
+        # fully live while the check reads [x]. Tonality found their own repo
+        # in exactly that state, declaring 2.4.1 (2026-08-18). Same family as
+        # 2.2.0's contains:leak_gate — the file existing is not the file
+        # working. Two repos fleet-wide were in this state when it was fixed.
+        return subprocess.run(["git", "-C", repo, "ls-files", "--error-unmatch", target],
+                              capture_output=True).returncode == 0
     if kind == "exec":
         return os.path.isfile(p) and os.access(p, os.X_OK)
     if kind.startswith("contains:"):

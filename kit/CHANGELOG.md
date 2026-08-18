@@ -245,3 +245,22 @@ wrong-target becomes a detectable one.
 - **Retrofit action:** none — tool-only. A repo at 2.4.0 is CURRENT.
 - **Verify gate:** `kit/test_kit_sync.py`, now actually wired.
 
+## 2.5.0 — 2026-08-18 — `.gitattributes` must be TRACKED, not merely present
+
+Found by Tonality in their own repo, mid-retrofit: `currency.py` reported
+`[x] .gitattributes (LF)` for a file that was never `git add`ed. An untracked
+`.gitattributes` reaches no clone and no CI, so the repo could declare 2.4.1
+with the Windows-CRLF hazard the policy exists to close fully live. The check
+read the working tree; the policy only exists in the index.
+
+Third instance of one family in two days — `contains:leak_gate` (2.2.0),
+files-installed-but-not-sourced (2.4.0), and now present-but-untracked. The
+question a check asks must be the question that matters, and "is this file on
+disk" is almost never it.
+
+- `currency.py` gains a `tracked` check kind (`git ls-files --error-unmatch`).
+- **Retrofit action:** `git add .gitattributes` and commit. Two repos fleet-wide
+  were in this state when it shipped (one of them dormant).
+- **Verify gate:** the `tracked` row in REQUIREMENTS; the fleet checklist shows
+  every repo lacking it.
+

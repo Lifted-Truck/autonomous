@@ -49,6 +49,11 @@ class RetrofitVerify(unittest.TestCase):
         kit_sync.install(self.truth)
         with open(os.path.join(self.truth, "project.manifest.json"), "w") as fh:
             json.dump({"kit_version": KIT_VERSION}, fh)
+        # 2.5.0: a current repo has .gitattributes TRACKED, not just present.
+        # This fixture builds a repo by hand, so it has to stage like a real
+        # one — the same correction the currency fixture needed.
+        subprocess.run(["git", "-C", self.truth, "add", "-A"], check=True,
+                       capture_output=True)
         self.liar = os.path.join(self.tmp, "liar")
         _git_repo(self.liar)
         with open(os.path.join(self.liar, "project.manifest.json"), "w") as fh:

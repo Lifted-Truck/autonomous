@@ -9,7 +9,7 @@ be re-published to the same artifact URL and refreshed by re-running.
 
 Usage:  render_checklist.py > checklist.html
 """
-import datetime, html, json, os, subprocess, sys
+import datetime, html, json, os, re, subprocess, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")
@@ -104,7 +104,41 @@ def pending():
         elif st == "absent" and has_verify:
             missing.append(r["name"])
     return {"staged": sorted(staged), "unpushed": sorted(unpushed),
-            "unwired": sorted(unwired), "missing": sorted(missing)}
+            "unwired": sorted(unwired), "missing": sorted(missing),
+            "prs": open_prs()}
+
+
+def open_prs():
+    """PRs awaiting the human's merge. One search per OWNER, not per repo.
+
+    Decision 66 moved the human's queue from `git push` to `gh pr merge`, so
+    this is now the action list rather than a backlog note. Best-effort: no
+    network, no gh, or no auth returns an empty list rather than failing the
+    page — a ledger that will not render because GitHub is down is worse than
+    one missing a section, and the section says when it could not look.
+    """
+    owners, out = set(), []
+    rows = json.loads(subprocess.run(
+        [sys.executable, os.path.join(HERE, "sweep", "sweep.py"),
+         "--registry", os.path.join(ROOT, "registry.json"), "list"],
+        capture_output=True, text=True, check=True).stdout)
+    for r in rows:
+        remote = (r["status"] or {}).get("remote") or ""
+        m = re.search(r"github\.com[:/]([^/]+)/", remote)
+        if m:
+            owners.add(m.group(1))
+    for o in sorted(owners):
+        try:
+            raw = subprocess.run(
+                ["gh", "search", "prs", "--owner", o, "--state", "open", "--limit", "60",
+                 "--json", "repository,number,title,url"],
+                capture_output=True, text=True, timeout=45).stdout
+            for pr in json.loads(raw or "[]"):
+                out.append({"repo": pr["repository"]["name"], "number": pr["number"],
+                            "title": pr["title"], "url": pr["url"]})
+        except Exception:
+            continue
+    return sorted(out, key=lambda x: (x["repo"], x["number"]))
 
 
 _PLANT_PATH = "/" + "Users" + "/somebody/private"   # assembled: this gate greps itself
@@ -219,15 +253,33 @@ def actions(data, todo):
             "why": ("Dirty tree or a working branch. Ask that session to run /retrofit "
                     "when it lands, or wait. Reaching in is what buries work."),
             "repos": waiting, "payload": None})
+    if todo.get("prs"):
+        out.append({
+            "kind": "run", "urgency": "review",
+            "title": f"Review and merge {len(todo['prs'])} open PR(s)",
+            "why": ("Merging is yours and always was. Each PR carries its own evidence in "
+                    "the body — that is the review surface a bare commit never had."),
+            "repos": [f"{p['repo']}#{p['number']}" for p in todo["prs"]],
+            "payload": "\n".join(f"gh pr view {p['url']}   # {p['title'][:60]}"
+                                  for p in todo["prs"])})
     if todo["unpushed"]:
         tot = sum(c for _, c in todo["unpushed"])
         out.append({
-            "kind": "run", "urgency": "backlog",
-            "title": f"Push {tot} commits across {len(todo['unpushed'])} repos",
-            "why": ("Agents commit, you push, so this accrues. Not urgent and not all "
-                    "from today."),
+            "kind": "relay", "urgency": "backlog",
+            "title": f"Ask for a PR — {tot} commits sit on main in {len(todo['unpushed'])} repos",
+            "why": ("These predate Decision 66, when sessions stopped at a local commit and "
+                    "left you to find and push each one. Ask each session to move its work "
+                    "onto a branch and open a PR; pushing them yourself works too, but then "
+                    "you are pushing code you have not reviewed, which is the half of the "
+                    "problem that was worse than the keystrokes."),
             "repos": [f"{n} ({c})" for n, c in sorted(todo["unpushed"], key=lambda t: -t[1])],
-            "payload": None})
+            "payload": ("From the autonomous resident, 2026-08-18 (Decision 66). You have "
+                        "commits on main that were never pushed. Please move them onto a "
+                        "branch and open a PR instead:\n\n"
+                        "  git switch -c chore/<slug>\n"
+                        "  git push -u origin HEAD && gh pr create --fill\n\n"
+                        "Put the evidence in the PR body. Do NOT merge - merges are the "
+                        "human's. If the repo has no remote, say so and leave it committed.")})
     return out
 
 
