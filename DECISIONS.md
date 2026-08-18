@@ -116,6 +116,37 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+60. **Filed an INTERNAL document into the PUBLIC repo; rewrote the tip commit
+    to remove it** (2026-08-18, human caught it: "remembering it's an internal
+    document and probably shouldn't make it to the public repo"). I committed
+    and pushed the human's methodology master v3 — client engagements named by
+    trade and region, pricing status, internal positioning notes — verbatim
+    into `research/siblings/`, then wrote the review. Public for roughly
+    fifteen minutes. **This was my error and it is exactly the class this repo
+    guards against**: the leak_gate catches machine identity, the algedonic
+    check catches IPs and CI, and NOTHING checks for a document that names
+    clients. Content-class exposure has no gate. Remediation, in order:
+    (a) copied the master to its actual home, the `ai-integration-methodology`
+    working tree, and gitignored it THERE because that repo is public too;
+    (b) removed it from the commit, kept the review (which quotes only
+    doctrine-level content — verified by grep, not assumed), amended;
+    (c) `git push --force-with-lease` — the one legitimate case: a single tip
+    commit minutes old, no branches on it, no forks, versus client names in
+    public history permanently; (d) ASSERTED the effective state rather than
+    the declared one: `origin/main` tree clean, zero reachable objects contain
+    the file, GitHub API returns 404 at the path, no GitHub-side ref holds the
+    orphan, local reflog expired and gc'd. **Residual, stated not hidden:** the
+    orphaned commit remains fetchable BY EXACT SHA until GitHub's server-side
+    GC runs (days), only to someone who captured the SHA in the ~15-minute
+    window. Contact-GitHub-support purge is the human's call; I judged it not
+    proportionate for trade-and-region client descriptions with no names,
+    contact details, or figures. **Rule adopted for myself, since no gate can
+    hold it:** a document the human drops in "for review" is reviewed IN
+    PLACE and filed only after asking where it belongs. The gate that could
+    hold it — a `.leakcheck-allow`-style declaration of internal-only files,
+    or a `visibility:` frontmatter key that verify refuses to commit into a
+    public repo — is a K5 candidate, and its absence is why this happened.
+
 59. **`library_validate` — nothing checked an actual ENTRY against the
     contract; and it cried wolf on its own first run** (2026-08-18,
     hypersaw-001 round 3). HYPERSAW emitted `absorbs:` and had to state it as
