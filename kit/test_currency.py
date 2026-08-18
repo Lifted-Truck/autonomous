@@ -104,30 +104,49 @@ class TestReport(unittest.TestCase):
         self.assertFalse(r["current"])
         # every non-tool-only CHANGELOG entry, not a fixed count — the point
         # is "behind by everything", which grows as the kit does
-        expected = [v for v in currency.REQUIREMENTS if v not in currency.TOOL_ONLY]
+        # Computed currency (2.6.0) lists a version only when one of ITS
+        # requirements is unmet, so entries with no requirements of their own
+        # never appear — "behind by everything" now means every version that
+        # actually asks for something.
+        expected = [v for v, reqs in currency.REQUIREMENTS.items()
+                    if reqs and v not in currency.TOOL_ONLY]
         self.assertEqual(len(r["behind"]), len(expected))
         # the baseline entry is the one with real requirements
         base = next(b for b in r["behind"] if b["version"] == "2.0.0")
         self.assertEqual(len(base["missing"]), len(currency.REQUIREMENTS["2.0.0"]))
 
-    def test_undeclared_but_complete_repo_is_still_behind(self):
-        """Antiphon's shape: full harness, no kit_version. It is BEHIND —
-        currency is declared, never inferred — but with an empty missing list,
-        so the retrofit's only action is to write the declaration."""
+    def test_undeclared_but_complete_repo_is_CURRENT(self):
+        """Antiphon's shape: full harness, no kit_version. THIS TEST WAS
+        INVERTED on 2026-08-18 and the inversion is the point of 2.6.0.
+
+        It used to assert that such a repo is BEHIND, because currency was
+        DECLARED and never inferred. That rule cost 24 repos a second retrofit
+        in one day — every one of them satisfying every requirement while
+        holding a stale string. Currency is now computed from the tree, so a
+        repo that meets the bar IS current, whatever its manifest says or does
+        not say. The old rule's real concern — that silence must not read as
+        compliance — is preserved by construction: silence proves nothing
+        here, the CHECKS do, and an incomplete repo still reads behind."""
         _full_baseline(self.tmp)
         _touch(self.tmp, "project.manifest.json", json.dumps({"survey": {}}))
         r = currency.report(self.tmp, _KIT)
-        self.assertFalse(r["current"])
-        self.assertEqual(r["behind"][0]["missing"], [])
+        self.assertTrue(r["current"])
+        self.assertEqual(r["behind"], [])
+        self.assertEqual(r["declared"], "pre-2.0.0")   # provenance, not a gate
 
-    def test_declared_current_but_missing_items_is_reported_as_drift(self):
-        """autonomous on 2026-08-17: declared 2.0.0 with no CLAUDE.md. A
-        declaration the checks contradict must be LOUDER than no declaration."""
+    def test_a_missing_baseline_item_reads_behind_whatever_is_declared(self):
+        """Was: 'declared current but missing items is reported as drift'.
+        autonomous on 2026-08-17 declared 2.0.0 with no CLAUDE.md, and the old
+        model needed a special `declared_but_missing` channel to say so —
+        because `current` was computed from the string and could disagree with
+        the tree. Computed currency (2.6.0) collapses that: there is no
+        declaration to contradict, so a missing requirement is simply an unmet
+        requirement and the repo is BEHIND. Drift stops being a category."""
         _full_baseline(self.tmp)
         os.remove(os.path.join(self.tmp, "CLAUDE.md"))
         r = currency.report(self.tmp, _KIT)
-        self.assertTrue(r["current"])
-        self.assertIn("CLAUDE.md", r["declared_but_missing"])
+        self.assertFalse(r["current"])
+        self.assertIn("CLAUDE.md", [m for b in r["behind"] for m in b["missing"]])
 
     def test_verify_must_be_executable_not_just_present(self):
         """The Write tool does not set the exec bit (retrofit gotcha,
@@ -135,7 +154,8 @@ class TestReport(unittest.TestCase):
         _full_baseline(self.tmp)
         os.chmod(os.path.join(self.tmp, "verify"), 0o644)
         r = currency.report(self.tmp, _KIT)
-        self.assertIn("./verify", r["declared_but_missing"])
+        self.assertFalse(r["current"])
+        self.assertIn("./verify", [m for b in r["behind"] for m in b["missing"]])
 
     def test_tool_only_bump_does_not_put_the_fleet_behind(self):
         """2.0.1 changed /retrofit, not what a repo must contain. A repo at

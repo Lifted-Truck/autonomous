@@ -106,24 +106,22 @@ in progress.
 
 ## Step 5 — declare, then prove the declaration
 
-**If the delta has no `[ ]` at all — every requirement already met and only
-the version string stale — you do not need this procedure.** Run
+**There is no longer a "declare it and you're done" case.** Since kit 2.6.0
+currency is COMPUTED from the tree: a version is behind only when one of its
+requirements is actually unmet, so if `currency.py` says BEHIND there is real
+work, and when the work is done the repo reads CURRENT with nothing to write.
+(Before 2.6.0 a repo could be BEHIND purely because a string in its manifest
+was stale — that cost 24 repos a needless second retrofit in one day.)
 
-    python3 ~/Documents/Claude/autonomous/kit/advance.py <target> --apply
+Close every `[ ]` in the delta, then run `currency.py` once more: it must say
+CURRENT. If it does not, the retrofit is not done, whatever the diff looks
+like — the checker reads the tree, not your summary of it.
 
-which raises the declaration to the highest version whose requirements are ALL
-already satisfied, and can therefore only ever declare something already true.
-Commit that with a PR and stop. A retrofit is for closing GAPS; when there is
-no gap, editing a version string should not cost a session. (2026-08-18: 24
-repos were BEHIND for exactly this reason, all 24 with zero unmet
-requirements, and the ledger was asking for 24 sessions to change 24 strings.)
-
-Only when EVERY `[ ]` in the delta is `[x]`: write `"kit_version": "<kit
-version>"` into `project.manifest.json`. A partial retrofit writes
-`"kit_version": "pre-<version>"` and records the remaining gaps in ROADMAP as
-explicit debt — a repo never declares a version it does not meet. Then run
-`currency.py` once more: it must say CURRENT with nothing missing. If it
-does not, the retrofit is not done, whatever the diff looks like.
+Write `"kit_version": "<kit version>"` into `project.manifest.json` as you
+close. Since 2.6.0 that field is **provenance, not a gate** — "last
+deliberately retrofitted at X", the one fact the tree cannot tell you. Being
+current no longer depends on it, and a stale one costs nothing, so never
+spend a session on it alone.
 
 ## Gotchas (each cost a real run)
 

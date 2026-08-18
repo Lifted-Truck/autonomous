@@ -42,7 +42,7 @@ def gather():
         missing = base[0]["missing"] if base else []
         if dormant:
             grp = "DORMANT"
-        elif c.get("current") and not c.get("declared_but_missing"):
+        elif c.get("current"):
             grp = "DONE"
         elif not missing:
             grp = "DECLARE"
@@ -80,7 +80,7 @@ def pending():
         capture_output=True, text=True, check=True).stdout)
     sys.path.insert(0, HERE)
     import kit_sync
-    staged, unpushed, unwired, missing, string_only = [], [], [], [], []
+    staged, unpushed, unwired, missing = [], [], [], []
     for r in rows:
         if not r["status"].get("git"):
             continue
@@ -94,13 +94,6 @@ def pending():
         # present, and files reachable. A repo can carry a checksum-perfect
         # gate its ./verify never sources and be completely ungated, which is
         # the declared-vs-effective trap wearing a new costume.
-        cj = json.loads(subprocess.run(
-            [sys.executable, os.path.join(HERE, "currency.py"), p, "--json"],
-            capture_output=True, text=True).stdout or "{}")
-        if cj.get("behind") and not cj.get("declared_but_missing"):
-            unmet = [c for b in cj["behind"] for c in b.get("checks", []) if not c["present"]]
-            if not unmet:
-                string_only.append(r["name"])
         st = kit_sync.check(p)[0]
         vp = os.path.join(p, "verify")
         has_verify = os.path.isfile(vp) and os.access(vp, os.X_OK)
@@ -112,7 +105,7 @@ def pending():
             missing.append(r["name"])
     return {"staged": sorted(staged), "unpushed": sorted(unpushed),
             "unwired": sorted(unwired), "missing": sorted(missing),
-            "string_only": sorted(string_only), "prs": open_prs()}
+            "prs": open_prs()}
 
 
 def open_prs():
@@ -230,18 +223,6 @@ def actions(data, todo):
                     "a planted identity path. Neither has a gate of its own to migrate, so "
                     "this is hand-wiring, not a script."),
             "repos": repos, "payload": WIRE_PROMPT})
-    if todo.get("string_only"):
-        out.append({
-            "kind": "run", "urgency": "quick",
-            "title": f"{len(todo['string_only'])} repos are BEHIND on paper only — one command, no sessions",
-            "why": ("Each already satisfies every requirement of every version it is behind; "
-                    "the only stale thing is the version string in its manifest. This used to "
-                    "read as 'run /retrofit' once per repo, which on 2026-08-18 meant 24 "
-                    "sessions to edit 24 strings. advance.py raises a declaration only to a "
-                    "version whose requirements are ALL already met, so it cannot declare "
-                    "anything untrue."),
-            "repos": todo["string_only"],
-            "payload": "python3 ~/Documents/Claude/autonomous/kit/advance.py --all --apply"})
     ready = [x for x in data if x["group"] == "DECLARE" and safety(x)[1] == "ok"]
     if ready:
         out.append({
@@ -310,7 +291,7 @@ def actions(data, todo):
 
 ORDER = ["DECLARE", "LIGHT", "FULL", "DONE", "DORMANT"]
 LABEL = {
-    "DECLARE": ("Declare", "Zero baseline gaps. /retrofit writes kit_version and the ## Mailbox section, then reads “nothing to do”. Two minutes each."),
+    "DECLARE": ("Declare", "Zero baseline gaps; only a later entry's requirement is unmet. Small, scoped work — usually one file."),
     "LIGHT":   ("Light", "One to three gaps — mostly the leak gate in ./verify or a CI workflow. Under an hour each."),
     "FULL":    ("Full", "Four or more gaps. The real procedure: gap survey, inferred manifest, the architecture-rung question, plan-then-pause for your approval."),
     "DONE":    ("Done", "Declares the current kit version and passes its own currency check."),

@@ -108,44 +108,26 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                     _stamp(f, text, m, verdict, note, today)
                 continue
             c = _currency(path)
-            # Verdict keys on the EFFECTIVE state (current, nothing missing), not
-            # on the declared string equalling the claim: a repo declaring 2.2.0
-            # is current against a tool-only 2.2.1, and the tree is truthful.
-            # The declared/claimed pair is reported either way — as prose.
-            # Judge the notice against the version it CLAIMS, not the kit's
-            # latest. babysynth closed correctly at 2.4.1 and was disputed the
-            # moment 2.5.0 shipped — punished for a release postdating its own
-            # work. Left alone, every kit bump would false-dispute every repo
-            # that had just finished. Versions ABOVE the claim are news;
-            # `declared_but_missing` spans every version <= declared, so it is
-            # the real test of whether the claim holds.
             sys.path.insert(0, os.path.join(_ROOT, "kit"))
-            from currency import parse_version          # semver, not string compare
-            behind = [b["version"] for b in c.get("behind", [])]
-            newer = [v for v in behind if parse_version(v) > parse_version(claimed)]
-            declared = c.get("declared") or "pre-2.0.0"
-            # `>=`, not `==`: a repo may ADVANCE past its own notice — babysynth
-            # filed at 2.4.1, then 2.5.0 landed mid-session with its single
-            # requirement already met, so it advanced the declaration. Demanding
-            # equality would dispute a repo for being MORE current than it
-            # claimed, which is the mirror of the bug fixed an hour earlier.
-            advanced = parse_version(declared) > parse_version(claimed)
-            if (parse_version(declared) >= parse_version(claimed)
-                    and not c.get("declared_but_missing")):
+            from currency import parse_version
+            # Computed currency (2.6.0): a notice claims a version, and the only
+            # question is whether the TREE meets every requirement at or below
+            # it. No declaration is consulted, so a notice can no longer be
+            # disputed for a stale string, for a release that postdated it, or
+            # for having advanced past it. Those were three separate bugs in
+            # this function today; all three die with the thing that caused them.
+            unmet = [b for b in c.get("behind", [])
+                     if parse_version(b["version"]) <= parse_version(claimed)]
+            newer = [b["version"] for b in c.get("behind", [])
+                     if parse_version(b["version"]) > parse_version(claimed)]
+            if not unmet:
                 verdict = "verified"
-                note = f"tree satisfies {claimed} in full"
-                if advanced:
-                    note += f"; since advanced to {declared}"
+                note = f"tree meets every requirement through {claimed}"
                 if newer:
-                    note += f"; the kit has since moved on ({', '.join(newer)}) — not a defect"
+                    note += f"; unmet above the claim: {', '.join(newer)} — not this notice's business"
             else:
-                bits = [f"tree declares {c.get('declared')!r}, notice claims {claimed!r}"]
-                at_or_below = [v for v in behind if v <= claimed]
-                if at_or_below:
-                    bits.append(f"BEHIND at or below its own claim: {at_or_below}")
-                if c.get("declared_but_missing"):
-                    bits.append(f"declared but missing: {c['declared_but_missing']}")
-                verdict, note = "disputed", "; ".join(bits)
+                verdict = "disputed"
+                note = "; ".join(f"{b['version']} unmet: {b['missing']}" for b in unmet)
         # Decision 66: a session now closes on a BRANCH with an open PR, so the
         # tree read here may be that branch — or `main`, if they switched back,
         # in which case the work is real and simply invisible from here. Name

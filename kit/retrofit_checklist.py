@@ -52,7 +52,7 @@ def classify(repo_path):
     dormant = manifest.get("dormant") if isinstance(manifest, dict) else None
     if isinstance(dormant, dict) and dormant.get("review_by"):
         return "DORMANT", [], r
-    if r.get("current") and not r.get("declared_but_missing"):
+    if r.get("current"):
         return "DONE", [], r
     base = [b for b in r.get("behind", []) if b["version"] == "2.0.0"]
     missing = base[0]["missing"] if base else []

@@ -288,3 +288,36 @@ the repo read healthy. Every individual check passed.
 - **Verify gate:** `kit/test_kit_sync.py`, whose fixtures had to become real
   git repos — they had been testing the one machine they ran on.
 
+## 2.6.0 — 2026-08-18 — currency is COMPUTED from the tree, not declared
+
+The last of the day's presence-vs-effective family, and the one that caused
+the most human work. `kit_version` in `project.manifest.json` was the gate:
+`currency.py` read the claim and diffed the CHANGELOG above it. A claim goes
+stale on its own, so shipping a version made every repo BEHIND whether or not
+anything about it had changed. Measured the day it was fixed: **24 repos had
+retrofitted THAT DAY and read BEHIND again, and all 24 satisfied every
+requirement of every version they were behind.** Zero needed work. The ledger
+was asking for 24 sessions to edit 24 strings.
+
+A version is now behind only when one of ITS requirements is actually unmet.
+
+- `currency.py` computes `current` and `behind` from the checks. `declared`
+  is still reported — as PROVENANCE, "last deliberately retrofitted at X",
+  the one thing the tree cannot tell you. Nothing gates on it.
+- `declared_but_missing` is gone as a concept: with no claim, there is
+  nothing to contradict. A missing requirement is just an unmet requirement.
+- `retrofit_verify` judges a notice by whether the tree meets every
+  requirement at or below the claimed version. Three bugs died with the
+  declaration: disputes for a stale string, for a release that POSTDATED the
+  notice, and for having advanced PAST it.
+- `kit/advance.py` deleted the day it was written. It existed to fix stale
+  strings; there are none.
+- **Retrofit action:** NONE, for any repo, ever, for this entry. No repo's
+  code read the field (checked across the fleet: 46 apparent hits were
+  `.kit/kit-gates.sh` skipping the unrelated `kit_version:` line in
+  `.kit/MANIFEST`, and two `verify` hits were comments). Manifests keep the
+  field; it simply stops being asked to tell the truth.
+- **Verify gate:** `kit/test_currency.py`, where the test asserting the old
+  rule is INVERTED and says so — an undeclared but complete repo is now
+  CURRENT.
+

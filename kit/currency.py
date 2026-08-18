@@ -69,6 +69,9 @@ def changelog_entries(kit_dir):
 TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3", "2.4.1", "2.5.1"}  # 2.3.0/2.4.0 are NOT
 
 REQUIREMENTS = {
+    # 2.6.0 asks nothing of a repo: it changed how the CHECKER decides, not
+    # what a repo must have. Requirements-free entries never appear in `behind`.
+    "2.6.0": [],
     # 2.5.0: .gitattributes must be TRACKED, not merely present. Tonality found
     # their own repo declaring 2.4.1 with an untracked one — the check read [x]
     # while the LF policy could not reach a clone or CI, so the Windows-CRLF
@@ -405,53 +408,53 @@ def declared_version(repo):
 
 
 def report(repo, kit_dir):
+    """Currency COMPUTED from the tree, not read from a declaration.
+
+    Until 2.6.0 this asked the manifest what version the repo claimed and
+    diffed the CHANGELOG above it. That made the claim the gate, and a claim
+    goes stale on its own: on 2026-08-18, 24 repos that had retrofitted THAT
+    DAY read BEHIND again, and every one of them satisfied every requirement
+    of every version it was behind. Zero needed work. The ledger was asking
+    for 24 sessions to edit 24 strings.
+
+    So the question changed from "what does this repo say" to "what does this
+    repo MEET". A version is behind only when one of its requirements is
+    actually unmet. Nothing to declare, nothing to go stale, and a kit bump
+    now touches only the repos that genuinely fail its new requirement — the
+    same nine versions that cost the fleet 24 sessions would have cost 2.
+
+    `kit_version` in the manifest survives as PROVENANCE ("last deliberately
+    retrofitted at X") and is reported, never gated on. It is the one thing
+    the tree cannot tell you, which is exactly the thing a note is for.
+    """
     kv = kit_version(kit_dir)
     declared = declared_version(repo)
     entries = changelog_entries(kit_dir)
-    behind = [e for e in entries
-              if parse_version(e[0]) > parse_version(declared)
-              and e[0] not in TOOL_ONLY]          # tool-only bumps ask nothing
     out = {
         # Absolute in JSON (machine-consumed, never committed); the human-facing
-        # render tildes it. /retrofit Step 6 pastes that render into a notice
-        # filed in the PUBLIC standards repo, where an absolute path is a leak
-        # the gate correctly rejects (2026-08-18, FOUNDATIONS' first notice).
+        # render tildes it — a notice pasting this lands in a PUBLIC repo.
         "repo": os.path.abspath(repo),
         "kit_version": kv,
-        "declared": declared or "pre-2.0.0",
-        # "current" = nothing to migrate. A repo at 2.0.0 is current against a
-        # kit at 2.0.1 when 2.0.1 is tool-only; the checker must not manufacture
-        # 46 behind-by-nothing rows.
-        "current": not any(parse_version(e[0]) > parse_version(declared)
-                           and e[0] not in TOOL_ONLY for e in entries),
+        "declared": declared or "pre-2.0.0",   # provenance only
         "behind": [],
     }
-    for ver, date, title, _ in behind:
+    for ver, date, title, _ in entries:
+        if ver in TOOL_ONLY:
+            continue                            # tool-only bumps ask nothing
         reqs = REQUIREMENTS.get(ver, [])
         checks = [{"label": lbl, "present": _present(repo, tgt, kind)}
                   for lbl, tgt, kind in reqs]
-        out["behind"].append({
-            "version": ver, "date": date, "title": title,
-            "checks": checks,
-            "missing": [c["label"] for c in checks if not c["present"]],
-        })
-    # A repo may DECLARE current while missing baseline items (hand-edited
-    # manifest, or an item deleted since). Report that as drift, loudly —
-    # a declaration the checks contradict is worse than no declaration.
-    if out["current"]:
-        # Drift is checked against EVERY version's requirements up to the
-        # declared one, not only the newest — a repo declaring 2.2.0 that has
-        # lost its CLAUDE.md (a 2.0.0 requirement) is in drift. Checking only
-        # the newest version made exactly that invisible the moment 2.2.0
-        # shipped with requirements of its own (test caught it).
-        missing = []
-        for ver in sorted(REQUIREMENTS, key=parse_version):
-            if parse_version(ver) > parse_version(declared):
-                continue
-            for lbl, tgt, kind in REQUIREMENTS[ver]:
-                if not _present(repo, tgt, kind):
-                    missing.append(lbl)
-        out["declared_but_missing"] = missing
+        missing = [c["label"] for c in checks if not c["present"]]
+        if missing:
+            out["behind"].append({
+                "version": ver, "date": date, "title": title,
+                "checks": checks, "missing": missing,
+            })
+    out["current"] = not out["behind"]
+    # Kept for consumers that still read it: under computed currency a repo
+    # cannot "declare X while missing Y", because nothing is declared. An
+    # unmet requirement is simply an unmet requirement, and it is in `behind`.
+    out["declared_but_missing"] = []
     return out
 
 
