@@ -64,6 +64,33 @@ def gather():
     return out
 
 
+def pending():
+    """What is waiting on the HUMAN specifically — derived, never typed. Two
+    classes, because they have different owners:
+
+      staged   an edit exists in that repo's tree that nobody has committed.
+               Batch-applied kit changes land here: writes stay home, so the
+               script never commits in a repo it does not reside in.
+      unpushed commits exist that the remote has not seen. Pushes are the
+               human's by charter, so these accumulate until they act.
+    """
+    rows = json.loads(subprocess.run(
+        [sys.executable, os.path.join(HERE, "sweep", "sweep.py"),
+         "--registry", os.path.join(ROOT, "registry.json"), "list"],
+        capture_output=True, text=True, check=True).stdout)
+    staged, unpushed = [], []
+    for r in rows:
+        if not r["status"].get("git"):
+            continue
+        p = r["path"]
+        if git(p, "diff", "--name-only", "--", "verify"):
+            staged.append(r["name"])
+        n = git(p, "rev-list", "--count", "@{u}..HEAD")
+        if n.isdigit() and int(n):
+            unpushed.append((r["name"], int(n)))
+    return {"staged": sorted(staged), "unpushed": sorted(unpushed)}
+
+
 ORDER = ["DECLARE", "LIGHT", "FULL", "DONE", "DORMANT"]
 LABEL = {
     "DECLARE": ("Declare", "Zero baseline gaps. /retrofit writes kit_version and the ## Mailbox section, then reads “nothing to do”. Two minutes each."),
@@ -72,6 +99,36 @@ LABEL = {
     "DONE":    ("Done", "Declares the current kit version and passes its own currency check."),
     "DORMANT": ("Dormant", "Declared dormant with a review date. Off the list until it wakes or the date passes (Decision 55)."),
 }
+
+
+def _todo_html(t):
+    out = []
+    if t["staged"]:
+        out.append('<h4>1 · Review and commit the kit 2.3.0 gate change</h4>'
+                   '<p>Applied by <code>kit/batch_leak_plant.py</code>: 19 lines added, 0 removed, '
+                   'one file (<code>verify</code>), byte-identical in every repo. Verified per repo — '
+                   'a foreign probe plant goes unnamed, a real leak still fires. '
+                   'Nothing was committed: writes stay home.</p><ul>'
+                   + "".join(f'<li><code>{html.escape(n)}</code></li>' for n in t["staged"])
+                   + '</ul><p>Per repo: <code>git diff verify</code>, then commit. '
+                   'Repos with a live session may prefer to commit it themselves.</p>')
+    if t["unpushed"]:
+        # Standing state, NOT a today-list: this accumulates because pushes are
+        # the human's by charter, and most of it is other residents' own work,
+        # not anything this session touched. Presented as a backlog with a
+        # count so it cannot masquerade as an urgent queue.
+        tot = sum(c for _, c in t["unpushed"])
+        big = ", ".join(f"{html.escape(n)} ({c})" for n, c in
+                        sorted(t["unpushed"], key=lambda x: -x[1])[:4])
+        out.append(f'<h4>Standing backlog · {len(t["unpushed"])} repos hold {tot} unpushed commit(s)</h4>'
+                   f'<p>Not a queue for today, and not all from this session — agents commit, '
+                   f'you push, so this accrues. Largest: {big}. '
+                   f'Full list: <code>python3 kit/render_checklist.py</code> or '
+                   f'<code>governor/monitor.py</code>.</p>')
+    if not out:
+        out.append('<p class="none">Nothing waiting. Every batch change is committed and every '
+                   'repo is level with its remote.</p>')
+    return "".join(out)
 
 
 def safety(x):
@@ -87,7 +144,8 @@ def safety(x):
     return ("clean, on default — run any time", "ok")
 
 
-def render(data):
+def render(data, todo=None):
+    todo = todo or {"staged": [], "unpushed": []}
     now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     total = len(data)
     settled = sum(1 for x in data if x["group"] in ("DONE", "DORMANT"))
@@ -178,6 +236,13 @@ tr:last-child td {{ border-bottom:0; }}
 .safety {{ font-size:13px; }}
 .safety-ok {{ color:var(--ok); }} .safety-warn {{ color:var(--warn); }}
 .row-warn td.repo {{ opacity:.85; }}
+.todo {{ background:var(--panel); border:1px solid var(--warn); border-left:3px solid var(--warn); padding:14px 18px; margin:0 0 24px; }}
+.todo h3 {{ margin:0 0 10px; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--warn); }}
+.todo h4 {{ margin:12px 0 4px; font-size:13px; }}
+.todo p {{ margin:4px 0 6px; color:var(--ink-2); font-size:13.5px; max-width:74ch; }}
+.todo ul {{ margin:4px 0; padding-left:20px; }} .todo li {{ margin:2px 0; font-size:13.5px; }}
+.todo code {{ font:12.5px var(--mono); background:var(--bg); padding:1px 5px; }}
+.todo .none {{ color:var(--ok); }}
 .foot {{ color:var(--ink-2); font-size:13px; border-top:1px solid var(--line); padding-top:16px; margin-top:8px; }}
 </style>
 <div class="wrap">
@@ -191,6 +256,11 @@ tr:last-child td {{ border-bottom:0; }}
   <div class="stat"><div class="n">{counts['FULL']}</div><div class="l">full retrofit</div></div>
   <div class="stat"><div class="n">{ready}</div><div class="l">safe to run right now</div></div>
   <div class="stat"><div class="n warn">{public_gaps}</div><div class="l">public repos without a leak gate</div></div>
+</div>
+
+<div class="todo">
+  <h3>Before you resume — {len(todo['staged'])} thing(s) to decide</h3>
+  {_todo_html(todo)}
 </div>
 
 <div class="how">
@@ -211,4 +281,4 @@ tr:last-child td {{ border-bottom:0; }}
 
 
 if __name__ == "__main__":
-    sys.stdout.write(render(gather()))
+    sys.stdout.write(render(gather(), pending()))

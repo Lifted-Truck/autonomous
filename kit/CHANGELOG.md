@@ -157,6 +157,21 @@ probe runs. mind-lathe's Stop hook reported two hits on
   `leak_gate` (copy the block from `harness/verify`; the three detectors stay
   byte-identical). A repo without it still reds a concurrent session while
   being probed — that is what BEHIND means here.
+- **DO NOT gitignore `.kit-currency-plant-*`.** It is the obvious way to
+  close the hole this exclusion opens — an orphaned plant is untracked AND
+  unignored, so a careless `git add -A` could commit identity paths the gate
+  now ignores by design. It does not work: `git grep --untracked` skips
+  IGNORED files, so the ignore line blinds the probe that OWNS the run too,
+  turning the whole gate-fires check into a silent no-op. Proven both
+  directions by mind-lathe, whose human had already approved the ignore line
+  before their control caught it. What they did instead, and what to copy: a
+  `plant_not_tracked` check OUTSIDE `leak_gate` that fails if any
+  `.kit-currency-plant-*` is TRACKED — untracked plants stay visible to their
+  owning probe, and a committed one can never hide. Kept outside the kit-core
+  function so `leak_gate` stays byte-identical across the three detectors.
+- **Adopt the block VERBATIM, comment included.** A repo that merges only the
+  code keeps its older comment and has to re-reconcile at every future entry;
+  byte-identical means an empty diff against canonical (mind-lathe).
 - **Verify gate:** `plant-invisible` in `currency.py`'s REQUIREMENTS; the
   fleet checklist will show every repo lacking it.
 
