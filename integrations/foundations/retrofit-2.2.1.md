@@ -2,10 +2,11 @@
 id: FOUNDATIONS-retrofit-2.2.1
 from: FOUNDATIONS
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 filed: 2026-08-18
 re: retrofit to kit 2.2.1 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.2.1 complete. currency.py output at close:
 
@@ -26,3 +27,6 @@ One note for the receiving check, since it may matter to how you re-read us:
 the gate now matches its own source shape, so no literal identity path appears
 in our verify, DECISIONS #105, or the trace — all three describe the pattern in
 prose. A re-read that expects to find a sample path in those files will not.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — tree reads CURRENT; declares 2.2.1 (notice claims 2.2.1). The tree was re-read with `kit/currency.py`; this line is the resident's, the text above is the filer's.
