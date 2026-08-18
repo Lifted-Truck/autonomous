@@ -157,5 +157,51 @@ class TestDormancy(unittest.TestCase):
         self.assertIn("STALE", c)
 
 
+class TestDormancyDefersMaintenanceNotSecurity(unittest.TestCase):
+    """The line that keeps dormancy honest: a repo nobody develops still leaks
+    in public. Dormancy is permission to skip CHORES, never permission to stop
+    looking for exposure."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        subprocess.run(["git", "init", "-q", self.tmp], check=True)
+        subprocess.run(["git", "-C", self.tmp, "remote", "add", "origin",
+                        "https://example.invalid/x.git"], check=True)
+        self.today = datetime.date(2026, 8, 17)
+        _write(self.tmp, "CLAUDE.md", "x")
+        _write(self.tmp, "README.md", "*Last verified current: 2026-01-01.*")
+        _write(self.tmp, "project.manifest.json", json.dumps({
+            "dormant": {"since": "2026-07-12", "reason": "delivered",
+                        "review_by": "2027-02-17"}}))
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _checks(self, today=None):
+        return monitor.check_repo({"name": "t", "path": self.tmp},
+                                  today or self.today, 30)
+
+    def test_maintenance_warnings_are_deferred(self):
+        c = self._checks()
+        for chore in ("NO-CI", "STALE", "KIT-PRE", "GAPS"):
+            self.assertNotIn(chore, c, f"{chore} should be deferred while dormant")
+        self.assertIn("DORMANT", c)
+
+    def test_a_leak_still_fires_while_dormant(self):
+        """A dormant PUBLIC repo that leaks is not less exposed for being
+        quiet. If this ever passes, dormancy has become a hiding place."""
+        _write(self.tmp, "notes.md", "path /Users/someone/secret/thing\n")
+        subprocess.run(["git", "-C", self.tmp, "add", "-A"], check=True)
+        c = self._checks()
+        self.assertTrue("LEAK" in c or "PATH" in c,
+                        "a leak must fire regardless of dormancy")
+
+    def test_expiry_restores_the_deferred_chores(self):
+        c = self._checks(datetime.date(2027, 6, 1))
+        self.assertIn("DORMANT-EXPIRED", c)
+        self.assertIn("NO-CI", c)
+        self.assertIn("STALE", c)
+
+
 if __name__ == "__main__":
     unittest.main()

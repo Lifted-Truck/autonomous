@@ -116,6 +116,31 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+55. **Dormancy defers MAINTENANCE, never SECURITY; and declaring it must not
+    require a retrofit** (2026-08-17, human ruled monarch dormant, the other
+    seven un-retrofit repos to be retrofit). Two refinements the first real
+    dormant repo forced. **(a) The line.** A live dormancy declaration now
+    also defers `NO-CI`, `KIT-PRE` and `GAPS`, not just `STALE` — adding CI or
+    a kit version to finished software nobody develops is a chore nobody will
+    do, and an undoable chore on a dashboard is how the dashboard stops being
+    read. `LEAK`/`PATH` are computed BEFORE the dormancy branch and are never
+    suppressed: a repo nobody develops still leaks in public, and if dormancy
+    ever hides exposure it has become a hiding place. Test pins exactly that.
+    Expiry restores every deferred chore, louder. **(b) The gap.** Dormancy
+    lives in `project.manifest.json`, and monarch had no manifest — so
+    "declare this parked" would have cost a full 9-question retrofit for a
+    repo whose whole point is that nobody will develop it. Resolved with a
+    MINIMAL/DORMANT manifest variant: identity + `dormant` + an explicit note
+    that the survey is deliberately unanswered, because answering an
+    architecture rung and oracle shape for a finished app would be inventing —
+    the exact failure the survey exists to prevent. `/retrofit` runs the real
+    survey if it ever wakes. **monarch's `review_by` is 2027-02-17 (6 months),
+    defended not defaulted:** it is a delivered training app for one person's
+    job at one venue; if the job persists that long it is still in use, and if
+    not the repo is archivable — either answer is actionable at that date. The
+    human should overrule if that reasoning is wrong, since per antiphon's
+    caveat the field is only as good as the honesty of the date.
+
 54. **The session brief is SCOPED to the repo you are in; the scope rule is
     written into the protocol and ships via retrofit** (2026-08-17,
     human-reported). Symptom: agents in several unrelated projects each warned

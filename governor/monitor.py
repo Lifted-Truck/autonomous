@@ -160,9 +160,6 @@ def check_repo(proj, today, stale_days):
     if gated is False:
         out["UNGATED"] = ("WARN", "./verify has no leak_gate")
 
-    if st.get("remote") and not has_ci(path):
-        out["NO-CI"] = ("WARN", "remote but no .github/workflows")
-
     # Dormancy defers the ACTIVITY warning only, and only until its review date.
     # A green repo with no commits is otherwise indistinguishable from an
     # abandoned one (antiphon-001) — but suppressing that forever would make the
@@ -174,6 +171,15 @@ def check_repo(proj, today, stale_days):
             f"dormancy review_by {dormant['review_by']} has passed — re-ratify or wake",
         )
         dormant = None  # expired: fall through to the normal staleness checks
+
+    # MAINTENANCE warnings are deferred by a live dormancy declaration;
+    # SECURITY findings never are. A repo nobody develops still leaks in
+    # public, so LEAK/PATH above are computed before this point and are not
+    # suppressed. Adding CI or a kit version to finished software, by contrast,
+    # is a chore nobody will do — and an undoable chore on a dashboard is how
+    # the dashboard stops being read.
+    if st.get("remote") and not has_ci(path) and not dormant:
+        out["NO-CI"] = ("WARN", "remote but no .github/workflows")
 
     lv = readme_last_verified(path)
     if dormant:
@@ -192,12 +198,13 @@ def check_repo(proj, today, stale_days):
     # Kit currency (K0). INFO, not WARN: today 46/47 repos are pre-2.0.0
     # and a WARN on all of them is noise that buries real WARNs. It becomes
     # WARN when the K4 catch-up leaves a repo behind by choice.
-    if st.get("kit_version", "pre-2.0.0") == "pre-2.0.0" and st.get("claude_md"):
+    if (st.get("kit_version", "pre-2.0.0") == "pre-2.0.0"
+            and st.get("claude_md") and not dormant):
         out["KIT-PRE"] = ("INFO", "no kit_version declared — pre-2.0.0")
 
     gaps = [k for k in ("claude_md", "roadmap", "traces", "manifest", "library")
             if not st.get(k)]
-    if gaps and (st["claude_md"] or st["verify"]):  # only for partially-harnessed repos
+    if gaps and (st["claude_md"] or st["verify"]) and not dormant:
         out["GAPS"] = ("INFO", "missing " + ",".join(gaps))
     return out
 
