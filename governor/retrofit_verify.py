@@ -90,7 +90,12 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                     note = (f"receipt was written for {declared_path.group(1)}, but the "
                             f"registry has {sender} at a different path — the run "
                             f"targeted another directory")
-                elif st == "current" and kit_sync.kit_version() == claimed:
+                # version-stale = canonical bytes with an older version LINE, the
+                # normal state after a tool-only bump. The mechanism is current;
+                # only the label lags. Disputing it would have called two correct
+                # repos wrong (harness-grader, vertex) the moment the state was
+                # introduced — which it did, for one run.
+                elif st in ("current", "version-stale") and kit_sync.kit_version() == claimed:
                     verdict, note = "verified", f".kit/ matches canonical at {claimed} (hash)"
                 else:
                     verdict, note = "disputed", (f"kit_sync reads {st!r}; kit is at "

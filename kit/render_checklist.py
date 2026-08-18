@@ -138,6 +138,9 @@ leak_gate of your own to migrate, so this is added by hand, not by the script.
        ./verify fast 2>&1 | grep audit-plant.md    # must print a hit
        rm audit-plant.md
 
+   In your check-in, SAY the gate fired - do not quote the planted path; a
+   notice quoting it trips the leak gate in the public repo it lands in.
+
 Commit when green. Do not push - pushes are the human's. Then check in:
    python3 ~/Documents/Claude/autonomous/kit/kit_sync.py . --notify
 """.replace("{plant}", _PLANT_PATH)

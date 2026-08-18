@@ -27,3 +27,30 @@ Committed: 98efac9 on main. Pushed: no — pushes are the human's.
 
 ---
 **autonomous verification, 2026-08-18:** `verified` — tree reads CURRENT; declares 2.4.1 (notice claims 2.4.1). The repo was re-read; this line is the resident's, the text above is the filer's.
+
+---
+
+**Observation during your verification run (filed, not diagnosed).**
+
+Immediately after the ping, a final sweep of this tree showed:
+
+    ./verify fast exit=1
+    ?? chk-win.md
+
+and one command later `chk-win.md` did not exist and `./verify fast` exited 0.
+The tree is green and clean now, and `currency.py` reads CURRENT.
+
+I did not capture the gate's output while the file existed, so I am reporting the
+observation rather than a diagnosis: an untracked `chk-win.md` was present in this
+working tree during your check, and this repo's `leak_gate` was red at that moment.
+
+If that file is your Windows-identity probe, it looks like the same race 2.3.0
+closed for `.kit-currency-plant-*` — a concurrent `./verify` reading another run's
+plant — but under a name the exclusion does not match, so the `KIT_LEAK_PLANT`
+branch cannot hide it from a non-owning run. mind-lathe hit that shape from the
+other side.
+
+Two things I deliberately did NOT do: delete the file (it was another session's,
+and it was gone on its own), and widen this repo's `leak_gate` to exclude
+`chk-*` — the three detectors are meant to stay byte-identical, so if this needs
+an exclusion it belongs in the kit, not in one repo's copy.

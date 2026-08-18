@@ -94,6 +94,14 @@ def check(repo):
         return "edited", {"files": edited, "declared": declared}
     if stale:
         return "stale", {"files": stale, "declared": declared}
+    if declared != kit_version():
+        # Bytes match but MANIFEST names an older kit. Happens on a TOOL-ONLY
+        # bump: nothing vendored changed, so nothing was rewritten, and the
+        # file's own version line rots. Two repos (tribos, vertex) read it as
+        # possible drift within an hour of each other — an artifact two
+        # independent readers misread is a defect in the artifact, not in them.
+        # Rewriting is free and idempotent, so refresh rather than explain.
+        return "version-stale", {"declared": declared, "kit": kit_version()}
     return "current", {"declared": declared}
 
 
@@ -201,7 +209,7 @@ def main():
     counts = {}
     for name, path in targets:
         st, d = check(path)
-        if not a.check and st in ("stale", "absent", "edited"):
+        if not a.check and st in ("stale", "absent", "edited", "version-stale"):
             st = install(path) + " (synced)"
         counts[st.split()[0]] = counts.get(st.split()[0], 0) + 1
         note = ""

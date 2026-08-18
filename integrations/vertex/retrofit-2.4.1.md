@@ -2,10 +2,11 @@
 id: vertex-retrofit-2.4.1
 from: vertex
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 filed: 2026-08-18
 re: retrofit to kit 2.4.1 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.4.1 complete. `currency.py` output at close:
 
@@ -51,3 +52,6 @@ vendored gate bytes did not change), so this is almost certainly intended —
 flagging only so a future reader does not mistake it for drift.
 
 Verify by re-reading, not by trusting this: `currency.py ~/Documents/Claude/vertex`.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — tree reads CURRENT; declares 2.4.1 (notice claims 2.4.1). The repo was re-read; this line is the resident's, the text above is the filer's.

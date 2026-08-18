@@ -38,7 +38,13 @@ sys.path.insert(0, os.path.join(_HERE, "sweep"))
 import kit_sync  # noqa: E402
 import sweep     # noqa: E402
 
-_PLANT = ".kit-audit-plant.md"
+# The plant MUST match the `.kit-currency-plant-*` name that 2.3.0's gate
+# exclusion knows, or a concurrent `./verify` in the target repo sees it and
+# reds on a file that vanishes — the exact race 2.3.0 fixed, reintroduced by
+# using a different filename here. attest caught this during a live audit,
+# 2026-08-18: their verify exited 1 on `chk-win.md` and was green a command
+# later. Owning the run via KIT_LEAK_PLANT keeps the plant visible to US.
+_PLANT = f".kit-currency-plant-audit-{os.getpid()}.md"
 EXPECTED = {".kit/", "verify"}
 
 
@@ -64,16 +70,29 @@ def _wired(path):
         return False
 
 
-def _behaves(path):
-    """Plant a real identity path; the gate must NAME it. The probe writes into
-    a foreign tree, which is why it is a sample and not the default — see
-    LIBRARY L0006 for what that cost when it ran fleet-wide."""
+WINDOWS_FORM = "x C:" + chr(92) + "Users" + chr(92) + "someone" + chr(92) + "x\n"
+POSIX_FORM = "x " + "/" + "Users" + "/somebody/private\n"
+
+
+def probe(path, form=POSIX_FORM):
+    """Plant a real identity path; the gate must NAME it. THE canonical way to
+    probe a foreign repo — hand-rolled one-off probes are how a differently
+    named plant slipped past the 2.3.0 exclusion and raced a live session.
+
+    Writes into a foreign tree, which is why it is a sample and not the
+    default (LIBRARY L0006), and why the plant is named and owned so a
+    concurrent run in that repo stays blind to it.
+    """
     p = os.path.join(path, _PLANT)
+    sys.path.insert(0, _HERE)
+    import currency
+    currency._sweep_stale_plants(path)      # clear any orphan a killed run left
     try:
         with open(p, "w", encoding="utf-8") as fh:
-            fh.write("x " + "/" + "Users" + "/somebody/private\n")
+            fh.write(form)
+        env = dict(os.environ, KIT_LEAK_PLANT=_PLANT)
         r = subprocess.run(["./verify", "fast"], cwd=path, capture_output=True,
-                           text=True, timeout=180)
+                           text=True, timeout=180, env=env)
         return _PLANT in (r.stdout + r.stderr)
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -103,7 +122,7 @@ def audit(registry, sample=3):
             if os.path.isfile(vp) and os.access(vp, os.X_OK) else None
         rows.append({"repo": p["name"], "sync": st, "wired": _wired(p["path"]), "oracle": oracle,
                      "stray": _scope(p["path"]),
-                     "behaves": _behaves(p["path"]) if p["name"] in sampled else None})
+                     "behaves": probe(p["path"]) if p["name"] in sampled else None})
     return rows
 
 

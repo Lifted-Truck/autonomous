@@ -70,6 +70,12 @@ Reference implementation: `~/Documents/Claude/autonomous/kit/templates/verify.pr
    rm audit-plant.md
    ```
 
+   In your check-in, SAY that the gate fired — do not quote the planted
+   path. The plant must be a real-looking identity path to fire at all, so
+   a notice quoting it trips the leak gate in the public standards repo
+   where the notice lands.
+
+
 ## Report back what you found
 
 Say explicitly which of these applied, because it feeds the kit rather than

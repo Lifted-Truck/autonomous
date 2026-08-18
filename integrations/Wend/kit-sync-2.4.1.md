@@ -2,10 +2,11 @@
 id: Wend-kit-sync-2.4.1
 from: Wend
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 repo_path: ~/Documents/Claude/synthetic-worlds/Wend
 re: kit_sync to 2.4.1 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 kit_sync reports `current` at kit 2.4.1 for `~/Documents/Claude/synthetic-worlds/Wend`.
 
@@ -26,3 +27,6 @@ kit_version: 2.4.1
 ```
 
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — .kit/ matches canonical at 2.4.1 (hash). The repo was re-read; this line is the resident's, the text above is the filer's.

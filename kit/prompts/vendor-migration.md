@@ -50,6 +50,12 @@ failure.
    ./verify fast 2>&1 | grep audit-plant.md   # must print a hit
    rm audit-plant.md
    ```
+
+   In your check-in, SAY that the gate fired — do not quote the planted
+   path. The plant must be a real-looking identity path to fire at all, so
+   a notice quoting it trips the leak gate in the public standards repo
+   where the notice lands.
+
    For many of you this is a genuine upgrade: your copied gate did not carry
    the Windows pattern, so `C:\Users\...` went straight through.
 

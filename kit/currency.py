@@ -142,6 +142,31 @@ def _tilde(path):
     return "~" + path[len(home):] if path.startswith(home + os.sep) else path
 
 
+def _sweep_stale_plants(repo, max_age=600):
+    """Remove ORPHANED probe plants before planting a new one.
+
+    A plant is written into a foreign working tree and removed in a finally
+    block — but a `finally` does not run if the interpreter is killed, and Place
+    hit exactly that (2026-08-18): a timed-out run left `.kit-currency-plant-*`
+    behind, untracked and unignored, one `git add -A` from committing identity
+    paths that leak_gate now ignores BY DESIGN. Their project-local
+    plant_not_tracked check caught it; this closes it at the source so no repo
+    has to carry a guard for our litter.
+
+    Age, not pid, decides: pids are reused, and a live sibling probe's plant
+    must survive. Probes time out at 180s, so anything older than max_age
+    cannot belong to a running one.
+    """
+    import glob as _glob, time as _time
+    now = _time.time()
+    for f in _glob.glob(os.path.join(repo, ".kit-currency-plant-*")):
+        try:
+            if now - os.path.getmtime(f) > max_age:
+                os.remove(f)
+        except OSError:
+            pass
+
+
 def _harness_snapshot(repo):
     """Snapshot what the repo's OWN ./verify writes as a side effect, so a probe
     can put it back. juce-rag (2026-08-18): the gate-fires probe runs the
@@ -193,7 +218,9 @@ def _vendored_current(repo):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import kit_sync
     try:
-        return kit_sync.check(repo)[0] == "current"
+        # version-stale counts: the vendored BYTES are canonical, which is the
+        # only thing a gate question can turn on. The version line is a label.
+        return kit_sync.check(repo)[0] in ("current", "version-stale")
     except Exception:
         return False
 
@@ -227,6 +254,7 @@ def _gate_report(repo):
     name = f".kit-currency-plant-{os.getpid()}.md"
     path = os.path.join(repo, name)
     result = {"posix": False, "windows": False, "plant_invisible": False}
+    _sweep_stale_plants(repo)
     snap = _harness_snapshot(repo)
     try:
         with open(path, "w", encoding="utf-8") as fh:
@@ -293,6 +321,7 @@ def _gate_fires(repo, plant_lines):
         return False
     name = f".kit-currency-plant-{os.getpid()}.md"
     path = os.path.join(repo, name)
+    _sweep_stale_plants(repo)
     snap = _harness_snapshot(repo)
     try:
         with open(path, "w", encoding="utf-8") as fh:
