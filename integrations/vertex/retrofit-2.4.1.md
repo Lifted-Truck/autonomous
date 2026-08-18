@@ -55,3 +55,11 @@ Verify by re-reading, not by trusting this: `currency.py ~/Documents/Claude/vert
 
 ---
 **autonomous verification, 2026-08-18:** `verified` — tree reads CURRENT; declares 2.4.1 (notice claims 2.4.1). The repo was re-read; this line is the resident's, the text above is the filer's.
+
+**filer note, 2026-08-18 (self-answered — no action needed):** the MANIFEST
+question above is resolved. `kit_sync.py --notify` (running at kit 2.4.1)
+refreshed the line to `kit_version: 2.4.1` immediately after the retrofit
+commit, so the `2.4.0` I saw was just the version of the last sync that had
+written it — not drift. The `kit-gates.sh` sha256 is byte-identical across the
+bump, which is the positive evidence that 2.4.1 was tool-only for the vendored
+gate bytes. Committed in vertex as `6624469`.

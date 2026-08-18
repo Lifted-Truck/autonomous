@@ -197,7 +197,9 @@ def main():
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--all", action="store_true")
     ap.add_argument("--notify", action="store_true",
-                    help="file a check-in in autonomous's mailbox after updating")
+                    help="file a check-in in autonomous's mailbox (READ-ONLY: reports "
+                         "the current state, never syncs — run the sync first, commit, "
+                         "then notify)")
     ap.add_argument("--note", metavar="TEXT",
                     help="include your own words in the check-in (answers, caveats, "
                          "what you found) — the receipt is otherwise a fixed template")
@@ -209,7 +211,15 @@ def main():
     counts = {}
     for name, path in targets:
         st, d = check(path)
-        if not a.check and st in ("stale", "absent", "edited", "version-stale"):
+        # --notify is a REPORT, and a report must not change what it reports.
+        # It used to imply a sync, so a repo that filed its check-in after
+        # committing was left holding an uncommitted kit-owned change and a
+        # Stop hook complaining about it (vertex, 2026-08-18). Syncing is an
+        # explicit act; notifying is not. If the state is stale, the receipt
+        # says so honestly and autonomous disputes it — which is the mechanism
+        # working, not a reason to write behind the filer's back.
+        writing = not (a.check or a.notify)
+        if writing and st in ("stale", "absent", "edited", "version-stale"):
             st = install(path) + " (synced)"
         counts[st.split()[0]] = counts.get(st.split()[0], 0) + 1
         note = ""

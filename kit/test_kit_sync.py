@@ -52,6 +52,25 @@ class KitSync(unittest.TestCase):
             fh.write(f"kit_version: 0.0.1\n{sha}  kit-gates.sh\n")
         self.assertEqual(kit_sync.check(self.repo)[0], "stale")
 
+    def test_notify_does_not_write(self):
+        """A report must not change what it reports. --notify used to imply a
+        sync, leaving a repo that checked in AFTER committing with an
+        uncommitted kit-owned change (vertex, 2026-08-18)."""
+        import subprocess as sp
+        aut = tempfile.mkdtemp()
+        try:
+            kit_sync.install(self.repo)
+            man = os.path.join(self.repo, ".kit", "MANIFEST")
+            with open(man, "w") as fh:                    # make it version-stale
+                fh.write("kit_version: 0.0.1\n")
+            before = open(man).read()
+            r = sp.run([sys.executable, os.path.join(HERE, "kit_sync.py"), self.repo,
+                        "--notify"], capture_output=True, text=True,
+                       env=dict(os.environ, HOME=os.environ.get("HOME", "")))
+            self.assertEqual(before, open(man).read(), "--notify rewrote the manifest")
+        finally:
+            shutil.rmtree(aut, ignore_errors=True)
+
     def test_install_is_idempotent(self):
         kit_sync.install(self.repo)
         before = open(os.path.join(self.repo, ".kit", "MANIFEST")).read()
