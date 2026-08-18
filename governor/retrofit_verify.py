@@ -110,18 +110,38 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
             # on the declared string equalling the claim: a repo declaring 2.2.0
             # is current against a tool-only 2.2.1, and the tree is truthful.
             # The declared/claimed pair is reported either way — as prose.
-            if c.get("current") and not c.get("declared_but_missing"):
-                verdict, note = "verified", (f"tree reads CURRENT; declares "
-                                             f"{c.get('declared')} (notice claims {claimed})")
+            # Judge the notice against the version it CLAIMS, not the kit's
+            # latest. babysynth closed correctly at 2.4.1 and was disputed the
+            # moment 2.5.0 shipped — punished for a release postdating its own
+            # work. Left alone, every kit bump would false-dispute every repo
+            # that had just finished. Versions ABOVE the claim are news;
+            # `declared_but_missing` spans every version <= declared, so it is
+            # the real test of whether the claim holds.
+            behind = [b["version"] for b in c.get("behind", [])]
+            newer = [v for v in behind if v > claimed]
+            if c.get("declared") == claimed and not c.get("declared_but_missing"):
+                verdict = "verified"
+                note = f"tree satisfies {claimed} in full"
+                if newer:
+                    note += f"; the kit has since moved on ({', '.join(newer)}) — not a defect"
             else:
                 bits = [f"tree declares {c.get('declared')!r}, notice claims {claimed!r}"]
-                if not c.get("current"):
-                    behind = [b["version"] for b in c.get("behind", [])]
-                    bits.append(f"tree is BEHIND: {behind}")
+                at_or_below = [v for v in behind if v <= claimed]
+                if at_or_below:
+                    bits.append(f"BEHIND at or below its own claim: {at_or_below}")
                 if c.get("declared_but_missing"):
                     bits.append(f"declared but missing: {c['declared_but_missing']}")
                 verdict, note = "disputed", "; ".join(bits)
-        out.append({"file": f, "sender": sender,
+        # Decision 66: a session now closes on a BRANCH with an open PR, so the
+        # tree read here may be that branch — or `main`, if they switched back,
+        # in which case the work is real and simply invisible from here. Name
+        # the ref that was read, so a dispute is never mistaken for absent work.
+        branch = subprocess.run(["git", "-C", path, "rev-parse", "--abbrev-ref", "HEAD"],
+                                capture_output=True, text=True).stdout.strip() if path else ""
+        if branch and verdict == "disputed":
+            note += (f" [read branch {branch}; if this work sits in an unmerged PR, "
+                     f"this passes once it merges or that branch is checked out]")
+        out.append({"file": f, "sender": sender, "branch": branch,
                     "claimed": claimed, "verdict": verdict, "note": note})
         if dry:
             continue

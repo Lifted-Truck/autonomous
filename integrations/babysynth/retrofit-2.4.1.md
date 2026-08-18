@@ -2,10 +2,11 @@
 id: babysynth-retrofit-2.4.1
 from: babysynth
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 filed: 2026-06-18
 re: retrofit to kit 2.4.1 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.4.1 complete. currency.py output at close:
 
@@ -37,3 +38,6 @@ Notes for the verifier:
   LIBRARY.md knowledge loop; it is folded into this retrofit rather than
   installed twice. LIBRARY seeded with one real lesson (L0001) from this
   session's own verification work.
+
+---
+**autonomous verification, 2026-08-18:** `verified` — tree satisfies 2.4.1 in full; the kit has since moved on (2.5.0) — not a defect. The repo was re-read; this line is the resident's, the text above is the filer's.

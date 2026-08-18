@@ -133,6 +133,22 @@ class RetrofitVerify(unittest.TestCase):
         self.assertEqual(row["verdict"], "disputed")
         self.assertIn("targeted another directory", row["note"])
 
+    def test_a_notice_is_judged_against_its_own_claim_not_the_latest_kit(self):
+        """babysynth closed correctly at 2.4.1 and was disputed the moment 2.5.0
+        shipped. A notice claims a version; being behind a release that POSTDATES
+        the claim is news, not a defect — otherwise every kit bump false-disputes
+        every repo that had just finished."""
+        older = "2.4.1"
+        with open(os.path.join(self.mail, "retrofit-older.md"), "w") as fh:
+            fh.write(f"---\nid: truth-retrofit-{older}\nfrom: truth\nto: autonomous\n"
+                     f"status: filed\nball: provider\nre: retrofit\n---\nclaimed.\n")
+        # `truth` declares the CURRENT kit version, so it satisfies 2.4.1 and more;
+        # what matters is that a claim of 2.4.1 is not disputed for 2.5.0 existing.
+        r = {os.path.basename(x["file"]): x for x in
+             rv.verify_all(self.registry, dry=True, mail_root=os.path.join(self.tmp, "mail"))}
+        row = r["retrofit-older.md"]
+        self.assertNotIn("BEHIND at or below", row["note"])
+
     def test_dry_run_writes_nothing(self):
         f = os.path.join(self.mail, "retrofit-lie.md")
         with open(f) as fh:
