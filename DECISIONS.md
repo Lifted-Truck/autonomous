@@ -184,11 +184,23 @@ history; supersede with a new numbered entry.
     commits chain to the oracle with `&&`, and content arriving from OUTSIDE
     the repo is gate-checked BEFORE staging, that being the class of content
     whose author never ran our gates. **What is NOT done.** The working tree
-    and tip are clean, but dd0f98e still carries the path in pushed public
-    history. The Decision 60 precedent (amend + force-with-lease) was BLOCKED
+    and tip are clean, but TWO pushed commits carry the path: 78f0f5a and
+    dd0f98e. **Corrected 2026-08-18, same day:** I first reported dd0f98e as
+    the only one. The entry point is actually 78f0f5a, one commit EARLIER, and
+    the mechanism is worse than a misread exit code. That commit ran `./verify
+    fast && git add -A && git commit` — correctly chained. The oracle was green
+    when it ran. FOUNDATIONS' notice then landed in the mailbox in the seconds
+    between the check and the `add -A`, which swept it in unseen. So a green
+    verify chained by `&&` is NOT sufficient in a repo whose mailbox receives
+    asynchronous writes from other sessions: the window between check and stage
+    is exactly when a visitor drops a file. Two structural consequences beyond
+    L0007: stage EXPLICIT paths rather than `-A` here, and re-check after
+    staging, because in a mailbox repo the tree can change under a green
+    result. `git add -A` also silently performed a resident act the charter
+    reserves — committing a visitor's uncommitted brief. The Decision 60 precedent (amend + force-with-lease) was BLOCKED
     by the permission classifier this time, and I did not work around it —
     history rewrite on a public remote is the human's call. Options: (a) leave
-    it (a home path, no credential); (b) rewrite dd0f98e..HEAD and
+    it (a home path, no credential); (b) rewrite 78f0f5a..HEAD and
     force-with-lease, which leaves an orphan SHA reachable until GC, same
     residual as Decision 60. I did NOT retract the false line in 1085728's
     commit message that says the tip was rewritten; it was not, and this entry
