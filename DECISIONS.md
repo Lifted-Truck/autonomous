@@ -116,6 +116,34 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+59. **`library_validate` — nothing checked an actual ENTRY against the
+    contract; and it cried wolf on its own first run** (2026-08-18,
+    hypersaw-001 round 3). HYPERSAW emitted `absorbs:` and had to state it as
+    an unverified claim: `test_library_contract` proves the contract is
+    self-consistent and `contract_gate` proves a contract is versioned, but
+    NOTHING validated an entry against it — distillery is still on v2, so no
+    v3 parser existed to disagree with them. Same class as the bug they caught:
+    a rule with nothing able to exercise it. Built targeted and dependency-free
+    beside the contract (same precedent as `status_validate`), NOT a second
+    ingester — distillery's parser turns a corpus into records; this answers
+    one question about one entry, so the two cannot drift into rivals. Scope
+    stated in the docstring rather than implied: line-form field grammar only;
+    span boundaries and block form stay the ingester's.
+    **It reported two false positives on first contact with real corpora, and
+    both were mine**: it applied the local `L\d{4}` shape to `origin` (which
+    the contract gives `<child>#Lxxxx`) and so reported autonomous's own
+    correct L0001 as broken; and it continuation-joined an unknown
+    `consolidated:` segment into `added:` instead of routing it to `extra`,
+    reporting HYPERSAW's valid date as malformed. A third defect was noise
+    rather than error — one prose value split on its own commas produced three
+    findings. Fixed and pinned by name, because a checker that cries wolf on
+    its first run teaches the reader to skip it, and I have now built three
+    detectors in two days that needed exactly this discipline.
+    **After the fix:** autonomous's LIBRARY is clean, HYPERSAW's `absorbs:`
+    lines validate, and the single remaining finding is the
+    `supersedes: nothing; escalated…` case HYPERSAW had already flagged
+    themselves in brief-001 §4 as tier-provenance-not-a-relation.
+
 58. **agent-knowledge-loop consolidated into `autonomous/loops/audit-loop/`
     and ARCHIVED — supersedes Decision 2** (2026-08-18, human-directed after
     asking whether the separation still had a reason). It did not. Decision 2
