@@ -310,7 +310,14 @@ before the mechanisms exist is a frame written about nothing.
   it uniform. Gate check in `./verify`: every `intake/*/` has a
   `PROVENANCE.md`. *Gate:* one repo runs it end-to-end (drop → promote →
   cite) before it ships in the kit.
-- **K3 — Session-boundary commands** (briefs/2026-08-17-session-boundary.md,
+- **K3 — Session-boundary commands** — *core BUILT 2026-08-18* (shared routine
+  `kit/session/state.py`, registry `kit/session/registry.py`, and all three
+  commands installed; 9 tests in `./verify fast`). Remaining before the gate
+  closes: the human names the registry location (`KIT_SESSION_REGISTRY` — the
+  brief proposes the private website repo both machines pull), and one full
+  open→close cycle runs on this repo with STATUS.json validating against
+  dispatch's fixtures. `/breakdown` as `status.1`'s first producer is NOT yet
+  built — SESSION.md ships first, STATUS.json follows. (briefs/2026-08-17-session-boundary.md,
   proposal ratified in chat): shared read+render routine → `/reorient` →
   registry (dedicated private repo; existence-only rows keyed by session_id;
   named INTEGRATIONS §3 exception) → `/wakeup` → `/breakdown`. `/breakdown`
