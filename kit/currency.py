@@ -66,7 +66,7 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3", "2.4.1"}  # 2.3.0/2.4.0 are NOT
+TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3", "2.4.1", "2.5.1"}  # 2.3.0/2.4.0 are NOT
 
 REQUIREMENTS = {
     # 2.5.0: .gitattributes must be TRACKED, not merely present. Tonality found
@@ -75,6 +75,7 @@ REQUIREMENTS = {
     # hazard it exists to close was fully live. Shipped as a version with a
     # retrofit action rather than folded into 2.0.0: a tightening that flips
     # repos to BEHIND is a migration, and 2.2.0 set that precedent.
+    "2.5.1": [],   # tool-only — kit_sync gains `untracked` (terrane)
     "2.5.0": [(".gitattributes is TRACKED", ".gitattributes", "tracked")],
     # 2.4.0: kit-owned gate code is VENDORED into .kit/ and checksum-pinned,
     # not copied. Checked by hash against the kit, which is also how the repo

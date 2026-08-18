@@ -264,3 +264,27 @@ disk" is almost never it.
 - **Verify gate:** the `tracked` row in REQUIREMENTS; the fleet checklist shows
   every repo lacking it.
 
+## 2.5.1 — 2026-08-18 — `kit_sync` stops calling an untracked `.kit/` current (tool-only)
+
+terrane found the intersection of the whole family: `.kit/` vendored,
+checksum-current, UNTRACKED and unsourced, with no `./verify` at all — and
+`kit_sync --check` reported `current`. A clone or CI run had zero gates while
+the repo read healthy. Every individual check passed.
+
+- New status `untracked`: canonical bytes that are not in the index. Not
+  fixable by syncing (the bytes are already right), so the CLI says
+  `git add .kit` instead of pretending a write helps.
+- `--check` still answers ONLY about the vendored files, by ruling: whether
+  `./verify` sources them is the oracle's question, answered by `currency.py`
+  and `kit_audit`'s `wired` column. A verdict that means three things means
+  none of them. It simply must not call a one-machine state `current`.
+- Known false positive recorded in `kit-gates.sh` itself (substack2pdf): the
+  leak pattern is a PATH shape, so a URL path reading `/home/<segment>/`
+  trips it. Reword the prose rather than allowlist the file — an allowlist
+  blinds the gate to that file forever; a reword costs a sentence.
+- **Retrofit action:** none — tool-only. But if `kit_sync` now reports
+  `untracked`, run `git add .kit && git commit`: your repo is ungated in
+  every clone until you do.
+- **Verify gate:** `kit/test_kit_sync.py`, whose fixtures had to become real
+  git repos — they had been testing the one machine they ran on.
+

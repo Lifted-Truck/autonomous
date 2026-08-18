@@ -95,6 +95,8 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                 # only the label lags. Disputing it would have called two correct
                 # repos wrong (harness-grader, vertex) the moment the state was
                 # introduced — which it did, for one run.
+                # `untracked` is NOT current: the bytes are canonical and reach
+                # nobody but this disk (terrane, 2026-08-18).
                 elif st in ("current", "version-stale") and kit_sync.kit_version() == claimed:
                     verdict, note = "verified", f".kit/ matches canonical at {claimed} (hash)"
                 else:

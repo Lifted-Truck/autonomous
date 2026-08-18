@@ -17,6 +17,16 @@ import kit_sync            # noqa: E402
 import migrate_to_vendored as mig   # noqa: E402
 
 
+
+
+def _git_track(repo):
+    """A fixture must be a real repo: `current` now requires .kit/ to be TRACKED,
+    because untracked vendored gates reach no clone and no CI (terrane,
+    2026-08-18). A fixture that never inits git was silently testing the
+    one machine it ran on."""
+    subprocess.run(["git", "init", "-q", repo], check=True, capture_output=True)
+    subprocess.run(["git", "-C", repo, "add", "-A"], check=True, capture_output=True)
+
 class KitSync(unittest.TestCase):
     def setUp(self):
         self.repo = tempfile.mkdtemp()
@@ -24,9 +34,13 @@ class KitSync(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.repo, ignore_errors=True)
 
-    def test_absent_then_current(self):
+    def test_absent_then_untracked_then_current(self):
         self.assertEqual(kit_sync.check(self.repo)[0], "absent")
         kit_sync.install(self.repo)
+        subprocess.run(["git", "init", "-q", self.repo], check=True, capture_output=True)
+        self.assertEqual(kit_sync.check(self.repo)[0], "untracked",
+                         "installed but unstaged must NOT read current")
+        _git_track(self.repo)
         self.assertEqual(kit_sync.check(self.repo)[0], "current")
 
     def test_local_edit_reads_edited_not_current(self):
@@ -85,6 +99,7 @@ class Receipt(unittest.TestCase):
         self.repo = tempfile.mkdtemp()
         self.aut = tempfile.mkdtemp()
         kit_sync.install(self.repo)
+        _git_track(self.repo)
 
     def tearDown(self):
         shutil.rmtree(self.repo, ignore_errors=True)

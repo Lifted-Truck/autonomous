@@ -24,7 +24,7 @@ Never commits: these are other residents' repos, and writes stay home. The
 files it writes are deterministic, so a resident's in-flight work cannot be
 buried by them and they cannot be buried by it.
 """
-import argparse, hashlib, json, os, shutil, sys
+import argparse, hashlib, json, os, shutil, subprocess, sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.join(_HERE, "..")
@@ -60,10 +60,23 @@ def check(repo):
     """Compare a repo's vendored files against the kit. Pure read.
 
     Returns (status, details) where status is one of:
-      current   every vendored file matches the kit's current bytes
+      current   bytes match canonical AND the files are tracked
+      untracked bytes match, but `.kit/` is not in the index — a clone and CI
+                get NOTHING, so the repo is ungated everywhere but this disk
+      version-stale  canonical bytes, older version line (tool-only bump)
       stale     present but differs — a plain kit_sync away
       edited    MANIFEST disagrees with the repo's own files (local edit)
       absent    no .kit/ at all — this repo predates vendoring
+
+    RULING (terrane, 2026-08-18): this reports on the vendored FILES — their
+    bytes and their existence in the repo that will be cloned. It deliberately
+    does NOT assert that `./verify` sources them; that is the oracle's domain,
+    checked by `currency.py` and by `kit_audit`'s `wired` column. Conflating
+    three questions into one verdict is how a status stops meaning anything.
+    But `current` had to stop covering the untracked case, because the word
+    reads as "healthy" and an untracked `.kit/` is healthy on exactly one
+    machine. A narrow check that means one thing beats a broad one that means
+    several; it must simply not LIE about the thing it means.
     """
     kd = os.path.join(repo, ".kit")
     man = os.path.join(kd, "MANIFEST")
@@ -94,6 +107,12 @@ def check(repo):
         return "edited", {"files": edited, "declared": declared}
     if stale:
         return "stale", {"files": stale, "declared": declared}
+    tracked = subprocess.run(
+        ["git", "-C", repo, "ls-files", "--error-unmatch", ".kit/kit-gates.sh",
+         ".kit/MANIFEST"], capture_output=True).returncode == 0
+    if not tracked:
+        return "untracked", {"declared": declared,
+                             "why": ".kit/ is not in the index; a clone or CI has no gates"}
     if declared != kit_version():
         # Bytes match but MANIFEST names an older kit. Happens on a TOOL-ONLY
         # bump: nothing vendored changed, so nothing was rewritten, and the
@@ -248,6 +267,8 @@ def main():
         # says so honestly and autonomous disputes it — which is the mechanism
         # working, not a reason to write behind the filer's back.
         writing = not (a.check or a.notify)
+        # `untracked` is NOT fixed by writing: the bytes are already right and
+        # only `git add` closes it, which is the repo's own act.
         if writing and st in ("stale", "absent", "edited", "version-stale"):
             st = install(path) + " (synced)"
         counts[st.split()[0]] = counts.get(st.split()[0], 0) + 1
@@ -256,6 +277,9 @@ def main():
             note = " — " + ", ".join(d["files"])
         if a.notify and not a.check:
             print(f"  {'filed':18} {os.path.relpath(receipt(path, note=a.note))}")
+            if st == "untracked":
+                print(f"  {'ACTION':18} .kit/ is UNTRACKED — bytes are right, but a clone "
+                      f"and CI get nothing.\n{'':22}git add .kit && commit.")
             if st != "current":
                 print(f"  {'NOTE':18} that receipt reports {st!r}. --notify is read-only "
                       f"and cannot fix it:\n{'':22}run the sync (no flag), commit, then "
