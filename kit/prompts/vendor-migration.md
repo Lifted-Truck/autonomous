@@ -66,8 +66,23 @@ failure.
   subsumed — the only diff worth reviewing is the migration's.
 - `.kit/*` is KIT-OWNED. Do not edit it; `./verify` goes red if you do, by
   design. Update it with `kit_sync.py`, never by hand.
-- Commit in your own repo when your tests are green. **Do not push** — pushes
-  are the human's. **Do not commit anything into `autonomous`.**
+**Do not commit anything into `autonomous`.**
+
+## Finishing: open a PR, do not leave a commit sitting on main
+
+Work on a branch, commit there when green, then:
+
+    git switch -c chore/<short-slug>      # if not already on one
+    git push -u origin HEAD && gh pr create --fill
+
+Put the evidence in the PR body — what you proved and how. **Do not merge**;
+merges are the human's. Report the PR URL.
+
+If the repo has no remote, commit on `main` and SAY SO ("no remote; commit
+<sha> is local-only"). If `gh` is unavailable, push the branch anyway and
+report the compare URL, saying `gh` was unavailable. Full text:
+`kit/prompts/_closing.md`.
+
 
 ## Check in when done
 

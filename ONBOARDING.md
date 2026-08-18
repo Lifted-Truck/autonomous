@@ -107,9 +107,14 @@ LIBRARY lessons). Then run `./verify report` to see the oracle's last state.
 5. **Provenance**: nontrivial claims cite file/line, a verify run, or a
    ROADMAP entry; merged changes get a `traces/` entry.
 6. **Human gates**: deleting files, public-interface changes, editing
-   `./verify`, new dependencies, git beyond add/commit, anything §Domain
-   protects, anything outward-facing (publishing, remote pushes to new
-   places) — stop and ask.
+   `./verify`, new dependencies, anything §Domain protects, anything
+   outward-facing (publishing, pushing to a remote that is not this repo's
+   own) — stop and ask. **Git: `add`, `commit`, `switch -c`, and
+   `push -u origin HEAD` on your OWN branch, then `gh pr create`, are yours;
+   MERGING is never yours** (Decision 66). Finishing a piece of work means
+   opening a PR, not leaving a commit on `main` for the human to find and
+   push by hand — that is invisible work with no review surface. Canonical
+   wording: `kit/prompts/_closing.md`.
 7. **Review beats are visual-first** ([doctrine](doctrine/DOCTRINE.md)):
    at any gate — phase close, ratification request, PR — lead with a visual
    presentation sufficient to evaluate the work without reading code; the

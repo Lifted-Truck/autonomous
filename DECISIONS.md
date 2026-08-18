@@ -167,6 +167,37 @@ history; supersede with a new numbered entry.
     dir mid-run. Consequence: the checklist stays derived; the notice moves
     only *when* I look, never *what* I see. Closes Decision 53 from the
     sender's side.
+66. **A session finishes by opening a PR, never by leaving a commit on main**
+    (2026-08-18, the human's directive). Their words: "your instructions tell
+    agents to await my push; I would prefer they file a PR in the future. It's
+    a real headache for me to have to run around and manually push everything
+    without seeing the PR." Both halves are the point. The *headache* is the
+    labour — by this afternoon 23 repos held 45 commits, each needing a
+    separate visit. The *without seeing* is the worse half: a local commit has
+    no review surface, so the human was being asked to push work they had not
+    read, one repo at a time, which converts review into rubber-stamping by
+    exhaustion. **The old rule was mine and it was wrong in a specific way.**
+    "Pushes are the human's" correctly identified that something outward-facing
+    belongs to them, then drew the line at the wrong operation: pushing a
+    BRANCH is not an outward-facing act on the repo's state, and MERGING is.
+    Drawing it at push meant agents stopped one step before the artifact that
+    would have made review possible. New rule: work on a branch, commit, `push
+    -u origin HEAD`, `gh pr create --fill`, evidence in the PR body, and never
+    merge. Three carve-outs stated so they are not improvised: no remote →
+    commit on main and say so explicitly; no `gh` → push the branch and report
+    the compare URL, saying why; not a resident → do not commit there at all,
+    file a brief. **Written once, quoted everywhere:** `kit/prompts/_closing.md`
+    is canonical, and the two prompts, `/retrofit`, the ledger's embedded
+    prompts and ONBOARDING rule 6 all point at it — the alternative is five
+    copies that drift, which is the failure 2.4.0 exists to prevent, in prose
+    instead of code. ONBOARDING rule 6 also had to change substantively: it
+    listed "git beyond add/commit" as a human gate, which forbade the exact
+    workflow now required. Open question surfaced to the human rather than
+    decided: whether autonomous's own residents (who push to `main` directly
+    per its charter) should also move to PRs. Their complaint was about other
+    repos; today's public-history leak is an argument that a review surface
+    here would be worth the latency.
+
 64. **The leak gate fired, I committed anyway, and the leak is in public
     history at dd0f98e — pending the human's call** (2026-08-18). Step 6 went
     live and three repos filed notices within the hour. FOUNDATIONS' notice

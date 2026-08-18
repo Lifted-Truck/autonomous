@@ -141,7 +141,11 @@ leak_gate of your own to migrate, so this is added by hand, not by the script.
    In your check-in, SAY the gate fired - do not quote the planted path; a
    notice quoting it trips the leak gate in the public repo it lands in.
 
-Commit when green. Do not push - pushes are the human's. Then check in:
+Finish with a PR, not a commit left on main:
+   git switch -c chore/wire-kit-gates
+   git push -u origin HEAD && gh pr create --fill
+Put the evidence in the PR body. Do NOT merge - merges are the human's.
+No remote? Commit on main and say so. Then check in:
    python3 ~/Documents/Claude/autonomous/kit/kit_sync.py . --notify
 """.replace("{plant}", _PLANT_PATH)
 
@@ -152,8 +156,9 @@ current kit version:
 
 It runs kit/currency.py first, shows you the exact delta, and PAUSES for
 approval before writing anything. Gate code is vendored now, never copied -
-step 4b runs kit_sync.py and thins ./verify. Commit when green; do not push
-(pushes are the human's), and check in at the end with
+step 4b runs kit_sync.py and thins ./verify. Finish on a branch with a PR
+(git push -u origin HEAD && gh pr create --fill) rather than a commit left on
+main - do NOT merge, that is the human's. Then check in with
 kit_sync.py . --notify so autonomous can verify against your tree.
 """
 

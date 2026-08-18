@@ -128,7 +128,7 @@ is a request that the effective-state check run now. Two channels, both:
    path. kit >=2.2.3 renders it that way; if yours prints an absolute path,
    tildeize it by hand — the leak_gate will reject the notice otherwise.>
 
-   Committed: <sha> on <branch>. Pushed: <yes/no — pushes are the human's>.
+   PR: <url>  (or: no remote; commit <sha> is local-only)
    ```
    Leave it uncommitted; committing into autonomous is its resident's act.
    The subject line MUST be the currency output, because that is what
@@ -141,6 +141,16 @@ is a request that the effective-state check run now. Two channels, both:
    printed for that row — juce-rag hit this on the first live run):
    `<this-repo> retrofit to <kit-version> filed at integrations/<this-repo>/retrofit-<kit-version>.md — please verify.`
    If no such session is listed, skip this — the file already carries it.
+
+Close on a BRANCH with a PR, never a commit left on `main`:
+
+    git switch -c chore/kit-retrofit-<version>
+    git push -u origin HEAD && gh pr create --fill
+
+Evidence goes in the PR body — that is where the human reviews. **Do not
+merge**; merges are theirs. No remote? Commit on `main` and say so plainly.
+`gh` missing? Push the branch and report the compare URL. Canonical wording
+for any session's close: `kit/prompts/_closing.md`.
 
 Autonomous will re-run `currency.py` on your repo, compare, and either close
 the notice (`status: verified`) or file back what differs. **Do not wait on

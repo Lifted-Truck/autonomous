@@ -1,0 +1,29 @@
+<!-- CANONICAL closing instruction for any agent-authored prompt that ends in a
+     commit. Every prompt and command that tells a session how to finish quotes
+     THIS text. Changed 2026-08-18 (Decision 66): sessions used to commit and
+     stop, leaving the human to find and push each one by hand across dozens of
+     repos — invisible work with no review surface. A PR is visible, reviewable,
+     and merges on the human's schedule, which is the part that was always
+     theirs. -->
+
+## Finishing: open a PR, do not leave a commit sitting on main
+
+1. Work on a branch, not `main`:
+   `git switch -c <kind>/<short-slug>`  (e.g. `chore/kit-vendor-2.4.1`)
+2. Commit there when your checks are green.
+3. Push the BRANCH and open a PR:
+   `git push -u origin HEAD && gh pr create --fill`
+   Put the evidence in the PR body — what you proved, and how. The PR is where
+   the human reviews; a commit message they have to go looking for is not.
+4. **Do not merge.** Merges are the human's, always. Report the PR URL.
+
+Three cases where this does not apply, and what to do instead:
+
+- **No remote** (some repos are local-only): commit on `main` and say so
+  explicitly in your report — "no remote; commit <sha> is local-only". Do not
+  invent a remote.
+- **`gh` unavailable or unauthenticated**: push the branch anyway and report
+  the compare URL so the human can open the PR in one click. Say that `gh` was
+  unavailable rather than silently falling back.
+- **You are not a resident of that repo**: you do not commit there at all.
+  Writes stay home; file a brief in its mailbox instead.
