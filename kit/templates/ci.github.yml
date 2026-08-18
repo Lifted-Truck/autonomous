@@ -39,17 +39,23 @@ jobs:
   verify:
     runs-on: ubuntu-latest        # macos-latest ONLY if verify needs Xcode/clang/auval — ~10× the minutes
     steps:
-      - uses: actions/checkout@v4
+      # Action majors age on GITHUB's schedule, not ours: a pinned major goes
+      # from silently-forced-onto-a-new-node to hard failure on a date nobody
+      # here picks. v4 sat in this template until 2026-08-18, by which point 32
+      # repos had INHERITED it — the 2.4.0 shape (a copied artifact carrying a
+      # claim that ages out of true), with an external clock. Bumped only after
+      # a real run proved it, because a major bump cannot be checked locally.
+      - uses: actions/checkout@v7
 
       # --- Python (stdlib verify: unittest/ruff) ------------------------------
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
       # If the project uses a venv + pinned deps, install them here:
       #   run: python -m pip install -r requirements.txt   (or: -e .[dev])
 
       # --- Node (delete Python block above) -----------------------------------
-      # - uses: actions/setup-node@v4
+      # - uses: actions/setup-node@v7
       #   with: { node-version: "lts/*" }
       # - run: npm ci
 

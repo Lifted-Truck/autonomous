@@ -8,6 +8,7 @@ consistency is this loop's atomic-write duty (contract §Validation stance).
 - L0003 — MCP SDK 2.0 moved `mcp.server.fastmcp`; try-2.x-fall-back-1.x — shim safe only on `@tool`/`.run()` — candidate
 - L0004 — consumer-authored contract tests catch the dialect the provider does not write — candidate
 - L0005 — a detector shares assumptions with what it measures; a must-read-zero control needs a paired corruption — canonical
+- L0011 — a pinned version in a template ages on someone else's clock; prove a major bump on a real run — canonical
 - L0010 — an artifact two independent readers misread is defective, however defensible — canonical
 - L0009 — a tool writing into a foreign tree sweeps its own orphans on ENTRY; `finally` cannot — canonical
 - L0008 — a green oracle chained by && still does not cover `git add -A` in a mailbox repo — canonical
