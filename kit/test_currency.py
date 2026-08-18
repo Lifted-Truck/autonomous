@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -47,6 +48,13 @@ def _full_baseline(root):
     real = os.path.join(_KIT, "..", "harness", "verify")
     with open(real, encoding="utf-8") as fh:
         _touch(root, "verify", fh.read(), exe=True)
+    # 2.4.0: kit gates are VENDORED, so a current fixture carries .kit/ and its
+    # MANIFEST. Installed from the kit rather than hand-built, for the same
+    # reason real repos do it that way — a hand-built copy is the thing 2.4.0
+    # exists to stop.
+    sys.path.insert(0, _KIT)
+    import kit_sync
+    kit_sync.install(root)
     subprocess.run(["git", "init", "-q", root], check=True)   # leak_gate uses git grep
     _touch(root, ".github/workflows/ci.yml", "name: ci")
     _touch(root, ".gitattributes", "* text=auto eol=lf")

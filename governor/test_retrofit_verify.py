@@ -40,6 +40,13 @@ class RetrofitVerify(unittest.TestCase):
         _put(os.path.join(self.truth, ".gitattributes"), "* text=auto eol=lf\n")
         shutil.copy(os.path.join(ROOT, "harness", "verify"), os.path.join(self.truth, "verify"))
         os.chmod(os.path.join(self.truth, "verify"), 0o755)
+        # 2.4.0: a current repo carries VENDORED kit gates. Installed with the
+        # real tool rather than hand-assembled here — a hand-built copy of kit
+        # mechanism is precisely what 2.4.0 exists to stop, and a fixture is not
+        # exempt from the rule it is testing.
+        sys.path.insert(0, os.path.join(ROOT, "kit"))
+        import kit_sync
+        kit_sync.install(self.truth)
         with open(os.path.join(self.truth, "project.manifest.json"), "w") as fh:
             json.dump({"kit_version": KIT_VERSION}, fh)
         self.liar = os.path.join(self.tmp, "liar")

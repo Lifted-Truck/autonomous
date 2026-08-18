@@ -206,6 +206,44 @@ history; supersede with a new numbered entry.
     commit message that says the tip was rewritten; it was not, and this entry
     is the correction of record. Peers told the same thing have been corrected
     directly.
+65. **Kit MECHANISM is vendored and checksummed; kit SUBSTANCE stays a
+    retrofit** (2026-08-18, the human's call after measurement). The human:
+    "I keep realizing that other sessions are in the middle of tasks when I ask
+    you to intervene… maybe we should start turning autonomous into a library
+    that can be updated via standard versioning instead of this messy
+    multiagent collaboration process." **The measurement that decided it:** the
+    fleet carried TEN distinct `leak_gate` implementations, NINE missing the
+    Windows identity pattern, while every one of those repos declared a
+    `kit_version` promising it. Same day, a batch applying a byte-identical
+    diff to 13 repos still left 10 variants standing — an identical patch on
+    divergent bases gives divergent results, which I had reported as clean
+    because I checked the diff and not the outcome. **The split:** mechanism
+    (24 files / 129kB of gate code, hooks, checkers) is machine-owned and
+    versioned; substance (8 files / 67kB — charter, ROADMAP, DECISIONS,
+    LIBRARY) stays judgment-bearing. Four of eight CHANGELOG entries to date
+    were pure mechanism and should never have cost an agent session.
+    **Chosen over three alternatives:** git submodule (pinnable, but recursive
+    clones and the Windows sync make it a permanent tax); a thin shim
+    delegating to one on-disk kit (zero copies, but CI has no checkout of this
+    repo, and a gate that cannot run in CI is not a gate — decisive); a real
+    pip package (proper semver, but forces a Python env onto JUCE/C++ repos).
+    Vendored-plus-checksum keeps repos self-contained, works in CI offline, is
+    portable to Windows, and produces a deterministic diff that cannot collide
+    with a resident's in-flight work — which was the human's actual complaint.
+    **The deeper payoff:** `currency.py` answers the gate questions by hash for
+    vendored repos, so it no longer plants files inside foreign working trees.
+    The entire defect family of 2.2.2/2.3.0 — record clobber, plant collision,
+    ignore-blinding — was a consequence of copy-distribution and cannot occur
+    for a vendored repo. 6x faster besides (0.03s vs 0.17s). **What this does
+    NOT do, stated so it is not overclaimed:** `kit_integrity` lives inside a
+    file it checks, so it detects drift, not tampering; the authoritative
+    comparison is external. Substance still needs judgment. And the peer
+    channel is NOT retired — today's three real defects were all found by
+    residents running the kit in their own contexts, which no library release
+    would have caught. Collaboration for discovery; versioning for
+    distribution. Prototyped end to end on resume-workshop, whose gate let a
+    Windows-form identity path through before migration and catches it after.
+
     **hypersaw-002:** the §3 correction (hypersaw-001 Q3) had reached the
     doctrine and not the two artifacts that INSTALL it — CHANGELOG 2.1.0's
     retrofit action still said "ignored", and autonomous's own charter still

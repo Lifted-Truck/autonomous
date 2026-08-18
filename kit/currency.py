@@ -66,9 +66,13 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3"}   # 2.3.0 is NOT tool-only
+TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2", "2.2.3"}   # 2.3.0/2.4.0 are NOT tool-only
 
 REQUIREMENTS = {
+    # 2.4.0: kit-owned gate code is VENDORED into .kit/ and checksum-pinned,
+    # not copied. Checked by hash against the kit, which is also how the repo
+    # proves it — no probe, no plant, no subprocess.
+    "2.4.0": [("kit gates vendored (.kit/ matches canonical)", None, "vendored")],
     # 2.2.1: tool-only — /retrofit Step 6 (completion notice) + retrofit_verify.
     # Asks nothing of the repo tree; a 2.2.0 repo is CURRENT against it.
     "2.2.1": [],
@@ -173,6 +177,26 @@ def _harness_restore(repo, snap):
             pass
 
 
+def _vendored_current(repo):
+    """True when the repo's `.kit/` matches the kit's current bytes exactly.
+
+    This is the whole point of vendoring: the question "does this repo carry
+    the real gate" becomes a hash comparison instead of a behavioural probe.
+    Microseconds, no subprocess, no plant written into someone else's working
+    tree, and therefore none of the failure family the probe created (record
+    clobber, plant collision, ignore-blinding). A copy can lie; a hash cannot.
+    """
+    try:
+        import kit_sync
+    except ImportError:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import kit_sync
+    try:
+        return kit_sync.check(repo)[0] == "current"
+    except Exception:
+        return False
+
+
 def _gate_report(repo):
     """ONE ./verify run per repo, planting BOTH identity families in one file
     on separate lines, and reading which LINE the gate named. Halves the cost
@@ -180,6 +204,12 @@ def _gate_report(repo):
     informative: {"posix": bool, "windows": bool}. Cached on verify content.
     """
     import hashlib, subprocess
+    # FAST PATH: a vendored repo's gate is byte-identical to canonical by
+    # construction, so every behavioural property canonical has, it has. Probing
+    # it would only re-derive what the checksum already settled — and probing is
+    # what writes files into a foreign working tree.
+    if _vendored_current(repo):
+        return {"posix": True, "windows": True, "plant_invisible": True}
     if os.environ.get("KIT_CURRENCY_NESTED"):
         return {"posix": False, "windows": False, "plant_invisible": False}
     v = os.path.join(repo, "verify")
@@ -294,6 +324,8 @@ def _present(repo, target, kind):
         return _gate_report(repo)["windows"]
     if kind == "plant-invisible":
         return _gate_report(repo)["plant_invisible"]
+    if kind == "vendored":
+        return _vendored_current(repo)
     p = os.path.join(repo, target)
     if kind == "file":
         return os.path.isfile(p)

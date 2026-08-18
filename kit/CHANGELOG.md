@@ -175,3 +175,42 @@ probe runs. mind-lathe's Stop hook reported two hits on
 - **Verify gate:** `plant-invisible` in `currency.py`'s REQUIREMENTS; the
   fleet checklist will show every repo lacking it.
 
+## 2.4.0 — 2026-08-18 — kit mechanism is VENDORED and checksummed, not copied
+
+The distribution model changes; the doctrine does not. Copying kit code into
+every repo produced TEN distinct `leak_gate` implementations across the fleet,
+NINE of them missing the Windows identity pattern, while every one of those
+repos declared a `kit_version` that promised it. The same day, a batch that
+applied a byte-identical diff to 13 repos still left 10 variants standing,
+because an identical patch on divergent bases gives divergent results. The
+version was a claim about a copy, and a copy can lie.
+
+Split: kit **mechanism** (gate code) is machine-owned and versioned;
+kit **substance** (charter, ROADMAP, DECISIONS, LIBRARY) stays a
+judgment-bearing retrofit. Only mechanism goes through the new path.
+
+- `.kit/kit-gates.sh` — vendored, byte-identical everywhere, carrying
+  `record`, `leak_gate`, `kit_integrity`. Vendored rather than sourced from
+  one shared copy because CI has no checkout of the standards repo, and a
+  gate that cannot run in CI is not a gate.
+- `.kit/MANIFEST` — `kit_version` plus a sha256 per vendored file.
+  `kit_integrity` (in `fast`) recomputes and reds on any local edit. Honest
+  limit: it lives inside a file it checks, so it detects drift, not tampering
+  — the authoritative comparison is external (`kit_sync.py --check`).
+- `./verify` becomes PROJECT-owned: it sources `.kit/kit-gates.sh` and holds
+  only project gates and test commands. A missing `.kit/` is a hard exit, not
+  a degraded run — a silently skipped privacy gate is the exact bug the gate
+  exists to prevent.
+- `kit/kit_sync.py` — install/check, per repo or `--all`. Never commits.
+- `kit/migrate_to_vendored.py` — one-time per repo. Refuses rather than
+  guesses: a hand-written `verify` is reported for a human.
+- `currency.py` — vendored repos answer the gate questions by CHECKSUM. No
+  probe, no plant written into a foreign tree, so the entire defect family
+  from 2.2.2/2.3.0 (record clobber, plant collision, ignore-blinding) cannot
+  occur for them.
+- **Retrofit action:** `python3 <kit>/kit_sync.py <repo>` then
+  `python3 <kit>/migrate_to_vendored.py <repo> --apply`. Both deterministic
+  and idempotent; neither commits. After this, kit mechanism updates need no
+  agent session at all — `kit_sync.py --all` is the whole update.
+- **Verify gate:** `vendored` in REQUIREMENTS; `kit/test_kit_sync.py`.
+
