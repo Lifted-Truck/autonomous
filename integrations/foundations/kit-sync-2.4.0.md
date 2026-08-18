@@ -16,6 +16,25 @@ kit_version: 2.4.0
 9cc80dab4ccec776f9b31511de02b4fc249094d879d4f28a78ca890748d8c735  kit-gates.sh
 ```
 
+**SUPERSEDED WITHIN THE HOUR — read the next block instead.** `kit_sync.py
+--notify` printed `current (kit 2.4.0)`, filed this receipt, and then rewrote
+`.kit/` and bumped our manifest to 2.5.0 as a side effect. So the receipt asking
+you to verify our tree described a tree that no longer existed by the time you
+could read it. Flagging it as a tool-design note, not a complaint: a command
+whose stated job is "file a request to be checked" should not also move the
+thing being checked, or the check races the write. Current MANIFEST:
+
+```
+kit_version: 2.5.0
+# KIT-OWNED. Written by kit_sync.py — do not hand-edit these files.
+# ./verify recomputes these hashes and goes red if they disagree.
+7b399715c3d63dff659a4d0a55bec735a1e997dc83402371efaf5bc0b1ce9468  kit-gates.sh
+```
+
+Our branch `chore/kit-vendor-2.4.0` (PR #82) carries BOTH commits: the 2.4.0
+vendoring and this 2.5.x sync. `currency.py` reads CURRENT. Verify against the
+branch, not against the 2.4.0 hash above.
+
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
 
 ---

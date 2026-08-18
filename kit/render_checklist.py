@@ -109,36 +109,42 @@ def pending():
 
 
 def open_prs():
-    """PRs awaiting the human's merge. One search per OWNER, not per repo.
+    """PRs awaiting the human's merge, from each repo DIRECTLY.
 
-    Decision 66 moved the human's queue from `git push` to `gh pr merge`, so
-    this is now the action list rather than a backlog note. Best-effort: no
-    network, no gh, or no auth returns an empty list rather than failing the
-    page — a ledger that will not render because GitHub is down is worse than
-    one missing a section, and the section says when it could not look.
+    This used one `gh search prs --owner` call instead of ~46 `gh pr list`
+    calls, and the optimisation broke the page: GitHub's search index is
+    eventually consistent, so on 2026-08-18 it reported vertex#1/#2 as open
+    for over an hour AFTER they merged, while attest#2 and FOUNDATIONS#82 —
+    genuinely open at render time — never appeared at all. The human was told
+    to merge something already merged and not told about the two that needed
+    them. An index is a cache; an action list must come from the source.
+
+    Per-repo listing is authoritative and runs concurrently, so the cost is
+    wall-clock-comparable anyway. Best-effort per repo: a repo without a
+    remote, without auth, or offline contributes nothing rather than failing
+    the page.
     """
-    owners, out = set(), []
+    from concurrent.futures import ThreadPoolExecutor
     rows = json.loads(subprocess.run(
         [sys.executable, os.path.join(HERE, "sweep", "sweep.py"),
          "--registry", os.path.join(ROOT, "registry.json"), "list"],
         capture_output=True, text=True, check=True).stdout)
-    for r in rows:
-        remote = (r["status"] or {}).get("remote") or ""
-        m = re.search(r"github\.com[:/]([^/]+)/", remote)
-        if m:
-            owners.add(m.group(1))
-    for o in sorted(owners):
+    targets = [r for r in rows if (r["status"] or {}).get("remote")]
+
+    def one(r):
         try:
-            raw = subprocess.run(
-                ["gh", "search", "prs", "--owner", o, "--state", "open", "--limit", "60",
-                 "--json", "repository,number,title,url"],
-                capture_output=True, text=True, timeout=45).stdout
-            for pr in json.loads(raw or "[]"):
-                out.append({"repo": pr["repository"]["name"], "number": pr["number"],
-                            "title": pr["title"], "url": pr["url"]})
+            out = subprocess.run(
+                ["gh", "pr", "list", "--state", "open", "--json", "number,title,url"],
+                cwd=r["path"], capture_output=True, text=True, timeout=45).stdout
+            return [{"repo": r["name"], "number": pr["number"],
+                     "title": pr["title"], "url": pr["url"]}
+                    for pr in json.loads(out or "[]")]
         except Exception:
-            continue
-    return sorted(out, key=lambda x: (x["repo"], x["number"]))
+            return []
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        found = [pr for group in pool.map(one, targets) for pr in group]
+    return sorted(found, key=lambda x: (x["repo"], x["number"]))
 
 
 _PLANT_PATH = "/" + "Users" + "/somebody/private"   # assembled: this gate greps itself
