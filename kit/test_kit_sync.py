@@ -120,9 +120,13 @@ class Receipt(unittest.TestCase):
         """--notify is read-only, so a receipt filed from a stale tree stays
         stale. The receipt must therefore say how to fix it, in itself — a doc
         line elsewhere is a doc line the filer may never have read."""
-        man = os.path.join(self.repo, ".kit", "MANIFEST")
-        with open(man, "w") as fh:
-            fh.write("kit_version: 0.0.1\n")
+        # A GENUINELY stale state: the vendored bytes differ from what MANIFEST
+        # records. (This used to fake it by aging the version line, but 2.6.0
+        # made that line provenance rather than a status — a version string is
+        # not a defect, and pretending it was is what generated fleet-wide
+        # churn on every bump.)
+        with open(os.path.join(self.repo, ".kit", "kit-gates.sh"), "a") as fh:
+            fh.write("\n# local edit\n")
         text = open(kit_sync.receipt(self.repo, autonomous_root=self.aut)).read()
         self.assertIn("READ-ONLY", text)
         self.assertIn("--notify", text)

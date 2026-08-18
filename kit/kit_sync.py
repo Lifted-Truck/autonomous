@@ -63,7 +63,6 @@ def check(repo):
       current   bytes match canonical AND the files are tracked
       untracked bytes match, but `.kit/` is not in the index — a clone and CI
                 get NOTHING, so the repo is ungated everywhere but this disk
-      version-stale  canonical bytes, older version line (tool-only bump)
       stale     present but differs — a plain kit_sync away
       edited    MANIFEST disagrees with the repo's own files (local edit)
       absent    no .kit/ at all — this repo predates vendoring
@@ -113,15 +112,15 @@ def check(repo):
     if not tracked:
         return "untracked", {"declared": declared,
                              "why": ".kit/ is not in the index; a clone or CI has no gates"}
-    if declared != kit_version():
-        # Bytes match but MANIFEST names an older kit. Happens on a TOOL-ONLY
-        # bump: nothing vendored changed, so nothing was rewritten, and the
-        # file's own version line rots. Two repos (tribos, vertex) read it as
-        # possible drift within an hour of each other — an artifact two
-        # independent readers misread is a defect in the artifact, not in them.
-        # Rewriting is free and idempotent, so refresh rather than explain.
-        return "version-stale", {"declared": declared, "kit": kit_version()}
-    return "current", {"declared": declared}
+    # The MANIFEST's `kit_version` line is PROVENANCE — which kit version wrote
+    # these bytes — and is deliberately NOT a staleness trigger, for the same
+    # reason the manifest declaration stopped being one in 2.6.0: a version
+    # string goes stale on its own, so gating on it manufactures work that no
+    # tree needs. The BYTES are the question, and they are answered above. The
+    # old `version-stale` status made every repo stale on every bump, and left
+    # a trap where read-only --notify reported a state it could not fix
+    # (vertex). Refreshed for free on any sync; never a reason to act.
+    return "current", {"declared": declared, "kit": kit_version()}
 
 
 def install(repo):
@@ -269,7 +268,7 @@ def main():
         writing = not (a.check or a.notify)
         # `untracked` is NOT fixed by writing: the bytes are already right and
         # only `git add` closes it, which is the repo's own act.
-        if writing and st in ("stale", "absent", "edited", "version-stale"):
+        if writing and st in ("stale", "absent", "edited"):
             st = install(path) + " (synced)"
         counts[st.split()[0]] = counts.get(st.split()[0], 0) + 1
         note = ""

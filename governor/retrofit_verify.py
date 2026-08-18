@@ -97,11 +97,15 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                 # introduced — which it did, for one run.
                 # `untracked` is NOT current: the bytes are canonical and reach
                 # nobody but this disk (terrane, 2026-08-18).
-                elif st in ("current", "version-stale") and kit_sync.kit_version() == claimed:
-                    verdict, note = "verified", f".kit/ matches canonical at {claimed} (hash)"
+                elif st == "current":
+                    # The BYTES are canonical; which kit version last wrote them
+                    # is provenance, not a verdict (2.6.0). Comparing the label
+                    # to the latest kit disputed every receipt the moment a
+                    # version shipped, for a tree that was byte-perfect.
+                    verdict, note = "verified", ".kit/ matches canonical bytes exactly"
                 else:
-                    verdict, note = "disputed", (f"kit_sync reads {st!r}; kit is at "
-                                                 f"{kit_sync.kit_version()}, notice claims {claimed}")
+                    verdict, note = "disputed", (f"kit_sync reads {st!r} — the vendored "
+                                                 f"bytes are not canonical")
                 out.append({"file": f, "sender": sender, "claimed": claimed,
                             "verdict": verdict, "note": note})
                 if not dry:

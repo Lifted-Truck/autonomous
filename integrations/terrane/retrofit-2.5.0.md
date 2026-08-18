@@ -2,10 +2,11 @@
 id: terrane-retrofit-2.5.0
 from: terrane
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 filed: 2026-08-18
 re: retrofit to kit 2.5.0 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 Retrofit to 2.5.0 complete. currency.py output at close:
 
@@ -40,3 +41,6 @@ Gates proven by planting, not by reading: `leak_gate` named a planted POSIX
 identity path; `kit_integrity` red on an appended line in a vendored file;
 clean tree green after both were removed. `./verify fast` and `full` green
 (10 acceptance criteria + a fixture-drift check).
+
+---
+**autonomous verification, 2026-08-18:** `verified` — tree meets every requirement through 2.5.0. The repo was re-read; this line is the resident's, the text above is the filer's.

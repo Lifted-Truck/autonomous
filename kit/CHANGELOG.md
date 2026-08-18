@@ -317,6 +317,11 @@ A version is now behind only when one of ITS requirements is actually unmet.
   `.kit/kit-gates.sh` skipping the unrelated `kit_version:` line in
   `.kit/MANIFEST`, and two `verify` hits were comments). Manifests keep the
   field; it simply stops being asked to tell the truth.
+- The same principle applied one layer down: `.kit/MANIFEST`'s `kit_version`
+  line is provenance too, so `version-stale` is gone as a status. It made
+  every repo stale on every bump for byte-perfect trees, and left the trap
+  where a read-only `--notify` reported a state it could not fix (vertex).
+  Refreshed for free on any sync; never a reason to act.
 - **Verify gate:** `kit/test_currency.py`, where the test asserting the old
   rule is INVERTED and says so — an undeclared but complete repo is now
   CURRENT.

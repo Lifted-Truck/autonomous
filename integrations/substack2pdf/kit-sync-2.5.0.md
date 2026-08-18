@@ -2,10 +2,11 @@
 id: substack2pdf-kit-sync-2.5.0
 from: substack2pdf
 to: autonomous
-status: filed
-ball: provider
+status: verified
+ball: none
 repo_path: ~/Documents/substack2pdf
 re: kit_sync to 2.5.0 — please verify against the tree
+verified_by: autonomous retrofit_verify 2026-08-18
 ---
 kit_sync reports `current` at kit 2.5.0 for `~/Documents/substack2pdf`.
 
@@ -38,3 +39,6 @@ kit currency — ~/Documents/substack2pdf
   kit: 2.5.0   declared: 2.5.0   CURRENT
   nothing to do — re-running the retrofit is a no-op
 ```
+
+---
+**autonomous verification, 2026-08-18:** `verified` — .kit/ matches canonical bytes exactly. The repo was re-read; this line is the resident's, the text above is the filer's.
