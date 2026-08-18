@@ -149,6 +149,23 @@ class RetrofitVerify(unittest.TestCase):
         row = r["retrofit-older.md"]
         self.assertNotIn("BEHIND at or below", row["note"])
 
+    def test_a_repo_that_ADVANCED_past_its_claim_is_not_disputed(self):
+        """The mirror of the postdated-release bug, found an hour later:
+        babysynth filed at 2.4.1, then 2.5.0 landed mid-session with its one
+        requirement already met, so it advanced its declaration. Demanding
+        declared == claimed disputes a repo for being MORE current than it
+        said — a verifier must not punish either direction of drift from the
+        claim, only a tree that fails to meet it."""
+        old = "2.0.0"
+        with open(os.path.join(self.mail, "retrofit-advanced.md"), "w") as fh:
+            fh.write(f"---\nid: truth-retrofit-{old}\nfrom: truth\nto: autonomous\n"
+                     f"status: filed\nball: provider\nre: retrofit\n---\nclaimed.\n")
+        r = {os.path.basename(x["file"]): x for x in
+             rv.verify_all(self.registry, dry=True, mail_root=os.path.join(self.tmp, "mail"))}
+        row = r["retrofit-advanced.md"]
+        self.assertEqual(row["verdict"], "verified")     # declares > claimed
+        self.assertIn("since advanced", row["note"])
+
     def test_dry_run_writes_nothing(self):
         f = os.path.join(self.mail, "retrofit-lie.md")
         with open(f) as fh:

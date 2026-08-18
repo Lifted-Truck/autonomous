@@ -101,6 +101,24 @@ class Receipt(unittest.TestCase):
                                note="ran from the wrong cwd the first time")
         self.assertIn("ran from the wrong cwd the first time", open(out).read())
 
+    def test_a_stale_receipt_carries_its_own_remedy(self):
+        """--notify is read-only, so a receipt filed from a stale tree stays
+        stale. The receipt must therefore say how to fix it, in itself — a doc
+        line elsewhere is a doc line the filer may never have read."""
+        man = os.path.join(self.repo, ".kit", "MANIFEST")
+        with open(man, "w") as fh:
+            fh.write("kit_version: 0.0.1\n")
+        text = open(kit_sync.receipt(self.repo, autonomous_root=self.aut)).read()
+        self.assertIn("READ-ONLY", text)
+        self.assertIn("--notify", text)
+        self.assertIn("sync", text.lower())
+
+    def test_a_current_receipt_has_no_remedy_section(self):
+        """The paired control: the remedy must NOT appear when it does not
+        apply, or its presence stops meaning anything."""
+        text = open(kit_sync.receipt(self.repo, autonomous_root=self.aut)).read()
+        self.assertNotIn("Why this receipt does not read", text)
+
     def test_receipt_carries_no_absolute_home_path(self):
         """Receipts land in a PUBLIC repo whose leak gate rejects them (2.2.3)."""
         out = kit_sync.receipt(self.repo, autonomous_root=self.aut)

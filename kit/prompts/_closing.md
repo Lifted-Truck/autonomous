@@ -25,5 +25,11 @@ Three cases where this does not apply, and what to do instead:
 - **`gh` unavailable or unauthenticated**: push the branch anyway and report
   the compare URL so the human can open the PR in one click. Say that `gh` was
   unavailable rather than silently falling back.
+**Order matters when you check in.** `kit_sync.py <repo>` WRITES; `--notify`
+only REPORTS and cannot fix what it finds. So: sync, commit, *then* notify —
+otherwise you file an accurate receipt describing a tree you have already
+fixed everywhere except `.kit/MANIFEST`, which reads like drift to anyone
+skimming (vertex, 2026-08-18).
+
 - **You are not a resident of that repo**: you do not commit there at all.
   Writes stay home; file a brief in its mailbox instead.

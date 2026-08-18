@@ -32,3 +32,8 @@ kit/prompts/vendor-migration-judgment.md
 # exemption over the mailbox would blind the gate exactly where visitor
 # content lands.
 integrations/harness-grader/kit-sync-2.4.1.md
+# substack2pdf's notice quotes a URL fragment (/home/post/) that it found and
+# reworded in its OWN prose — reporting the catch trips the same pattern. The
+# filer's words are theirs; a notice describing a leak-gate hit is a record,
+# not a leak.
+integrations/substack2pdf/kit-sync-2.5.0.md

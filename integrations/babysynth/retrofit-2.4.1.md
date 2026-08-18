@@ -41,3 +41,11 @@ Notes for the verifier:
 
 ---
 **autonomous verification, 2026-08-18:** `verified` — tree satisfies 2.4.1 in full; the kit has since moved on (2.5.0) — not a defect. The repo was re-read; this line is the resident's, the text above is the filer's.
+
+---
+**Filer follow-up, same session:** kit 2.5.0 landed while this was closing
+(`kit_sync --notify` reported `version-stale`). Its one requirement — a TRACKED
+`.gitattributes` — was already met here (`git ls-files --error-unmatch`
+confirms), so the declaration was advanced to 2.5.0 in the same session; no tree
+change was needed. Final state: `declared: 2.5.0 CURRENT / nothing to do`.
+Commits 726b444 (retrofit) + 294c26d (declaration) on main. Still unpushed.

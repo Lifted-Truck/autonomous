@@ -184,6 +184,27 @@ MANIFEST as written:
 
 Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
 """)
+        if st != "current":
+            # A read-only --notify cannot fix what it reports, so a receipt filed
+            # from a stale tree stays stale and reads like drift to anyone
+            # skimming (vertex, 2026-08-18, after the read-only change). The
+            # receipt therefore carries its own remedy rather than relying on a
+            # doc line the filer may never have read. Ordering matters: sync
+            # WRITES, notify REPORTS, so notify must come last.
+            fh.write(f"""
+## Why this receipt does not read `current`
+
+`kit_sync --notify` is READ-ONLY: it reports the state it finds and never
+changes it, because a report must not change what it reports. So this state
+(`{st}`) will persist until someone runs the write step. The order is:
+
+    python3 <kit>/kit_sync.py <repo>     # WRITE: sync .kit/ + MANIFEST
+    git add .kit && git commit           # your repo, your commit
+    python3 <kit>/kit_sync.py <repo> --notify   # REPORT: file this receipt
+
+Filed as-is because an accurate report of a stale tree is worth more than a
+tidy one — but it is not the finished state, and autonomous will dispute it.
+""")
         if note:
             # The filer's own words. Without this the receipt is a fixed template
             # with nowhere to answer a question, which is how a direct question
@@ -235,6 +256,10 @@ def main():
             note = " — " + ", ".join(d["files"])
         if a.notify and not a.check:
             print(f"  {'filed':18} {os.path.relpath(receipt(path, note=a.note))}")
+            if st != "current":
+                print(f"  {'NOTE':18} that receipt reports {st!r}. --notify is read-only "
+                      f"and cannot fix it:\n{'':22}run the sync (no flag), commit, then "
+                      f"--notify again.")
         if a.all and st.startswith("current"):
             continue                      # only report what needs attention
         print(f"  {st:18} {name}{note}")

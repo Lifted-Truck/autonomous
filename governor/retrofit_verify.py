@@ -117,11 +117,23 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
             # that had just finished. Versions ABOVE the claim are news;
             # `declared_but_missing` spans every version <= declared, so it is
             # the real test of whether the claim holds.
+            sys.path.insert(0, os.path.join(_ROOT, "kit"))
+            from currency import parse_version          # semver, not string compare
             behind = [b["version"] for b in c.get("behind", [])]
-            newer = [v for v in behind if v > claimed]
-            if c.get("declared") == claimed and not c.get("declared_but_missing"):
+            newer = [v for v in behind if parse_version(v) > parse_version(claimed)]
+            declared = c.get("declared") or "pre-2.0.0"
+            # `>=`, not `==`: a repo may ADVANCE past its own notice — babysynth
+            # filed at 2.4.1, then 2.5.0 landed mid-session with its single
+            # requirement already met, so it advanced the declaration. Demanding
+            # equality would dispute a repo for being MORE current than it
+            # claimed, which is the mirror of the bug fixed an hour earlier.
+            advanced = parse_version(declared) > parse_version(claimed)
+            if (parse_version(declared) >= parse_version(claimed)
+                    and not c.get("declared_but_missing")):
                 verdict = "verified"
                 note = f"tree satisfies {claimed} in full"
+                if advanced:
+                    note += f"; since advanced to {declared}"
                 if newer:
                     note += f"; the kit has since moved on ({', '.join(newer)}) — not a defect"
             else:
