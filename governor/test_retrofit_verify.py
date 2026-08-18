@@ -93,6 +93,26 @@ class RetrofitVerify(unittest.TestCase):
         self.assertIn("autonomous verification", lie)
         self.assertEqual(self._run(dry=False), {})        # already judged → skipped
 
+    def test_kit_sync_receipt_verified_on_a_synced_repo(self):
+        """A sync receipt claims only that the VENDORED MECHANISM is current —
+        narrower than a retrofit notice. `truth` is vendored but BEHIND on
+        substance, so judging a sync receipt by full currency would wrongly
+        dispute it. That distinction is the test."""
+        with open(os.path.join(self.mail, "kit-sync-current.md"), "w") as fh:
+            fh.write(f"---\nid: truth-kit-sync-{KIT_VERSION}\nfrom: truth\nto: autonomous\n"
+                     f"status: filed\nball: provider\nre: kit_sync\n---\nclaimed.\n")
+        with open(os.path.join(self.mail, "kit-sync-lie.md"), "w") as fh:
+            fh.write(f"---\nid: liar-kit-sync-{KIT_VERSION}\nfrom: liar\nto: autonomous\n"
+                     f"status: filed\nball: provider\nre: kit_sync\n---\nclaimed.\n")
+        # Key by FILE, not sender: each sender has both a retrofit notice and a
+        # sync receipt here, and a sender-keyed dict silently keeps whichever
+        # sorted last — which is how this test first "failed" against correct code.
+        r = {os.path.basename(x["file"]): x for x in
+             rv.verify_all(self.registry, dry=True, mail_root=os.path.join(self.tmp, "mail"))}
+        self.assertEqual(r["kit-sync-current.md"]["verdict"], "verified")
+        self.assertEqual(r["kit-sync-lie.md"]["verdict"], "disputed")
+        self.assertIn("absent", r["kit-sync-lie.md"]["note"])
+
     def test_dry_run_writes_nothing(self):
         f = os.path.join(self.mail, "retrofit-lie.md")
         with open(f) as fh:

@@ -25,7 +25,7 @@ sys.path.insert(0, os.path.join(_ROOT, "kit", "sweep"))
 import sweep  # noqa: E402
 
 _FM = re.compile(r"\A---\n(.*?)\n---\n", re.S)
-_ID = re.compile(r"^id:\s*(\S+)-retrofit-(\S+)\s*$", re.M)
+_ID = re.compile(r"^id:\s*(\S+)-(?:retrofit|kit-sync)-(\S+)\s*$", re.M)
 
 
 def _repo_path_for(sender, registry):
@@ -50,7 +50,9 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
     today = (today or datetime.date.today()).isoformat()
     mail_root = mail_root or os.path.join(_ROOT, "integrations")
     out = []
-    for f in sorted(glob.glob(os.path.join(mail_root, "*", "retrofit-*.md"))):
+    notices = sorted(glob.glob(os.path.join(mail_root, "*", "retrofit-*.md"))
+                     + glob.glob(os.path.join(mail_root, "*", "kit-sync-*.md")))
+    for f in notices:
         with open(f, encoding="utf-8") as fh:
             text = fh.read()
         m = _FM.match(text)
@@ -67,6 +69,24 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
         if not path:
             verdict, note = "unresolvable", f"registry has no repo named {sender}"
         else:
+            # A kit-sync receipt is a narrower claim than a retrofit notice: it
+            # says the VENDORED MECHANISM is current, not that the whole repo
+            # is. Judge it on that, or every sync would read `disputed` for
+            # substance gaps it never claimed to close.
+            if "kit-sync" in os.path.basename(f):
+                sys.path.insert(0, os.path.join(_ROOT, "kit"))
+                import kit_sync
+                st, _d = kit_sync.check(path)
+                if st == "current" and kit_sync.kit_version() == claimed:
+                    verdict, note = "verified", f".kit/ matches canonical at {claimed} (hash)"
+                else:
+                    verdict, note = "disputed", (f"kit_sync reads {st!r}; kit is at "
+                                                 f"{kit_sync.kit_version()}, notice claims {claimed}")
+                out.append({"file": f, "sender": sender, "claimed": claimed,
+                            "verdict": verdict, "note": note})
+                if not dry:
+                    _stamp(f, text, m, verdict, note, today)
+                continue
             c = _currency(path)
             # Verdict keys on the EFFECTIVE state (current, nothing missing), not
             # on the declared string equalling the claim: a repo declaring 2.2.0
@@ -87,18 +107,22 @@ def verify_all(registry, dry=False, today=None, mail_root=None):
                     "claimed": claimed, "verdict": verdict, "note": note})
         if dry:
             continue
-        # Frontmatter is protocol state and the RESIDENT owns it (Decision 56);
-        # the body is the filer's and is appended to, never edited.
-        fm2 = re.sub(r"^status:.*$", f"status: {verdict}", fm, count=1, flags=re.M)
-        fm2 = re.sub(r"^ball:.*$", "ball: none", fm2, count=1, flags=re.M)
-        fm2 += f"\nverified_by: autonomous retrofit_verify {today}"
-        body = text[m.end():]
-        stamp = (f"\n\n---\n**autonomous verification, {today}:** `{verdict}` — {note}. "
-                 f"The tree was re-read with `kit/currency.py`; this line is the resident's, "
-                 f"the text above is the filer's.\n")
-        with open(f, "w", encoding="utf-8") as fh:
-            fh.write("---\n" + fm2 + "\n---\n" + body.rstrip("\n") + stamp)
+        _stamp(f, text, m, verdict, note, today)
     return out
+
+
+def _stamp(path, text, m, verdict, note, today):
+    """Frontmatter is protocol state and the RESIDENT owns it (Decision 56);
+    the body is the filer's and is appended to, never edited."""
+    fm = m.group(1)
+    fm = re.sub(r"^status:.*$", f"status: {verdict}", fm, count=1, flags=re.M)
+    fm = re.sub(r"^ball:.*$", "ball: none", fm, count=1, flags=re.M)
+    fm += f"\nverified_by: autonomous retrofit_verify {today}"
+    stamp = (f"\n\n---\n**autonomous verification, {today}:** `{verdict}` — {note}. "
+             f"The repo was re-read; this line is the resident's, the text above "
+             f"is the filer's.\n")
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.write("---\n" + fm + "\n---\n" + text[m.end():].rstrip("\n") + stamp)
 
 
 def main():

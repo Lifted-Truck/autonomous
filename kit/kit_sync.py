@@ -112,6 +112,47 @@ def install(repo):
     return check(repo)[0]
 
 
+def receipt(repo, autonomous_root=None):
+    """File a check-in in the standards repo's mailbox after an update.
+
+    Not a claim that the update worked — a request that it be CHECKED, and a
+    timestamped record of what the repo believed at that moment. autonomous
+    can read any repo's `.kit/MANIFEST` at any time, so this is not delivery;
+    it is TIMING (look now) plus an audit trail of who updated what and when.
+    Same inversion as /retrofit Step 6: the notice carries evidence, and the
+    verdict comes from re-reading the tree.
+
+    Written uncommitted — committing into the standards repo is its resident's
+    act, not the visitor's.
+    """
+    root = autonomous_root or os.path.abspath(_ROOT)
+    name = os.path.basename(os.path.abspath(repo))
+    st, d = check(repo)
+    man = os.path.join(repo, ".kit", "MANIFEST")
+    body = open(man, encoding="utf-8").read() if os.path.isfile(man) else "(no MANIFEST)"
+    box = os.path.join(root, "integrations", name)
+    os.makedirs(box, exist_ok=True)
+    out = os.path.join(box, f"kit-sync-{kit_version()}.md")
+    with open(out, "w", encoding="utf-8") as fh:
+        fh.write(f"""---
+id: {name}-kit-sync-{kit_version()}
+from: {name}
+to: autonomous
+status: filed
+ball: provider
+re: kit_sync to {kit_version()} — please verify against the tree
+---
+kit_sync reports `{st}` at kit {kit_version()}. MANIFEST as written:
+
+```
+{body.strip()}
+```
+
+Verify by re-reading, not by trusting this: `kit_sync.py <repo> --check`.
+""")
+    return out
+
+
 def _repos(registry):
     sys.path.insert(0, os.path.join(_HERE, "sweep"))
     import sweep
@@ -124,6 +165,8 @@ def main():
     ap.add_argument("repo", nargs="?")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--all", action="store_true")
+    ap.add_argument("--notify", action="store_true",
+                    help="file a check-in in autonomous's mailbox after updating")
     ap.add_argument("--registry", default=os.path.join(_ROOT, "registry.json"))
     a = ap.parse_args()
     targets = _repos(a.registry) if a.all else [(os.path.basename(os.path.abspath(a.repo)), a.repo)]
@@ -138,6 +181,8 @@ def main():
         note = ""
         if d.get("files"):
             note = " — " + ", ".join(d["files"])
+        if a.notify and not a.check:
+            print(f"  {'filed':18} {os.path.relpath(receipt(path))}")
         if a.all and st.startswith("current"):
             continue                      # only report what needs attention
         print(f"  {st:18} {name}{note}")
