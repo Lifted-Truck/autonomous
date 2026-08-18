@@ -57,6 +57,23 @@ def main():
     today = datetime.date.today()
     bits = []
 
+    # 0. Retrofit notices (autonomous only — the mailbox is ours; runs BEFORE
+    #    the ball scan so a notice judged here is not also reported as owed). A repo that
+    #     finished /retrofit filed a notice asking to be verified NOW; verify
+    #     it here by re-reading its tree, and say what the verdict was. The
+    #     notice's claim is never repeated as fact — only the verdict is.
+    if os.path.realpath(root) == os.path.realpath(AUT):
+        try:
+            sys.path.insert(0, os.path.join(AUT, "governor"))
+            import retrofit_verify
+            with open(os.path.join(AUT, "registry.json"), encoding="utf-8") as fh:
+                judged = retrofit_verify.verify_all(json.load(fh))
+            for r in judged:
+                bits.append(f"retrofit {r['sender']}→{r['claimed']}: {r['verdict'].upper()}"
+                            + ("" if r["verdict"] == "verified" else f" ({r['note']})"))
+        except Exception:
+            pass
+
     # 1. What THIS repo owes (its own mailbox).
     try:
         mine = ball_scan.scan_repo(root, name, today)

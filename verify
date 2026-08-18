@@ -74,6 +74,7 @@ fast() {
   # kit/currency.py drives every /retrofit in the fleet; its REQUIREMENTS
   # table must stay in lockstep with CHANGELOG.md (a test pins that).
   (cd kit && python3 -m unittest -q test_currency) \
+    && (cd governor && python3 -m unittest -q test_retrofit_verify) \
     || { echo "verify[fast]: kit currency tests red" >&2; ok=1; }
   # Retired doctrine phrases must not survive in INSTALLING artifacts
   # (hypersaw-002): a rule corrected where it is READ but left in the charter

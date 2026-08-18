@@ -84,8 +84,49 @@ does not, the retrofit is not done, whatever the diff looks like.
   README, gate rule). The retrofit's own closing check is an instance:
   `currency.py` reads the tree, not your summary of it.
 
+## Step 6 — notify autonomous, so it verifies NOW rather than next sweep
+
+The standards repo verifies a retrofit by RE-READING the repo (`currency.py`),
+never by trusting a report. So this notice is not a claim of completion — it
+is a request that the effective-state check run now. Two channels, both:
+
+1. **File it** (works whether or not an autonomous session is live — the
+   protocol's own channel). Write, under the mailbox exception, to
+   `~/Documents/Claude/autonomous/integrations/<this-repo>/retrofit-<kit-version>.md`:
+
+   ```
+   ---
+   id: <this-repo>-retrofit-<kit-version>
+   from: <this-repo>
+   to: autonomous
+   status: filed
+   ball: provider
+   filed: <YYYY-MM-DD>
+   re: retrofit to kit <kit-version> — please verify against the tree
+   ---
+   Retrofit to <kit-version> complete. currency.py output at close:
+
+   <paste the final currency output — must read CURRENT / nothing to do>
+
+   Committed: <sha> on <branch>. Pushed: <yes/no — pushes are the human's>.
+   ```
+   Leave it uncommitted; committing into autonomous is its resident's act.
+   The subject line MUST be the currency output, because that is what
+   autonomous compares against its own re-read — a notice without it is a
+   claim, and claims are exactly what this step exists to replace.
+
+2. **Ping it** (only if a session is live). Run `ListAgents`; if a session
+   whose name contains `autonomous` is listed, `SendMessage` it one line:
+   `<this-repo> retrofit to <kit-version> filed at integrations/<this-repo>/retrofit-<kit-version>.md — please verify.`
+   If no such session is listed, skip this — the file already carries it.
+
+Autonomous will re-run `currency.py` on your repo, compare, and either close
+the notice (`status: verified`) or file back what differs. **Do not wait on
+that** — you are done when your own close check reads `nothing to do`.
+
 Finish by reporting: the currency output before and after (this is the
 visual for the review beat — the `[ ]`→`[x]` delta), the manifest for
 ratification, green `./verify fast` output, and any briefs filed. Reference
 for the target end-state: `~/Documents/Claude/autonomous/` itself (declares
-2.0.0 and passes its own checker), `~/Documents/Claude/distillery/`.
+the current kit version and passes its own checker),
+`~/Documents/Claude/distillery/`.

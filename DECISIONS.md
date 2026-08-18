@@ -138,6 +138,35 @@ history; supersede with a new numbered entry.
     retrofit action — a migration, not a silent tightening, per their ask 3.
     Their brief's own line 72 trips the gate by quoting the escaped form; NOT
     edited (visitor's words), allowlisted with reason.
+63. **A retrofit closes by asking to be verified, never by declaring itself
+    done** (2026-08-18). The human: "a command to send you a brief directly
+    when it's over so you can verify." The derived checklist had refused a
+    notice channel because a notice is a declared state, and this fortnight's
+    record is a list of declared states that lied. Kept the notice, inverted
+    its meaning: it is not a claim of completion, it is a request that the
+    effective-state check run NOW. `/retrofit` Step 6 files
+    `integrations/<repo>/retrofit-<version>.md` in autonomous's mailbox
+    (uncommitted — mailbox exception) carrying the repo's own final
+    `currency.py` output, and pings a live autonomous session via
+    `SendMessage` if `ListAgents` shows one — file first, because the file
+    works whether or not anyone is live. `governor/retrofit_verify.py` is the
+    receiving half: re-runs `currency.py` on the sender and stamps the notice
+    `verified` / `disputed` (with the exact difference) / `unresolvable`;
+    frontmatter is the resident's (Decision 56), the filer's body is appended
+    to, never edited. The session brief runs it BEFORE the ball scan, so a
+    judged notice is not also reported as owed. Verdict keys on the effective
+    state (current, nothing missing), not on the declared string equalling
+    the claim — a repo declaring 2.2.0 is truthfully current against a
+    tool-only 2.2.1. Ships as kit **2.2.1, tool-only**: asks nothing of the
+    tree, so the eleven Declare repos the human just retrofitted stay
+    CURRENT. Test plants a lie (declares, has nothing) and asserts
+    `disputed` — a verifier that cannot say no is one that always says yes
+    (L0002/L0005); the "true" fixture is a self-contained current repo, NOT
+    autonomous itself, whose `./verify` re-runs this test from inside
+    currency's gate-fires check and wiped the first draft's shared fixture
+    dir mid-run. Consequence: the checklist stays derived; the notice moves
+    only *when* I look, never *what* I see. Closes Decision 53 from the
+    sender's side.
     **hypersaw-002:** the §3 correction (hypersaw-001 Q3) had reached the
     doctrine and not the two artifacts that INSTALL it — CHANGELOG 2.1.0's
     retrofit action still said "ignored", and autonomous's own charter still

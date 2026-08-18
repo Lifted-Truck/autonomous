@@ -66,9 +66,12 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1"}
+TOOL_ONLY = {"2.0.1", "2.2.1"}
 
 REQUIREMENTS = {
+    # 2.2.1: tool-only — /retrofit Step 6 (completion notice) + retrofit_verify.
+    # Asks nothing of the repo tree; a 2.2.0 repo is CURRENT against it.
+    "2.2.1": [],
     # 2.2.0: the leak gate must FIRE, not merely exist. Behavioural, per
     # spectral-morph-001. A repo at 2.1.0 with a POSIX-only gate is correctly
     # BEHIND this — that is the migration, not a silent tightening.

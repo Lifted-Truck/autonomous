@@ -93,3 +93,21 @@ kit-v2 core install carries as of this date:
 <!-- Next entries append BELOW, newest last, so the migration order reads
      top-to-bottom. K2 (intake/), K3 (session-boundary artifacts) will land
      here as 2.1.0 / 2.2.0 when they ship. -->
+
+## 2.2.1 — 2026-08-18 — retrofit closes by asking to be verified (tool-only)
+
+- `/retrofit` Step 6: on close, the repo files
+  `autonomous/integrations/<repo>/retrofit-<version>.md` (uncommitted, mailbox
+  exception) carrying its own final `currency.py` output, and pings a live
+  autonomous session via `SendMessage` if `ListAgents` shows one. The notice
+  is not a claim of completion — it is a request that autonomous re-read the
+  tree NOW instead of at the next sweep (closes the delivery gap of Decision
+  53 from the other side).
+- `governor/retrofit_verify.py` — the receiving half. Re-runs `currency.py`
+  on the sender, compares to the claim, and stamps the notice `verified` /
+  `disputed` (with the exact difference) / `unresolvable`. Frontmatter is the
+  resident's (Decision 56); the filer's body is appended to, never edited.
+  Runs from the session brief and by hand.
+- **Retrofit action:** none — tool-only. A repo at 2.2.0 is CURRENT.
+- **Verify gate:** `governor/test_retrofit_verify.py`.
+
