@@ -167,3 +167,66 @@ class TestAnnotatedBallValues(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestResponsesAwaiting(unittest.TestCase):
+    """The delivery gap (Decision 53/54): a response lands in the PROVIDER's
+    tree, so a consumer reading only its own mailbox cannot tell an answered
+    brief from an ignored one. distillery filed against a stale premise for
+    five days because of this."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.me = os.path.join(self.tmp, "distillery")
+        self.them = os.path.join(self.tmp, "autonomous")
+        os.makedirs(self.me)
+        os.makedirs(self.them)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _paths(self):
+        return [self.me, self.them]
+
+    def test_response_in_provider_tree_is_surfaced_to_the_consumer(self):
+        box = os.path.join(self.them, "integrations", "distillery")
+        _fm(box, "brief.md", id="d-1", ball="provider", status="filed",
+            filed="2026-08-01")
+        _fm(box, "response.md", id="d-1", ball="consumer", status="responded",
+            responded="2026-08-10")
+        got = ball_scan.responses_awaiting("distillery", self._paths(), TODAY)
+        self.assertEqual([(g["id"], g["in_repo"]) for g in got],
+                         [("d-1", "autonomous")])
+
+    def test_thread_still_on_the_provider_is_not_ours(self):
+        """Un-answered means THEY owe US. It must not appear as our obligation
+        — over-claiming here would put another repo's work on our list."""
+        box = os.path.join(self.them, "integrations", "distillery")
+        _fm(box, "brief.md", id="d-2", ball="provider", status="filed",
+            filed="2026-08-01")
+        self.assertEqual(ball_scan.responses_awaiting("distillery", self._paths(), TODAY), [])
+
+    def test_closed_thread_is_not_surfaced(self):
+        box = os.path.join(self.them, "integrations", "distillery")
+        _fm(box, "brief.md", id="d-3", ball="provider", status="filed", filed="2026-08-01")
+        _fm(box, "response.md", id="d-3", ball="consumer", status="responded",
+            responded="2026-08-10")
+        _fm(box, "ratify.md", id="d-3", ball="none", status="closed",
+            ratified="2026-08-11")
+        self.assertEqual(ball_scan.responses_awaiting("distillery", self._paths(), TODAY), [])
+
+    def test_other_repos_channels_are_ignored(self):
+        """THE SCOPE RULE. A channel between two OTHER repos must never appear
+        — agents in several projects warned the human about one brief in a
+        repo none of them could touch (2026-08-17)."""
+        box = os.path.join(self.them, "integrations", "hypersaw")
+        _fm(box, "brief.md", id="h-1", ball="provider", status="filed", filed="2026-08-01")
+        _fm(box, "response.md", id="h-1", ball="consumer", status="responded",
+            responded="2026-08-10")
+        self.assertEqual(ball_scan.responses_awaiting("distillery", self._paths(), TODAY), [])
+
+    def test_our_own_mailbox_is_not_double_reported(self):
+        """scan_repo already covers it; counting it twice inflates the list."""
+        box = os.path.join(self.me, "integrations", "peer")
+        _fm(box, "brief.md", id="d-4", ball="provider", status="filed", filed="2026-08-01")
+        self.assertEqual(ball_scan.responses_awaiting("distillery", self._paths(), TODAY), [])

@@ -49,6 +49,25 @@ kit-v2 core install carries as of this date:
 - **Verify gate:** autonomous's own `./verify fast` runs the currency tests
   and its own currency check.
 
+## 2.1.0 — 2026-08-17 — mailbox scope rule in every charter (K1 follow-on)
+
+- Every repo's `CLAUDE.md` states, in its own words, **which mailbox is its
+  own and that other repos' exchanges are not its business** — the three
+  questions in INTEGRATIONS §3 "Scope" (who owes me / did anyone answer me /
+  should I act on X↔Y).
+- **Retrofit action:** append a `## Mailbox` section to `CLAUDE.md` naming
+  (a) `integrations/` in THIS repo as the only place briefs to us land,
+  (b) that responses to OUR briefs live in the PROVIDER's tree and must be
+  pulled and read, (c) that exchanges between other repos are ignored.
+  Marker-delimited, append-only; if a `## Mailbox` section already exists,
+  leave it alone and report the difference.
+- **Verify gate:** none — this is a charter statement, and gating prose on
+  grep would reward the words over the understanding. The behavioural gate is
+  the scoped session brief, which only ever shows a repo its own obligations.
+- **Why:** on 2026-08-17 agents in several unrelated projects each warned the
+  human about one brief in autonomous's mailbox. Tooling caused it; the rule
+  was never written down either way.
+
 <!-- Next entries append BELOW, newest last, so the migration order reads
      top-to-bottom. K2 (intake/), K3 (session-boundary artifacts) will land
      here as 2.1.0 / 2.2.0 when they ship. -->

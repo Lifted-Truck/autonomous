@@ -196,3 +196,42 @@ def untracked_mailbox_files(path):
     except (subprocess.CalledProcessError, FileNotFoundError):
         return []
     return [l for l in out.splitlines() if l.strip()]
+
+def responses_awaiting(repo_name, roster_paths, today=None):
+    """Exchanges in OTHER repos' mailboxes addressed to THIS repo, where the
+    ball is now on us.
+
+    Closes the delivery gap found 2026-08-17 (Decision 53): a response lands in
+    the PROVIDER's repo, and `scan_repo` only ever reads a repo's own mailbox —
+    so from the consumer's side an answered brief and an ignored one are
+    identical. distillery filed against a stale premise for five days because
+    of exactly this.
+
+    This is a READ across territories, which writes-stay-home permits (it
+    forbids WRITES). Nothing here mutates another repo; it reports what another
+    repo has already said to us.
+    """
+    today = today or datetime.date.today()
+    me = repo_name.lower().split("/")[-1]
+    out = []
+    for path in roster_paths:
+        base = os.path.basename(path.rstrip("/")).lower()
+        if base == me:
+            continue                      # our own mailbox is scan_repo's job
+        box = os.path.join(path, "integrations")
+        if not os.path.isdir(box):
+            continue
+        for d in os.listdir(box):
+            if d.lower() != me:
+                continue                  # only channels addressed to US
+            for th in scan_repo(path, me, today):
+                # scan_repo evaluated ownership from the OTHER repo's point of
+                # view; re-evaluate from ours. Their `ball: consumer` is our
+                # ball when we are the consumer in that channel.
+                if th["dir"].lower() != me:
+                    continue
+                token = _ball_token(th["ball"])
+                ours = token in ("consumer", me)
+                if ours:
+                    out.append({**th, "in_repo": os.path.basename(path), "ours": True})
+    return out

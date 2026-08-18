@@ -69,6 +69,12 @@ def changelog_entries(kit_dir):
 TOOL_ONLY = {"2.0.1"}
 
 REQUIREMENTS = {
+    # 2.1.0 asks for a CLAUDE.md section; presence of the FILE is already
+    # required by 2.0.0, and gating on the section's prose would reward the
+    # words over the understanding (see CHANGELOG). So: no new mechanical
+    # check — the retrofit still applies the entry, and a repo below 2.1.0
+    # reads as behind until it does.
+    "2.1.0": [],
     "2.0.1": [],
     "2.0.0": [
         # (label, relative path or callable-name, kind)

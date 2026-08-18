@@ -31,7 +31,12 @@ def _full_baseline(root):
     """Everything REQUIREMENTS['2.0.0'] asks for."""
     for f in ("CLAUDE.md", "ROADMAP.md", "DECISIONS.md", "INDEX.md", "LIBRARY.md"):
         _touch(root, f)
-    _touch(root, "project.manifest.json", json.dumps({"kit_version": "2.0.0"}))
+    # Declare whatever the kit's CURRENT version is, never a hardcoded one:
+    # pinning "2.0.0" here made every one of these tests fail the moment 2.1.0
+    # shipped, which is the test asserting the kit never moves rather than
+    # asserting the property under test.
+    _touch(root, "project.manifest.json",
+           json.dumps({"kit_version": currency.kit_version(_KIT)}))
     os.makedirs(os.path.join(root, "traces"), exist_ok=True)
     _touch(root, "verify", "#!/bin/bash\nleak_gate() { :; }\n", exe=True)
     _touch(root, ".github/workflows/ci.yml", "name: ci")
@@ -73,9 +78,13 @@ class TestReport(unittest.TestCase):
         r = currency.report(self.tmp, _KIT)
         self.assertEqual(r["declared"], "pre-2.0.0")
         self.assertFalse(r["current"])
-        self.assertEqual(len(r["behind"]), 1)
-        self.assertEqual(len(r["behind"][0]["missing"]),
-                         len(currency.REQUIREMENTS["2.0.0"]))
+        # every non-tool-only CHANGELOG entry, not a fixed count — the point
+        # is "behind by everything", which grows as the kit does
+        expected = [v for v in currency.REQUIREMENTS if v not in currency.TOOL_ONLY]
+        self.assertEqual(len(r["behind"]), len(expected))
+        # the baseline entry is the one with real requirements
+        base = next(b for b in r["behind"] if b["version"] == "2.0.0")
+        self.assertEqual(len(base["missing"]), len(currency.REQUIREMENTS["2.0.0"]))
 
     def test_undeclared_but_complete_repo_is_still_behind(self):
         """Antiphon's shape: full harness, no kit_version. It is BEHIND —
@@ -108,7 +117,7 @@ class TestReport(unittest.TestCase):
         """2.0.1 changed /retrofit, not what a repo must contain. A repo at
         2.0.0 must read CURRENT, or the checker manufactures 46 rows of
         'behind by nothing you can act on' — noise that gets the tool ignored."""
-        _full_baseline(self.tmp)   # declares 2.0.0
+        _full_baseline(self.tmp)   # declares the current kit version
         r = currency.report(self.tmp, _KIT)
         self.assertTrue(r["current"])
         self.assertEqual(r["behind"], [])

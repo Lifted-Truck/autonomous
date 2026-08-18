@@ -116,6 +116,42 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+54. **The session brief is SCOPED to the repo you are in; the scope rule is
+    written into the protocol and ships via retrofit** (2026-08-17,
+    human-reported). Symptom: agents in several unrelated projects each warned
+    the human about ONE uncommitted brief sitting in autonomous's mailbox — a
+    repo none of them had standing to touch. Cause was mine: the SessionStart
+    hook is installed globally, read the FLEET-WIDE `STATUS.md`, and reported
+    its counts into every session regardless of cwd. A requisite-variety
+    failure — an attenuator must deliver a signal its recipient can ACT on,
+    and fleet state delivered to a leaf project is noise that trains the reader
+    to skip the channel. Note this is the OPPOSITE of the failure diagnosed
+    one entry earlier: 53 found under-delivery (a ruling that never reached
+    its consumer), 54 is over-broadcast. Both are addressing failures, and
+    fixing only one would have left the channel useless in the other
+    direction.
+    **Built:** `kit/hooks/session-brief.py` replaces `fleet-brief.sh` — reports
+    only (a) this repo's own overdue/held balls, (b) uncommitted mailbox writes
+    HERE, (c) responses to OUR briefs sitting in other repos, and (d) a fleet
+    roll-up ONLY when cwd is the standards repo. First run proved it: HYPERSAW
+    sees four unread FOUNDATIONS responses and nothing about autonomous, so
+    the delivery gap is fleet-wide rather than a distillery quirk.
+    `ball_scan.responses_awaiting` is a READ across territories, which rule
+    zero permits (it forbids writes); it reports what another repo has already
+    said to us.
+    **Written down:** INTEGRATIONS §3 gains a "Scope" section with the three
+    questions a resident must be able to answer (who owes me / did anyone
+    answer me / should I act on X↔Y — the last answered "no"), and kit
+    CHANGELOG **2.1.0** makes a `## Mailbox` section in every repo's CLAUDE.md
+    a real migration. Deliberately NOT gated by grep: gating prose would
+    reward the words over the understanding — the behavioural gate is the
+    scoped brief itself. autonomous applied its own 2.1.0 migration and
+    declares it.
+    **Test-design lesson recorded in passing:** the currency tests hardcoded
+    `2.0.0` as the top version and all failed the moment 2.1.0 shipped — the
+    test was asserting the kit never moves rather than the property under
+    test. They now read the live `kit/VERSION`.
+
 53. **`absorbs` ruled into library-entry.3 (not v4); and a RESPONSE-DELIVERY
     gap found in the INTEGRATIONS protocol** (2026-08-17, distillery-004).
     Ruling: distillery's option (b), a distinct `absorbs: L0011, L0021,

@@ -112,6 +112,40 @@ coordination without conversation.
 - **Freeze = revoked permission, not an instruction.** Any "do not touch X"
   state is enforced by credentials/hooks/branch protection, never by prose.
 
+### Scope: what a repo may act on, and what it must ignore
+
+**A repo acts on exchanges in its OWN `integrations/` mailbox, plus responses
+addressed to it in other repos' mailboxes. Nothing else.** An exchange between
+two other projects is not a to-do, not a warning, and not context — it is
+somebody else's territory, and reacting to it is the read-side twin of writing
+outside your territory.
+
+Stated because it failed: on 2026-08-17 the human was warned by agents in
+several unrelated projects about ONE uncommitted brief sitting in autonomous's
+mailbox — a repo none of them could commit to. The cause was tooling (a
+global session hook reporting fleet-wide state into every session), not
+judgement, but the rule needs writing down either way: an agent that cannot
+act on a finding must not raise it.
+
+Three questions every resident should be able to answer, and where the answer
+lives:
+
+| Question | Answer |
+|---|---|
+| Who owes ME something? | `integrations/*/` in MY repo — `ball_scan.scan_repo` |
+| Did anyone ANSWER my brief? | `<their repo>/integrations/<my name>/` — `ball_scan.responses_awaiting`. **A response lands in the PROVIDER's tree, so a consumer that only reads its own mailbox cannot tell an answered brief from an ignored one.** |
+| Should I act on repo X's exchange with repo Y? | **No.** |
+
+The second row is the one that bites. distillery filed a brief on 2026-08-12
+restating two questions autonomous had ruled on 2026-08-10, because the ruling
+was sitting in autonomous's tree with nothing to signal its arrival. Reading
+across territories is permitted — rule zero forbids *writes*, not reads — and
+a consumer is expected to look.
+
+**Retrofit obligation.** Every kit-scaffolded repo's `CLAUDE.md` carries this
+scope rule in its own words (kit CHANGELOG 2.1.0). A repo that cannot state
+which mailbox is its own will eventually act on someone else's.
+
 ### Self-similarity
 This policy is the inter-repo instance of the intra-repo organ protocol
 (DESIGN.md §3): territory = repo, PROPOSAL = brief, contract commit =
