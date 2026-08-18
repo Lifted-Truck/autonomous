@@ -66,12 +66,13 @@ def changelog_entries(kit_dir):
 # as satisfied by every repo, so a tool-only bump never reports the fleet
 # behind by something it cannot act on. Repos still get the declaration bumped
 # on their next retrofit, which is the right time.
-TOOL_ONLY = {"2.0.1", "2.2.1"}
+TOOL_ONLY = {"2.0.1", "2.2.1", "2.2.2"}
 
 REQUIREMENTS = {
     # 2.2.1: tool-only — /retrofit Step 6 (completion notice) + retrofit_verify.
     # Asks nothing of the repo tree; a 2.2.0 repo is CURRENT against it.
     "2.2.1": [],
+    "2.2.2": [],   # tool-only — probe restores .harness/ (L0006)
     # 2.2.0: the leak gate must FIRE, not merely exist. Behavioural, per
     # spectral-morph-001. A repo at 2.1.0 with a POSIX-only gate is correctly
     # BEHIND this — that is the migration, not a silent tightening.
@@ -125,6 +126,42 @@ def _gate_fires_cached(repo, plant_lines, key):
     return _GATE_CACHE[ck]
 
 
+def _harness_snapshot(repo):
+    """Snapshot what the repo's OWN ./verify writes as a side effect, so a probe
+    can put it back. juce-rag (2026-08-18): the gate-fires probe runs the
+    target's `./verify fast`, and a CORRECTLY firing gate exits 1 — so the
+    target's `record()` wrote `{"exit":1}` into `.harness/last-verify.json`
+    and deleted `.harness/dirty`. The plant was removed; the record was not
+    restored; the repo's Stop hook then blocked on a red that was actually
+    this check PASSING. "Left untouched" must mean `.harness/` too."""
+    hd = os.path.join(repo, ".harness")
+    snap = {}
+    for f in ("last-verify.json", "dirty"):
+        fp = os.path.join(hd, f)
+        try:
+            with open(fp, "rb") as fh:
+                snap[f] = fh.read()
+        except OSError:
+            snap[f] = None            # absent — restore means "absent again"
+    return snap
+
+
+def _harness_restore(repo, snap):
+    hd = os.path.join(repo, ".harness")
+    for f, data in snap.items():
+        fp = os.path.join(hd, f)
+        try:
+            if data is None:
+                if os.path.exists(fp):
+                    os.remove(fp)
+            else:
+                os.makedirs(hd, exist_ok=True)
+                with open(fp, "wb") as fh:
+                    fh.write(data)
+        except OSError:
+            pass
+
+
 def _gate_report(repo):
     """ONE ./verify run per repo, planting BOTH identity families in one file
     on separate lines, and reading which LINE the gate named. Halves the cost
@@ -148,6 +185,7 @@ def _gate_report(repo):
     name = f".kit-currency-plant-{os.getpid()}.md"
     path = os.path.join(repo, name)
     result = {"posix": False, "windows": False}
+    snap = _harness_snapshot(repo)
     try:
         with open(path, "w", encoding="utf-8") as fh:
             fh.write(f"posix {_POSIX_PLANT}\nwindows {_WIN_PLANT}\n")
@@ -163,6 +201,7 @@ def _gate_report(repo):
             os.remove(path)
         except OSError:
             pass
+        _harness_restore(repo, snap)
     _GATE_CACHE[ck] = result
     return result
 
@@ -176,7 +215,8 @@ def _gate_fires(repo, plant_lines):
     says every gate asserts the EFFECTIVE state; the currency checker was the
     exception. This plants each identity family in a scratch file inside the
     repo, runs `./verify fast`, and requires the gate to name the file. The
-    plant is created and removed inside one call; the repo is left untouched.
+    plant is created and removed inside one call; the repo is left untouched —
+    working tree AND `.harness/` (see _harness_snapshot).
     """
     import subprocess
     # RECURSION GUARD. autonomous's own ./verify runs `currency.py .`, and this
@@ -196,6 +236,7 @@ def _gate_fires(repo, plant_lines):
         return False
     name = f".kit-currency-plant-{os.getpid()}.md"
     path = os.path.join(repo, name)
+    snap = _harness_snapshot(repo)
     try:
         with open(path, "w", encoding="utf-8") as fh:
             fh.write("\n".join(plant_lines) + "\n")
@@ -210,6 +251,7 @@ def _gate_fires(repo, plant_lines):
             os.remove(path)
         except OSError:
             pass
+        _harness_restore(repo, snap)
 
 
 # Planted lines are ASSEMBLED, never written as literals: this file is greppable

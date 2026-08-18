@@ -143,3 +143,34 @@ class TestReport(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestProbeLeavesHarnessAlone(unittest.TestCase):
+    """juce-rag 2026-08-18: the gate-fires probe runs the target's ./verify,
+    whose record() overwrote .harness/last-verify.json with the probe's exit 1
+    and deleted .harness/dirty — a red Stop hook for a PASSING check. The
+    probe must restore both, byte for byte, including 'absent'."""
+
+    def test_green_record_and_dirty_flag_survive_the_probe(self):
+        with tempfile.TemporaryDirectory() as root:
+            _full_baseline(root)
+            hd = os.path.join(root, ".harness")
+            os.makedirs(hd)
+            green = b'{"target":"fast","exit":0,"git":"abc","at":"t"}'
+            with open(os.path.join(hd, "last-verify.json"), "wb") as fh:
+                fh.write(green)
+            with open(os.path.join(hd, "dirty"), "wb") as fh:
+                fh.write(b"1")
+            currency._GATE_CACHE.clear()
+            self.assertTrue(currency._gate_report(root)["posix"])   # gate fired (exit 1)
+            with open(os.path.join(hd, "last-verify.json"), "rb") as fh:
+                self.assertEqual(fh.read(), green)                 # ...and left no trace
+            self.assertTrue(os.path.exists(os.path.join(hd, "dirty")))
+
+    def test_absent_record_stays_absent(self):
+        with tempfile.TemporaryDirectory() as root:
+            _full_baseline(root)
+            currency._GATE_CACHE.clear()
+            currency._gate_report(root)
+            self.assertFalse(os.path.exists(os.path.join(root, ".harness", "last-verify.json")))
+

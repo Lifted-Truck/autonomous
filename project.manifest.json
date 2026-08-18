@@ -1,7 +1,7 @@
 {
   "schema": "project-manifest.0 (draft \u2014 kit v2 will formalize)",
   "status": "RATIFIED by construction 2026-08-17 (Decision 51) \u2014 the standards repo declares itself against its own kit. Phase state lives in ROADMAP.md only.",
-  "kit_version": "2.2.1",
+  "kit_version": "2.2.2",
   "survey": {
     "what_is_it": "standards + kit + governor \u2014 the canonical home of cross-project doctrine, the harness kit, memory loops, and the deterministic fleet watchdog (see README)",
     "architecture_rung": {

@@ -111,3 +111,14 @@ kit-v2 core install carries as of this date:
 - **Retrofit action:** none — tool-only. A repo at 2.2.0 is CURRENT.
 - **Verify gate:** `governor/test_retrofit_verify.py`.
 
+## 2.2.2 — 2026-08-18 — the gate-fires probe restores `.harness/` (tool-only)
+
+- `currency.py`: `_gate_report`/`_gate_fires` snapshot `.harness/last-verify.json`
+  and `.harness/dirty` before running the target's `./verify fast` and restore
+  them byte-for-byte after (including "absent"). Found by juce-rag on the
+  first live Step 6 verification: a correctly firing gate exits 1, the
+  target's `record()` wrote that, and its Stop hook blocked on a red that was
+  the probe passing (LIBRARY L0006).
+- **Retrofit action:** none — tool-only. A repo at 2.2.0 is CURRENT.
+- **Verify gate:** `kit/test_currency.py::TestProbeLeavesHarnessAlone`.
+
