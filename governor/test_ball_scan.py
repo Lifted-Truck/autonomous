@@ -230,3 +230,53 @@ class TestResponsesAwaiting(unittest.TestCase):
         box = os.path.join(self.me, "integrations", "peer")
         _fm(box, "brief.md", id="d-4", ball="provider", status="filed", filed="2026-08-01")
         self.assertEqual(ball_scan.responses_awaiting("distillery", self._paths(), TODAY), [])
+
+
+class TestFrontmatterLies(unittest.TestCase):
+    """A sweep fixes instances; a gate fixes the class. The manual sweep that
+    closed this bug caught 21 of 23 — and one miss was HYPERSAW's own brief, on
+    the very thread reporting the bug (hypersaw-001 round 2)."""
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.box = os.path.join(self.tmp, "integrations", "peer")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_opening_brief_left_claiming_the_ball_is_flagged(self):
+        b = _fm(self.box, "brief.md", id="z-1", ball="provider", status="filed",
+                filed="2026-08-01")
+        r = _fm(self.box, "response.md", id="z-1", ball="consumer",
+                status="responded", responded="2026-08-10")
+        os.utime(b, (1, 1_000_000)); os.utime(r, (1, 2_000_000))
+        got = ball_scan.frontmatter_lies(self.tmp)
+        self.assertEqual([g["file"] for g in got], ["integrations/peer/brief.md"])
+
+    def test_a_live_hand_back_is_NOT_flagged(self):
+        """THE FALSE-POSITIVE GUARD. A thread bounces: the consumer ratifies and
+        hands the ball back with a new ask. That provider-ball is current, not
+        stale. Flagging it would report a live obligation as a lie and get the
+        gate switched off."""
+        b = _fm(self.box, "brief.md", id="z-2", ball="provider", status="filed",
+                filed="2026-08-01")
+        r = _fm(self.box, "response.md", id="z-2", ball="consumer",
+                status="responded", responded="2026-08-10")
+        h = _fm(self.box, "ratification.md", id="z-2", ball="provider",
+                status="refined", filed="2026-08-18")
+        os.utime(b, (1, 1_000_000)); os.utime(r, (1, 2_000_000)); os.utime(h, (1, 3_000_000))
+        got = [g["file"] for g in ball_scan.frontmatter_lies(self.tmp)]
+        self.assertIn("integrations/peer/brief.md", got)
+        self.assertNotIn("integrations/peer/ratification.md", got)
+
+    def test_unanswered_thread_is_clean(self):
+        _fm(self.box, "brief.md", id="z-3", ball="provider", status="filed",
+            filed="2026-08-01")
+        self.assertEqual(ball_scan.frontmatter_lies(self.tmp), [])
+
+    def test_answered_by_pointing_at_a_missing_file_is_not_proof(self):
+        """Assert the EFFECTIVE state: the answer must exist on disk, not merely
+        be claimed by a field."""
+        _fm(self.box, "brief.md", id="z-4", ball="provider", status="filed",
+            filed="2026-08-01", answered_by="nope.md")
+        self.assertEqual(ball_scan.frontmatter_lies(self.tmp), [])

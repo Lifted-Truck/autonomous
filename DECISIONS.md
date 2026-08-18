@@ -116,6 +116,52 @@ history; supersede with a new numbered entry.
     re-edited in parallel with its ROADMAP). Rejected: leaving growth
     unchecked (addition must be paid for by subtraction, or doctrine becomes
     noise).
+57. **The `absorbs` amendment was inert; the frontmatter fix missed its own
+    thread; citation-time notice accepted** (2026-08-18, ruling hypersaw-001
+    round 2 — all three items verified in-tree before answering).
+    **(1) An amendment that could not fire.** The 2026-08-17 `absorbs`
+    amendment updated the prose, the JSON Schema and the quarantine rule but
+    NOT the label-opening regex, so a conforming parser routed
+    `| absorbs: …` to `extra` and the graph edge stayed unwalkable — the exact
+    loss the amendment was made to prevent. Second-order and worse: the
+    quarantine rule guarding it could never fire, because the field it guards
+    could never open. **A check that cannot fire reads exactly like a check
+    that passes** (L0002; HYPERSAW L0032/L0024) — now reached the contract
+    governing the entries that taught us that. Fixed; a systematic diff
+    confirmed `absorbs` was the only such field; `kit/gates/
+    test_library_contract.py` now pins schema-writable-fields ≡ label rule in
+    both directions, with `absorbs` named because a regex "simplification"
+    would reintroduce it silently. Rule at the site: **a field is not added
+    until it appears in all four places.** Caught by the first party to WRITE
+    the field while distillery will be first to READ it — neither author nor
+    reader was placed to see it, which is Q1's argument arriving as evidence.
+    **(2) Citation-time notice adopted**, and their argument used my own logic:
+    I hold `relations:` until distillery ships v3 to avoid a second migration,
+    yet notifying only at ruling time cost precisely that migration — a
+    citation notice on 2026-08-12 would have put their four-verb evidence on
+    the table while v3 was still unimplemented, inside the same zero-migration
+    amendment. Two notices, citation and ruling, neither carrying a ball,
+    provider never waits on the first. **Deliberately NOT built today**: the
+    human is amending the protocol and asked the dialogue to converge, so a
+    detector now would encode a trigger the amendment may reshape. Caveat
+    recorded for the amendment: citation-time notice needs to know WHO is
+    cited, which is prose extraction — the least mechanical thing here. Either
+    the filer declares `cites:` (mechanical, forgettable, fail-open to today's
+    silence) or the provider notifies at ruling (reliable, late). Recommended
+    `cites:` as required-if-applicable under the absence-is-never-current
+    stance.
+    **(3) The frontmatter fix survived its own fix.** The manual sweep caught
+    21 of 23; one miss was HYPERSAW's own brief, on the thread reporting the
+    bug. Now gated in `./verify fast` (`ball_scan.frontmatter_lies`), proven to
+    fire on a planted lie. Two implementation failures worth recording: the
+    first version flagged HYPERSAW's `ratification-001` — a LEGITIMATE
+    hand-back — and the obvious ordering fix failed too, because every file in
+    that thread is dated 2026-08-18 so the tiebreak fell to mtime, and merely
+    EDITING the opener made it newest and flipped the verdict mid-fix. Final
+    design uses no ordering: **openers state a question, answerers move the
+    ball**, by filename convention. Third appearance of the day-resolution-date
+    limitation; a monotonic `seq:` is now worth the amendment.
+
 56. **Cited third parties: notice is the provider's duty; reading was never
     bounded; frontmatter is protocol state** (2026-08-18, ruling hypersaw-001).
     HYPERSAW filed a fourth instance of the delivery gap that is a different

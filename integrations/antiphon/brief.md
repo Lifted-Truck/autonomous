@@ -2,10 +2,11 @@
 id: antiphon-001
 from: antiphon
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-07-14
 respond-by: 2026-07-28
+answered_by: response.md
 ---
 
 # Brief: list ANTIPHON in the Execution-project registry (as deliberately dormant)

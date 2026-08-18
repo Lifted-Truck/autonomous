@@ -32,6 +32,19 @@
 > into prose — the same loss v2 rejected for annotated placeholders.
 > Free-text remainder after the references is preserved as `absorbs_note`,
 > same rule as the other reference fields.
+>
+> **Amendment defect, found and fixed 2026-08-18 (hypersaw-001 round 2).** The
+> 2026-08-17 amendment updated this prose, the JSON Schema and the quarantine
+> rule but NOT the label-opening rule in §Segment rules — so a conforming
+> parser routed `| absorbs: …` to `extra` and the graph edge stayed
+> unwalkable, which is the exact loss the amendment was made to prevent. The
+> quarantine rule guarding it could never fire, because the field it guards
+> could never open: a check that cannot fire reads exactly like a check that
+> passes. Caught by HYPERSAW, the first party to try to WRITE the field —
+> neither the author nor the first reader was placed to see it. **A field is
+> not added until it appears in all four places: this prose, the label-opening
+> rule, the JSON Schema, and the quarantine list.** `kit/gates` now pins that
+> the schema's writable fields and the label rule cannot diverge.
 
 > **Correction to the distillery-002 response letter:** that letter said the bare
 > tier is recognized "by matching the tier enum, not by position." That was
@@ -165,7 +178,7 @@ Split the entry on `|`, then:
   form). Matching against the enum rather than against position is load-bearing:
   a title containing a literal `|` would otherwise have its tail silently
   promoted to tier.
-- A segment matching `^\s*(tier|added|tags|origin|lesson|evidence|falsifier|supersedes|recurred)\s*:`
+- A segment matching `^\s*(tier|added|tags|origin|lesson|evidence|falsifier|supersedes|absorbs|recurred)\s*:`
   **opens** that field.
 - **Any other segment appends to the currently-open field**, with the `|` that
   split it restored. This is what makes prose pipes legal.

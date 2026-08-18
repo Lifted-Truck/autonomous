@@ -75,6 +75,17 @@ fast() {
   # table must stay in lockstep with CHANGELOG.md (a test pins that).
   (cd kit && python3 -m unittest -q test_currency) \
     || { echo "verify[fast]: kit currency tests red" >&2; ok=1; }
+  # Exchange frontmatter must not lie about its own state (Decision 57).
+  python3 - <<'PYEOF2' || ok=1
+import sys, os
+sys.path.insert(0, "governor")
+import ball_scan
+bad = ball_scan.frontmatter_lies(".")
+for b in bad:
+    print(f"verify: STALE FRONTMATTER — {b['file']} still says ball={b['says']} "
+          f"but the thread has an answer", file=sys.stderr)
+sys.exit(1 if bad else 0)
+PYEOF2
   # And the standards repo must pass its own checker — a false declaration
   # here is the one place it would be indefensible.
   python3 kit/currency.py . --json | python3 -c 'import json,sys; r=json.load(sys.stdin); sys.exit(0 if r["current"] and not r.get("declared_but_missing") else 1)' \

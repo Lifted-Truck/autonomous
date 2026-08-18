@@ -32,6 +32,11 @@ _DATE_FIELDS = ("ratified", "responded", "refreshed", "filed")
 
 _FM = re.compile(r"\A---\s*\n(.*?)\n---", re.S)
 
+# Files that MOVE a ball rather than open a question. Naming is the
+# fleet's real convention and is stable; ordering by date/mtime is not
+# (day-resolution dates, and editing a file changes its mtime).
+_ROLE_ANSWERER = re.compile(r"^(response|ratif|notice|ack)", re.I)
+
 
 def _field(fm, name):
     m = re.search(rf"^{name}:\s*(.+?)\s*$", fm, re.M)
@@ -234,4 +239,62 @@ def responses_awaiting(repo_name, roster_paths, today=None):
                 ours = token in ("consumer", me)
                 if ours:
                     out.append({**th, "in_repo": os.path.basename(path), "ours": True})
+    return out
+
+def frontmatter_lies(path):
+    """Threads whose opening file still claims the ball while an answer exists.
+
+    hypersaw-001 round 2: the manual sweep that fixed this caught 21 of 23 —
+    and one of the two misses was HYPERSAW's own brief, on the very thread
+    that reported the bug. A sweep fixes instances; a gate fixes the class.
+    Prose is the reminder, the gate is the enforcement.
+
+    The rule: if any file in a thread names an `answered_by` target that
+    EXISTS, no file in that thread may still read `ball: provider`. Asserts the
+    effective state (does the answer exist on disk?) rather than the declared
+    one (does someone say it was answered?).
+    """
+    out = []
+    threads = {}
+    for f in glob.glob(os.path.join(path, "integrations", "*", "*.md")):
+        p = _parse(f)
+        if p:
+            threads.setdefault(p["id"], []).append((f, p))
+
+    for tid, members in sorted(threads.items()):
+        answered = False
+        for f, m in members:
+            try:
+                with open(f, encoding="utf-8", errors="ignore") as fh:
+                    head = fh.read(4096)
+            except OSError:
+                continue
+            am = re.search(r"^answered_by:\s*(\S+)\s*$", head, re.M)
+            if am and os.path.isfile(os.path.join(os.path.dirname(f), am.group(1))):
+                answered = True
+            # A sibling that RESPONDS is equally proof the thread moved.
+            if m["status"] in ("responded", "ratified", "closed"):
+                answered = True
+        if not answered:
+            continue
+        # A thread can legitimately BOUNCE: HYPERSAW's ratification-001 claims
+        # `ball: provider` after our response-001, and it is RIGHT to — a new
+        # ask, not stale state.
+        #
+        # Ordering by (date, mtime) cannot separate the two here: exchange dates
+        # are day-resolution and every file in that thread is 2026-08-18, so the
+        # tiebreak falls to mtime — and merely EDITING an opener's frontmatter
+        # makes it the newest file, which flipped this check's verdict mid-fix.
+        # So this uses no ordering at all. It uses the fleet's actual, stable
+        # filename convention: openers state a question, answerers move the ball.
+        # An OPENER still claiming provider in a thread that has an ANSWERER is
+        # stale; an ANSWERER claiming provider is a hand-back and is current.
+        for f, m in members:
+            if _ball_token(m["ball"]) != "provider":
+                continue
+            if _ROLE_ANSWERER.match(os.path.basename(f)):
+                continue                   # a hand-back, not stale state
+            if any(_ROLE_ANSWERER.match(os.path.basename(g)) for g, _ in members):
+                out.append({"id": tid, "file": os.path.relpath(f, path),
+                            "says": m["ball"], "status": m["status"]})
     return out

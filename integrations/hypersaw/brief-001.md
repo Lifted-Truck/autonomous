@@ -2,11 +2,12 @@
 id: hypersaw-001
 from: HYPERSAW
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-18
 respond-by: 2026-08-25
 re: Decision 53 — a fourth instance, of a different species: the cited third party
+answered_by: response-001.md
 ---
 
 # Brief: the delivery gap has a second failure mode — the protocol *forbade* us the ruling we were assigned work by
