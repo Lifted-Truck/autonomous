@@ -1,0 +1,276 @@
+<style>
+  :root{
+    --paper:#F2F5F8; --panel:#FBFCFD; --ink:#161A20; --muted:#59636F;
+    --line:#D6DDE5; --line-soft:#E7ECF1;
+    --accent:#26456E;            /* archive / blueprint blue */
+    --accent-soft:#E4EAF2;
+    --canonical:#2E6B4F; --canonical-bg:#E6F0EA;
+    --candidate:#9A6A1B; --candidate-bg:#F4ECDD;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  .wrap{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    line-height:1.58;font-size:16px;padding:clamp(20px,4vw,60px);
+    max-width:1000px;margin:0 auto;-webkit-font-smoothing:antialiased}
+  .wrap h1,.wrap h2,.wrap h3{font-family:var(--serif);font-weight:600;text-wrap:balance;letter-spacing:-.01em}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+  h1{font-size:clamp(30px,5.2vw,46px);line-height:1.06;margin:0 0 16px}
+  .lede{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:66ch;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 10px;margin:26px 0 0;font-family:var(--mono);font-size:12.5px}
+  .chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--muted)}
+  .chip b{color:var(--ink);font-weight:600}
+  section{margin-top:clamp(36px,5vw,56px)}
+  h2{font-size:clamp(22px,3vw,29px);margin:0 0 8px}
+  .sub{color:var(--muted);margin:0 0 22px;max-width:68ch}
+  p.body{max-width:68ch}
+  hr.rule{border:0;border-top:1px solid var(--line);margin:0}
+  em.term{font-style:italic;color:var(--ink)}
+  code{font-family:var(--mono);font-size:.86em;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:5px}
+
+  /* recursive tier diagram */
+  .tiers{display:flex;flex-direction:column;margin-top:26px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+  .tier{display:grid;grid-template-columns:132px 1fr;border-top:1px solid var(--line-soft)}
+  .tier:first-child{border-top:0}
+  .tier .lvl{padding:16px;background:#EEF2F6;border-right:1px solid var(--line-soft);
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:4px;justify-content:center}
+  .tier .lvl b{font-family:var(--sans);font-size:15px;letter-spacing:0;text-transform:none;color:var(--ink)}
+  .tier .body{padding:16px 18px}
+  .tier .role{font-size:14px;color:var(--muted)}
+  .tier .role b{color:var(--ink);font-weight:600}
+  .files-inline{font-family:var(--mono);font-size:12px;color:var(--accent);margin-top:8px}
+  .flow{display:flex;align-items:center;gap:11px;padding:9px 18px;background:var(--accent);color:#fff;font-size:13px}
+  .flow svg{flex:0 0 auto}
+  .flow b{font-weight:600}
+
+  /* generic card grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{font-size:16px;margin:0 0 6px}
+  .card p{margin:0;color:var(--muted);font-size:14px}
+  .card .n{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.06em;display:block;margin-bottom:8px}
+
+  /* research breadth */
+  .lit{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:680px){.lit{grid-template-columns:1fr}.tier{grid-template-columns:1fr}.tier .lvl{border-right:0;border-bottom:1px solid var(--line-soft);flex-direction:row;gap:8px;align-items:baseline}}
+  .litcol{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .litcol > .h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+  .litcol > .d{color:var(--muted);font-size:13px;margin:0 0 16px}
+  .src{display:flex;flex-direction:column;gap:13px}
+  .src .row{display:flex;flex-direction:column;gap:3px}
+  .src .nm{font-size:14px}
+  .src .nm b{font-weight:600}
+  .src .took{color:var(--muted);font-size:13px}
+  .src .cite{font-family:var(--mono);font-size:11.5px}
+  .src .cite a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--line)}
+  .src .cite a:hover{border-color:var(--accent)}
+
+  .convergent{border:1px solid var(--accent);background:var(--accent-soft);border-radius:12px;padding:22px 24px;margin-top:16px}
+  .convergent .t{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 8px;font-weight:600}
+  .convergent .q{font-family:var(--serif);font-size:19px;color:var(--ink);margin:0}
+
+  /* principles table */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px;background:var(--panel)}
+  th,td{text-align:left;padding:11px 14px;vertical-align:top}
+  th{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:#EEF2F6}
+  td{border-top:1px solid var(--line-soft)}
+  td b{font-weight:600}
+  td.src2{font-family:var(--mono);font-size:11.5px;color:var(--accent);white-space:nowrap}
+
+  /* worked example */
+  .example{border:1px solid var(--line);border-left:4px solid var(--canonical);border-radius:12px;background:var(--panel);padding:20px 22px}
+  .example .lab{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--canonical);margin:0 0 8px;font-weight:600}
+  .example h3{margin:0 0 10px;font-size:18px}
+  .example p{margin:0 0 10px;color:var(--muted);font-size:14.5px}
+  .example p:last-child{margin:0}
+  .example .conv{color:var(--ink);font-weight:600}
+
+  /* adopt steps */
+  .steps{display:flex;flex-direction:column;gap:2px;counter-reset:s;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .step{display:grid;grid-template-columns:44px 1fr;background:var(--panel);border-top:1px solid var(--line-soft)}
+  .step:first-child{border-top:0}
+  .step .num{background:#EEF2F6;border-right:1px solid var(--line-soft);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:600}
+  .step .txt{padding:14px 18px}
+  .step .txt b{font-weight:600}
+  .step .txt span{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+
+  .callout{border:1px solid var(--candidate);background:var(--candidate-bg);border-radius:12px;padding:20px 24px}
+  .callout .t{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--candidate);margin:0 0 8px;font-weight:600}
+  .callout p{margin:0 0 10px;max-width:70ch}
+  .callout p:last-child{margin:0}
+  .callout .q{font-family:var(--serif);font-size:18px;color:var(--ink)}
+
+  .foot{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-family:var(--mono);font-size:12px;display:flex;flex-wrap:wrap;gap:6px 16px}
+  a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">A field guide · self-improving knowledge for coding agents</p>
+  <h1>Knowledge that climbs: a hierarchical loop for making coding agents learn across projects</h1>
+  <p class="lede">Most agent "memory" is per-project and stays there — every repo re-derives the same hard-won lessons. This is a portable system for letting knowledge <em class="term">climb</em>: each project distills its own lessons, and a loop above harvests the ones that generalise and republishes them to siblings — recursively, all the way up a tree of projects.</p>
+  <div class="meta">
+    <span class="chip">grounded in <b>2</b> literatures</span>
+    <span class="chip"><b>~50</b> primary sources</span>
+    <span class="chip"><b>8</b> parallel research threads</span>
+    <span class="chip"><b>12</b> design principles</span>
+    <span class="chip">portable across machines</span>
+  </div>
+
+  <section>
+    <h2>The problem it solves</h2>
+    <p class="body sub">A single agent working in one repository can keep a durable record of what it learned there. But the moment you have <em class="term">many</em> projects, three things go wrong: the same lesson is learned independently in five places; a genuinely universal insight stays trapped in the one repo that discovered it; and nobody has the incentive — or the vantage point — to notice the pattern across them. Human organisations have fought this exact battle for decades. This system borrows their answers and the answers from a fast-moving body of AI-agent-memory research.</p>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>The pattern: a recursive knowledge loop</h2>
+    <p class="sub">Two loops, one shape. At the leaf, each project runs its own record-and-reflect loop across three small files. Above it, an <em class="term">audit loop</em> harvests upward. Both use the identical entry format — so a grandparent scope harvests a parent with the very same procedure a parent uses on a leaf. The mechanism is self-similar at every level.</p>
+    <div class="tiers">
+      <div class="tier">
+        <div class="lvl"><b>Top scope</b>Level 2</div>
+        <div class="body"><div class="role"><b>Audit loop.</b> Promotes only what recurs across whole groups — the truly universal engineering lessons.</div></div>
+      </div>
+      <div class="flow"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 14V2M8 2L3 7M8 2l5 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> promotion criteria <b>tighten with altitude</b></div>
+      <div class="tier">
+        <div class="lvl"><b>Group scope</b>Level 1</div>
+        <div class="body"><div class="role"><b>Audit loop.</b> Reads every child's library; promotes lessons that generalise beyond one project; centralises them for the group.</div><div class="files-inline">CLAUDE.md · INDEX.md · LIBRARY.md · AUDIT-STATE.json</div></div>
+      </div>
+      <div class="flow"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 14V2M8 2L3 7M8 2l5 5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg> harvest the <b>reusable</b>, leave the project-specific</div>
+      <div class="tier">
+        <div class="lvl"><b>Project</b>Level 0</div>
+        <div class="body"><div class="role"><b>Knowledge loop.</b> Each session: read accumulated lessons, do the work, reflect, write one distilled lesson if it earns its place.</div><div class="files-inline">CLAUDE.md · INDEX.md · LIBRARY.md</div></div>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:20px">
+      <div class="card"><span class="n">PROTOCOL</span><h3>CLAUDE.md</h3><p>How the loop runs — read every session. The audit loop's version harvests children instead of reflecting on work.</p></div>
+      <div class="card"><span class="n">RETRIEVAL</span><h3>INDEX.md</h3><p>A compact map of accumulated knowledge, read in full. Pull only the matching entries — never load everything by default.</p></div>
+      <div class="card"><span class="n">MEMORY</span><h3>LIBRARY.md</h3><p>Durable, evidence-backed lessons. Each states its own <em class="term">falsifier</em>. Promoted entries also carry an <code>origin</code> back-link.</p></div>
+      <div class="card"><span class="n">LEDGER</span><h3>AUDIT-STATE.json</h3><p>Per-child content hashes + a child→parent promotion map. Makes every re-run incremental and idempotent — deterministic mechanics under a judged decision.</p></div>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>How a lesson earns promotion</h2>
+    <p class="sub">Promotion is an <em class="term">untrusted write into a shared, high-trust store</em>: a wrong lesson placed at a parent scope is retrieved and reinforced by every sibling below it, and the blast radius grows the higher it climbs. So trust is earned at the boundary, never inherited from whoever proposed it.</p>
+    <div class="grid">
+      <div class="card"><h3>Qualified at source</h3><p>Already trusted in its own project, or independently discovered by two or more siblings. Convergence from a shared source counts once, not twice.</p></div>
+      <div class="card"><h3>Generalises beyond origin</h3><p>You can state it without naming the origin project's code. The transferable pattern is promoted; the project-specific fact stays home.</p></div>
+      <div class="card"><h3>Tightens with altitude</h3><p>A group promotes on generality or convergence; the top promotes only what's proven across multiple groups. The higher it reaches, the more it must earn.</p></div>
+      <div class="card"><h3>Provenance, never dropped</h3><p>Every promoted entry keeps back-links to the exact source lessons and its own falsifier — so it can be traced, re-checked, and revoked.</p></div>
+      <div class="card"><h3>Default-deny &amp; quarantine</h3><p>Single-source promotions enter provisional. When in doubt, the lesson stays in the child. Prefer not promoting over promoting unverified.</p></div>
+      <div class="card"><h3>Dedup over abstraction</h3><p>Merge convergent siblings into one entry and keep each origin's concrete detail. Aggressive summarising measurably destroys what makes a lesson usable.</p></div>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>A worked example</h2>
+    <p class="sub">What a promoted lesson looks like in practice — the transferable pattern lifted out, with the concrete instances kept as evidence.</p>
+    <div class="example">
+      <p class="lab">Promoted · convergent from 3 independent projects</p>
+      <h3>An oracle must be built so it can <em>fail</em> — test the true reference, in the regime where the banned method diverges</h3>
+      <p><span class="conv">Three sibling projects independently hit the same trap:</span> an evaluation that compares against an idealised closed form, or runs in a benign regime, silently passes the very thing it exists to forbid.</p>
+      <p>One asserted a discretised value instead of the continuum ideal it was tempted to hard-code; one verified an operator by construction and gated a dense result as a set rather than index-aligned; one moved a test fixture into the frequency band where the forbidden shortcut and the correct method finally diverge. Different domains, one lesson — which is precisely why it promotes: <em class="term">before trusting an evaluation, prove it fails when fed the thing it is supposed to reject.</em></p>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>The research foundation</h2>
+    <p class="body sub">The design is not invented from first principles. It was assembled from a fan-out of parallel research threads across roughly fifty primary sources, spanning two literatures that turn out to agree with each other in striking detail: the fast-moving science of <em class="term">LLM-agent memory</em>, and decades of hard evidence from <em class="term">human lessons-learned systems</em>. Each named technique below contributed a specific, transferable mechanism.</p>
+    <div class="lit">
+      <div class="litcol">
+        <p class="h">LLM-agent memory research</p>
+        <p class="d">How autonomous systems accumulate and reuse experience without retraining.</p>
+        <div class="src">
+          <div class="row"><span class="nm"><b>Generative Agents</b></span><span class="took">Reflection triggered on accumulated importance; every insight cites its source records.</span><span class="cite"><a href="https://arxiv.org/abs/2304.03442">arXiv:2304.03442</a></span></div>
+          <div class="row"><span class="nm"><b>ExpeL</b></span><span class="took">Extract insights by contrasting success across different tasks; a self-pruning pool with vote-and-decay.</span><span class="cite"><a href="https://arxiv.org/abs/2308.10144">arXiv:2308.10144</a></span></div>
+          <div class="row"><span class="nm"><b>Agent Workflow Memory</b></span><span class="took">Promote by abstracting concrete values into typed variables; keep curated vs self-induced apart.</span><span class="cite"><a href="https://arxiv.org/abs/2409.07429">arXiv:2409.07429</a></span></div>
+          <div class="row"><span class="nm"><b>Voyager</b></span><span class="took">A skill library keyed by intent; only verified skills are admitted; capability compounds by composition.</span><span class="cite"><a href="https://arxiv.org/abs/2305.16291">arXiv:2305.16291</a></span></div>
+          <div class="row"><span class="nm"><b>RAPTOR</b></span><span class="took">Recursive embed → cluster → summarise; retrieve at the level that matches the query.</span><span class="cite"><a href="https://arxiv.org/abs/2401.18059">arXiv:2401.18059</a></span></div>
+          <div class="row"><span class="nm"><b>G-Memory · Agent-KB · H²R</b></span><span class="took">The closest published "promote-up" systems: tiered memory, level-specific retrieval, a veto gate.</span><span class="cite"><a href="https://arxiv.org/abs/2506.07398">2506.07398</a> · <a href="https://arxiv.org/abs/2507.06229">2507.06229</a> · <a href="https://arxiv.org/abs/2509.12810">2509.12810</a></span></div>
+          <div class="row"><span class="nm"><b>MemGPT · Reflexion · Zep</b></span><span class="took">Tiered self-editing memory; verbal self-correction; bi-temporal "invalidate, don't overwrite".</span><span class="cite"><a href="https://arxiv.org/abs/2310.08560">2310.08560</a> · <a href="https://arxiv.org/abs/2303.11366">2303.11366</a> · <a href="https://arxiv.org/abs/2501.13956">2501.13956</a></span></div>
+          <div class="row"><span class="nm"><b>Memory-poisoning literature</b></span><span class="took">Why promotion is the strictest write-gate: a handful of poisoned entries dominate a corpus.</span><span class="cite"><a href="https://arxiv.org/abs/2402.07867">2402.07867</a> · <a href="https://arxiv.org/abs/2407.12784">2407.12784</a></span></div>
+        </div>
+      </div>
+      <div class="litcol">
+        <p class="h">Human lessons-learned systems</p>
+        <p class="d">Decades of evidence — including the documented ways these systems fail.</p>
+        <div class="src">
+          <div class="row"><span class="nm"><b>Army AAR → CALL</b></span><span class="took">The maturity ladder Observation → Insight → Lesson → Learned; validation owned by the scope that would change, not the observer; resolve at the lowest level possible.</span><span class="cite"><a href="https://www.army.mil/CALL">army.mil/CALL</a> · AR 11-33</span></div>
+          <div class="row"><span class="nm"><b>NATO JALLC · GAO · RAND</b></span><span class="took">The dominant failure: "lessons observed, never learned" — captured and circulated, never acted on.</span><span class="cite"><a href="https://www.gao.gov/products/nsiad-95-152">GAO NSIAD-95-152</a></span></div>
+          <div class="row"><span class="nm"><b>Pattern languages (Alexander / GoF)</b></span><span class="took">A lesson is reusable only if it names its context and forces, not just a solution.</span><span class="cite"><a href="https://en.wikipedia.org/wiki/The_Timeless_Way_of_Building">Timeless Way</a></span></div>
+          <div class="row"><span class="nm"><b>Nonaka SECI</b></span><span class="took">Knowledge amplifies individual → group → org — but guard against copy-up masquerading as learning.</span><span class="cite"><a href="https://cmr.berkeley.edu/1998/05/40-3-the-concept-of-ba-building-a-foundation-for-knowledge-creation/">CMR 1998</a></span></div>
+          <div class="row"><span class="nm"><b>Communities of Practice</b></span><span class="took">Participation ↔ reification: a promoted document rots without re-validation.</span><span class="cite"><a href="https://en.wikipedia.org/wiki/Community_of_practice">Wenger</a></span></div>
+          <div class="row"><span class="nm"><b>Golden paths · Team Topologies</b></span><span class="took">Promote what children pull by repeated demand, not what a parent pushes; keep the surface thin.</span><span class="cite"><a href="https://teamtopologies.com/key-concepts">teamtopologies.com</a></span></div>
+          <div class="row"><span class="nm"><b>Google SRE postmortems</b></span><span class="took">Blameless capture keeps reports honest; aggregation across boundaries finds the cross-cutting theme.</span><span class="cite"><a href="https://sre.google/sre-book/postmortem-culture/">SRE Book ch.15</a></span></div>
+          <div class="row"><span class="nm"><b>Spotify guilds · Tech Radar · ADR</b></span><span class="took">A cross-cutting knowledge axis; staged confidence rings; record why each promotion happened, immutably.</span><span class="cite"><a href="https://www.thoughtworks.com/en-us/radar/faq">Tech Radar</a></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="convergent">
+      <p class="t">Where both literatures agree</p>
+      <p class="q">Capturing and circulating a lesson is the easy part; the value is entirely in acting on it and not corrupting the shared pool. An observation does not become a lesson learned until behaviour verifiably changes.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>Twelve principles, and how the loop encodes each</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Principle</th><th>Encoded as</th><th>From</th></tr></thead>
+        <tbody>
+          <tr><td><b>Promote only what recurs across siblings</b></td><td>Convergence from ≥2 independent projects</td><td class="src2">ExpeL · SRE</td></tr>
+          <tr><td><b>Abstract the concrete out on the way up</b></td><td>Promote the pattern, not the project fact</td><td class="src2">AWM · Voyager</td></tr>
+          <tr><td><b>Keep provenance back-links</b></td><td>Required <code>origin</code> field, never dropped</td><td class="src2">Generative Agents</td></tr>
+          <tr><td><b>Prefer lossless dedup over lossy abstraction</b></td><td>Merge siblings; keep each origin's instance</td><td class="src2">consolidation studies</td></tr>
+          <tr><td><b>Treat promotion as the strictest write-gate</b></td><td>Default-deny, quarantine, independence check</td><td class="src2">poisoning research</td></tr>
+          <tr><td><b>Tighten criteria with altitude</b></td><td>Group vs top thresholds; staged tiers</td><td class="src2">Tech Radar · CALL</td></tr>
+          <tr><td><b>Name context &amp; forces, not bare solutions</b></td><td>Lesson + evidence + falsifier per entry</td><td class="src2">pattern languages</td></tr>
+          <tr><td><b>Demand-pull, not parent-push</b></td><td>Harvest upward from real recurrence</td><td class="src2">Team Topologies</td></tr>
+          <tr><td><b>Lessons decay — re-validate</b></td><td>Staleness pass re-checks each falsifier</td><td class="src2">CoP · Zep</td></tr>
+          <tr><td><b>Invalidate, don't overwrite</b></td><td>Supersede chain; demotion noted at origin</td><td class="src2">Zep bi-temporal</td></tr>
+          <tr><td><b>The observer never self-certifies</b></td><td>Convergence + human approval, not self-vote</td><td class="src2">Army CALL</td></tr>
+          <tr><td><b>Keep mechanics deterministic; AI only judges</b></td><td>Hashing, IDs, ledger deterministic</td><td class="src2">boundary discipline</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>The limit worth stating plainly</h2>
+    <div class="callout">
+      <p class="t">Observed ≠ Learned</p>
+      <p class="q">Every human source — the Army, NATO, GAO, RAND, Google SRE — converges on one failure mode above all others: capture and dissemination masquerading as learning.</p>
+      <p>A promote-up loop that stops at publishing lessons into a store the agents <em class="term">read</em> has done the disseminating 80%, not the acting 20%. Genuine learning means a promoted lesson changes downstream behaviour and the change is verified — bound into a rule the agent consults, a hook it runs, or a test that would have caught the original miss, then confirmed the failure does not recur. Any adoption of this system should treat that binding step as the real finish line, not the promotion.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>Adopting it — and normalising across machines</h2>
+    <p class="sub">The system is deliberately file-based and tool-agnostic: plain Markdown and JSON in each project, driven by portable setup and harvest prompts. Nothing is tied to one machine.</p>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="txt"><b>Seed each project with the leaf loop.</b><span>Add the three files (protocol, index, library) to a project and reflect one real lesson per session. This is the substrate everything above harvests.</span></div></div>
+      <div class="step"><div class="num">2</div><div class="txt"><b>Light up a parent scope with the audit loop.</b><span>Run the setup prompt at a directory whose children each run a loop. It installs the audit protocol, the index/library, and the state ledger, seeded only with lessons that already qualify.</span></div></div>
+      <div class="step"><div class="num">3</div><div class="txt"><b>Harvest on a cadence — in propose-only mode.</b><span>Schedule the harvest to write a dated proposal rather than mutate the shared store unattended. Review, then apply. This is the staging-buffer defence the poisoning research demands.</span></div></div>
+      <div class="step"><div class="num">4</div><div class="txt"><b>Repeat one level up.</b><span>Because every scope uses the same entry format, the next level harvests the last with the identical procedure. Grow the tree as your project structure grows.</span></div></div>
+      <div class="step"><div class="num">5</div><div class="txt"><b>Carry the kit between machines.</b><span>Version the setup prompt, the harvest prompt, and the runner in one repo. On a new machine, clone it, point the runner's scope list at your local project root, and re-run. The per-project files travel with each project.</span></div></div>
+    </div>
+  </section>
+
+  <hr class="rule">
+  <section>
+    <h2>Where this is going</h2>
+    <p class="body sub">This is version one of a living practice, not a finished framework — every source above warns that a clean framework is an aspiration to be measured, not a truth. The intended arc is iterative: run real harvests, watch which promotions prove out, and fold each round of research back into the protocol. Two directions are already marked. <b>Close the loop</b> — move from disseminating lessons to binding and verifying them downstream, turning "observed" into "learned." And <b>add a cross-cutting axis</b> — a guild-style path so a lesson shared by siblings can travel between them, not only up to a parent. The structure is meant to absorb its own findings over time; that is the whole point.</p>
+  </section>
+
+  <div class="foot">
+    <span>A field guide · v1</span><span>file-based · tool-agnostic</span><span>~50 sources · 2 literatures</span><span>propose-then-approve</span><span>observed ≠ learned</span>
+  </div>
+</div>

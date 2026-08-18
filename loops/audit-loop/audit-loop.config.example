@@ -1,0 +1,16 @@
+# audit-loop.config.example
+# Copy to `audit-loop.config` (same directory) and edit for your machine.
+# `audit-loop.config` is git-ignored, so your local paths never get committed.
+
+# REQUIRED — absolute paths to the parent scopes that have an audit loop installed
+# (each contains an AUDIT-STATE.json). Space- or newline-separated.
+export AKL_SCOPES="$HOME/projects/group-a $HOME/projects/group-b"
+
+# OPTIONAL — directory holding run-audit-loop.prompt.md (default: this repo's dir).
+# export AKL_PROMPT_DIR="$HOME/tools/agent-knowledge-loop"
+
+# OPTIONAL — path to the claude CLI (default: first `claude` found on PATH).
+# export AKL_CLAUDE_BIN="$HOME/.local/bin/claude"
+
+# OPTIONAL — model id (default: claude-opus-4-8).
+# export AKL_MODEL="claude-opus-4-8"
