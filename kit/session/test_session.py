@@ -104,6 +104,18 @@ class Registry(unittest.TestCase):
         self.assertIn("ok", r)              # returns a verdict, never raises
         self.assertEqual(registry.close_session("s1").get("ok"), True)
 
+    def test_the_machine_label_is_overridable(self):
+        """The macOS default hostname embeds the owner's name
+        ("Julians-MacBook-Air"), which is fine locally and is a personal-identity
+        leak once this store is a shared repo. The promotion step sets a neutral
+        label; this pins that the override actually takes."""
+        os.environ["KIT_SESSION_MACHINE"] = "mac"
+        try:
+            registry.open_session(self.repo, "s1")
+            self.assertEqual(registry.list_open()[0]["machine"], "mac")
+        finally:
+            os.environ.pop("KIT_SESSION_MACHINE", None)
+
     def test_the_row_carries_no_content_and_no_user_identity(self):
         """It is the one sanctioned cross-repo write precisely because it
         carries nothing worth reading — and it may live in a synced repo."""

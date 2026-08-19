@@ -41,10 +41,27 @@ def root():
     return _FALLBACK if os.path.isdir(_FALLBACK) else None
 
 
+_MACHINE_ENV = "KIT_SESSION_MACHINE"
+
+
 def _machine():
-    # Hostname only — no username, no path. This file may live in a repo that
-    # syncs between machines, and machine identity is the one thing doctrine
-    # forbids committing.
+    """A label for this machine — overridable, because the default is not safe
+    to commit.
+
+    `platform.node()` returned "Julians-MacBook-Air" on the first live run: the
+    default macOS hostname embeds the owner's NAME. That is fine in a local
+    registry and is a personal-identity leak the moment this store is promoted
+    to the shared private repo the brief proposes. Doctrine forbids committing
+    machine identity, and a hostname is exactly that.
+
+    So the label is configurable and the promotion step sets it — `mac`, `win`
+    — rather than discovering the tension after the first push. Which machine
+    holds a session open is load-bearing information; whose machine it is, is
+    not.
+    """
+    override = os.environ.get(_MACHINE_ENV)
+    if override:
+        return override[:32]
     return platform.node().split(".")[0] or "unknown"
 
 
