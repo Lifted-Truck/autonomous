@@ -103,9 +103,65 @@ def pending():
                     unwired.append(r["name"])
         elif st == "absent" and has_verify:
             missing.append(r["name"])
-    return {"staged": sorted(staged), "unpushed": sorted(unpushed),
+    return {"to_close": _sessions_to_close(rows), "staged": sorted(staged),
+            "unpushed": sorted(unpushed),
             "unwired": sorted(unwired), "missing": sorted(missing),
             "prs": open_prs()}
+
+
+def _sessions_to_close(rows):
+    """What should get a /breakdown before the human stops for the day.
+
+    Two sources, kept distinguishable on purpose. The session REGISTRY is
+    authoritative but only knows what /wakeup registered, so today it is
+    mostly empty; the tree is a heuristic but is right now. Presenting the
+    inference as if it were a registration would be the declared-vs-effective
+    error in a new place, so the rows say which they are.
+    """
+    sys.path.insert(0, os.path.join(HERE, "session"))
+    try:
+        import registry
+        registered = {r.get("repo") for r in registry.list_open()}
+    except Exception:
+        registered = set()
+    out = []
+    for r in rows:
+        if not r["status"].get("git"):
+            continue
+        p, name = r["path"], r["name"]
+        head = (git(p, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
+                or "main").rsplit("/", 1)[-1]
+        branch = git(p, "rev-parse", "--abbrev-ref", "HEAD")
+        # Split on whitespace, never a fixed offset: `git()` strips its output,
+        # which eats the leading space of the FIRST porcelain line only, so
+        # `l[3:]` silently returned "kit/MANIFEST" for line 1 and "..kit/x" for
+        # the rest. One repo's kit litter then read as session work — an
+        # off-by-one that only ever affects the first line is exactly the kind
+        # that survives a skim.
+        dirty = [l.split(maxsplit=1)[-1].strip('"')
+                 for l in git(p, "status", "--porcelain").splitlines() if l.strip()]
+        # Uncommitted KIT-OWNED files are not a session in flight — they are
+        # this repo's batch writes (kit_sync, advance) sitting in someone
+        # else's tree, waiting for that repo's own commit. Counting them made
+        # the end-of-day list 43 repos long, which is the stale-PR failure in
+        # another costume: a list that names everything names nothing.
+        theirs = [f for f in dirty
+                  if not (f.startswith(".kit/") or f == "project.manifest.json")]
+        n = git(p, "rev-list", "--count", "@{u}..HEAD")
+        unpushed = int(n) if n.isdigit() else 0
+        why = []
+        if branch and branch != head:
+            why.append(f"on {branch}")
+        if theirs:
+            why.append(f"{len(theirs)} uncommitted")
+        if unpushed:
+            why.append(f"{unpushed} unpushed")
+        base = name.split("/")[-1]
+        if base in registered:
+            out.append(f"{name} (registered{'; ' + ', '.join(why) if why else ''})")
+        elif why:
+            out.append(f"{name} ({', '.join(why)})")
+    return sorted(out)
 
 
 def open_prs():
@@ -265,6 +321,25 @@ def actions(data, todo):
             "why": ("Dirty tree or a working branch. Ask that session to run /retrofit "
                     "when it lands, or wait. Reaching in is what buries work."),
             "repos": waiting, "payload": None})
+    if todo.get("to_close"):
+        out.append({
+            "kind": "run", "urgency": "end-of-day",
+            "title": f"Close these {len(todo['to_close'])} before you stop",
+            "why": ("Work is in flight here: a working branch, the repo's OWN uncommitted "
+                    "changes, or "
+                    "commits that never became a PR. Kit-owned files this repo wrote into "
+                    "their trees (.kit/, project.manifest.json) are excluded — those are "
+                    "my litter awaiting their commit, not their session. Running "
+                    "/breakdown in each writes "
+                    "SESSION.md, appends what today decided, opens a PR, and deregisters "
+                    "— so tomorrow's session starts from an account rather than from a "
+                    "reconstruction. Rows marked (registered) come from the session "
+                    "registry and are authoritative; the rest are INFERRED from the tree, "
+                    "which is the best available answer until /wakeup has been adopted."),
+            "repos": todo["to_close"],
+            "payload": "\n".join(
+                f"cd ~/Documents/Claude/{n.split(' ')[0]} && claude   # then: /breakdown"
+                for n in todo["to_close"][:8])})
     if todo.get("prs"):
         out.append({
             "kind": "run", "urgency": "review",
