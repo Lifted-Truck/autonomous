@@ -317,7 +317,12 @@ before the mechanisms exist is a frame written about nothing.
   brief proposes the private website repo both machines pull), and one full
   open→close cycle runs on this repo with STATUS.json validating against
   dispatch's fixtures. `/breakdown` as `status.1`'s first producer is NOT yet
-  built — SESSION.md ships first, STATUS.json follows. (briefs/2026-08-17-session-boundary.md,
+  built — SESSION.md ships first, STATUS.json follows. The ecosystem-level
+  fan-out (brief §7 step 7) shipped EARLY as `/closeout` +
+  `kit/session/batch_close.py`, because 39 repos needed closing the day the
+  per-repo commands landed; it closes only what can be closed HONESTLY
+  (33 mechanical) and hands back the rest (10 needing a human).
+  (briefs/2026-08-17-session-boundary.md,
   proposal ratified in chat): shared read+render routine → `/reorient` →
   registry (dedicated private repo; existence-only rows keyed by session_id;
   named INTEGRATIONS §3 exception) → `/wakeup` → `/breakdown`. `/breakdown`
