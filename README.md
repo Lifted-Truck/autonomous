@@ -13,7 +13,7 @@ human should understand every layer, protocol, and cycle from this file
 alone, without reading the implementation; deep links go to the canonical
 sources.
 
-*Last verified current: 2026-07-20.*
+*Last verified current: 2026-08-26.*
 
 ---
 
@@ -97,6 +97,50 @@ building a control room for a factory that isn't running.
 
 ---
 
+---
+
+## 1a. The cybernetic frame (why the layers are those layers)
+
+The layers above are not an arbitrary stack. Since Decision 47 this system is
+read through **Stafford Beer's Viable System Model**, adopted for a blunt
+reason: it lets a fresh-context agent inherit fifty years of diagnosed failure
+modes in a sentence, instead of rediscovering each one through its own
+incident.
+
+| VSM | Here | Built? |
+|---|---|---|
+| **S1** — the operations that do the work | each repo in the fleet | live, 46 repos |
+| **S2** — anti-oscillation, shared standards | `doctrine/INTEGRATIONS.md`, contracts, the kit | live |
+| **S3** — resource bargain, direction | the human at ratification gates; `ROADMAP.md` | live |
+| **S3\*** — audit that BYPASSES self-report | `governor/monitor.py`, `leak_scan.py`, `ball_scan.py`, `kit/currency.py` | live |
+| **S4** — outside-and-then | landscape audit, `governor/s4_scan.py` | live |
+| **S5** — identity, policy | `doctrine/DOCTRINE.md` + the human | live |
+| **algedonic** — pain that leaps the hierarchy | `governor/algedonic.py`, weekly | live |
+
+Three consequences worth stating, because they explain choices that otherwise
+look like overcaution:
+
+**S3\* is the load-bearing one.** An audit that reads a system's *self-report*
+is not an audit. Every recurring defect in this repo's log has the same shape:
+a check asked a question adjacent to the one that mattered — did the gate's
+*name* appear, was the file *present*, did the manifest *say* it was current —
+and passed while the thing itself was broken (LIBRARY L0014). So the standing
+rule is **assert the effective state, never the declared state**, and it is why
+the kit's currency checker reads the tree rather than a version string.
+
+**Ashby's law sets the human's channel as the constraint.** Every mechanism
+here is an attenuator or an amplifier for one human's attention, and *a channel
+nobody reads has no requisite variety*. That is the actual reason a report that
+cries wolf is treated as a defect and fixed, not tolerated: an audit flagging
+26 repos for having ordinary uncommitted work trains its reader to ignore it,
+and then it is worse than nothing.
+
+**Recursion is the direction, not the current state.** The same protocol should
+run at the project level and at the ecosystem level over projects — that is why
+`/breakdown` (one repo) and `/closeout` (the fleet) are the same shape at two
+scales. Full mapping, pathology checklist and amendment queue:
+[research/2026-08-14-viable-system-model-mapping.md](research/2026-08-14-viable-system-model-mapping.md).
+
 ## 2. How a project comes to life (the spin-up protocol)
 
 1. **Survey.** A standard, repeatable question list about scope — what it is,
@@ -119,6 +163,41 @@ building a control room for a factory that isn't running.
 Escalate rungs only when the current rung is the demonstrated bottleneck.
 
 ---
+
+---
+
+## 2a. How the kit reaches a repo (vendored, not copied)
+
+Until kit 2.4.0 the kit's gate code was **copied** into each repo at scaffold
+time. The result, measured on 2026-08-18: **ten distinct `leak_gate`
+implementations across the fleet, nine of them missing the Windows identity
+pattern — while every one of those repos declared a `kit_version` that promised
+it.** A version was a claim about a copy, and a copy can lie.
+
+The split that fixed it:
+
+- **Kit MECHANISM is vendored and checksummed.** `.kit/kit-gates.sh` is
+  byte-identical everywhere, pinned by sha256 in `.kit/MANIFEST`, and
+  `kit_integrity` reds the build if anything edits it. `./verify` is
+  project-owned and *sources* it. Vendored rather than sourced from one shared
+  copy because CI has no checkout of this repo, and **a gate that cannot run in
+  CI is not a gate**. Update with `kit/kit_sync.py`; no agent session required.
+- **Kit SUBSTANCE stays a judgement-bearing retrofit** — charter, ROADMAP,
+  DECISIONS, LIBRARY are per-repo and are what `/retrofit` is actually for.
+
+**Currency is computed, not declared** (2.6.0). A repo is behind only when one
+of a version's requirements is genuinely unmet. `kit_version` in the manifest
+survives as *provenance* — "last deliberately retrofitted at X", the one fact a
+tree cannot state — and nothing gates on it. Before this, shipping a version
+made every repo read BEHIND whether or not anything about it had changed: on
+one afternoon, 24 repos that had retrofitted **that day** read behind again,
+all 24 satisfying every requirement, held back by a string.
+
+Session boundaries are commands too: `/wakeup` opens, `/breakdown` closes
+(writing `SESSION.md`, the only prior-session context the next session trusts),
+`/reorient` re-primes a lost context, and `/closeout` is the fleet-level close
+that runs when per-repo is untenable — closing only what can be closed honestly
+and handing back the rest.
 
 ## 3. The testing cycle (oracle discipline)
 
@@ -240,12 +319,15 @@ version:
 
 ---
 
-## 6. Governance and halting (fleet rung — DESIGNED, mostly not built)
+## 6. Governance and halting (fleet rung — partly built)
 
-> This section describes the target design for governing a running organ
-> fleet. Today only its deterministic *gates* exist (leak_gate, budget gate,
-> CI, leak_scan); the HALT sentinel, watchdog loop, and conductor await a
-> fleet to govern. See Layer 5 above for what's real.
+> Target design for governing a running organ fleet. **Built today:** the
+> deterministic gates (leak_gate, CI, `leak_scan.py`), the S3\* sweeps
+> (`monitor.py`, `ball_scan.py`, `s4_scan.py`, `kit/currency.py`,
+> `kit/kit_audit.py`), the algedonic channel (`algedonic.py`, weekly), and
+> notice verification (`retrofit_verify.py`). **Still designed only:** the HALT
+> sentinel, the watchdog loop, and the conductor — they await a running organ
+> fleet to govern. See Layer 5 and §1a for what is real.
 
 Every consequential guard is **technically enforced, never prose** — the
 entire incident record (prod-DB deletions, five-figure runaway loops) traces
@@ -270,16 +352,18 @@ by **reversibility of the change**, not trust in the model.
 | [ONBOARDING.md](ONBOARDING.md) | Replication + arrival guide (human and agent) — start here on a new machine | current |
 | [DESIGN.md](DESIGN.md) | The full research-backed design | current |
 | [ROADMAP.md](ROADMAP.md) | Phase-gated direction: C0 done; kit v2 + ecosystem tracks in progress; governor watchdog-monitor next, HALT/conductor/critic deferred | current |
-| [DECISIONS.md](DECISIONS.md) | Append-only decision log (31 on record) | current |
+| [DECISIONS.md](DECISIONS.md) | Append-only decision log (66 on record; NOT in numeric order — next is max+1) | current |
 | [doctrine/](doctrine/) | Doctrine (auto-loaded) + INTEGRATIONS + CONVENTIONS (JIT) + global-install guide | current |
-| [kit/](kit/) | Kit v2 "harness factory": survey → manifest → profiles | **in progress** — contracts (`library-entry.1`, `status.1`), sweep primitive, CI template, leak gate shipped |
+| [kit/](kit/) | The harness factory, **v2.6.0**: survey → manifest → vendored gates. `currency.py` (computed currency), `kit_sync.py` (vendoring), `kit_audit.py`, `commands/` (`/spinup` `/retrofit` `/wakeup` `/breakdown` `/reorient` `/closeout`), `session/` (state + registry + batch close), `vendor/kit-gates.sh`, `contracts/` (`library-entry.3`, `status.1`) | live |
 | [harness/](harness/) | Generic Agent Harness (layer 2) | imported, working |
-| [loops/](loops/) | Memory loops (leaf + audit loop, both canonical here)  <!--xruck/agent-knowledge-loop)) | current |
-| [governor/](governor/) | Watchdog · curator · coherence critic | **~10%** — `leak_scan.py` (privacy watchdog) + `HISTORY-REMEDIATION.md` live; rest designed (DESIGN §4) |
+| [loops/](loops/) | Memory loops — knowledge loop (per-project) + audit loop (cross-project harvest), both canonical here | current |
+| [governor/](governor/) | Watchdog · curator · coherence critic | **S3\* + algedonic live** — `monitor.py`, `leak_scan.py`, `ball_scan.py`, `s4_scan.py`, `algedonic.py`, `retrofit_verify.py`, `red_records.py`. HALT sentinel / watchdog loop / conductor still designed (DESIGN §4) |
 | [integrations/](integrations/) | Intake channel — one dir per consumer (briefs from `distillery`, `dispatch`) | live |
 | [registry.json](registry.json) | Canonical sweep/watch allowlist for ecosystem processes (Decision 14) | live |
 | [routines/](routines/) | Versioned prompts for recurring routines (landscape audit: local task + cloud variant) | live |
-| [research/](research/) | The evidence base, citations preserved | current |
+| [research/](research/) | The evidence base, citations preserved — incl. the [VSM mapping](research/2026-08-14-viable-system-model-mapping.md) | current |
+| [LIBRARY.md](LIBRARY.md) / [INDEX.md](INDEX.md) | This repo's own hard-won lessons (15 on record), each with evidence and a falsifier | live |
+| [briefs/](briefs/) | Design briefs received from the human, kept as the citable original | live |
 | [archive/kit-v1/](archive/kit-v1/) | Kit v1, frozen | archived |
 
 **Sibling repos** (own repos, sequenced in ROADMAP → Ecosystem tracks):
@@ -297,3 +381,10 @@ canonical-copy discipline (one home per artifact; every other location is a
 pointer), README freshness per the clarity standard, DECISIONS as the
 append-only trail, periodic dedup sweeps. **If the same editable content
 exists in two places, one of them is a bug — file it.**
+
+README freshness is itself a gate, not a good intention: the *Last verified*
+line above is dated, and a README that lies about its repo is treated as a bug
+of the same severity as a failing test (clarity standard). This file was 61
+commits stale when last refreshed — including the entire vendoring and
+computed-currency change — which is exactly the rot the dated line exists to
+make visible rather than silent.
