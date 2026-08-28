@@ -76,3 +76,18 @@ python3 ~/Documents/Claude/autonomous/kit/session/registry.py list
 If other rows remain, close with one line: **"Still open: X, Y."** That line is
 the point of the registry — at the end of a night it is how the human sees
 which projects still need closing.
+
+## Last — republish the Session Board
+
+The registry only changes at session boundaries, so this command republishing
+the board is what keeps it current "at any given time" — event-driven, no
+polling. If `~/.claude/session-registry/BOARD_URL` exists:
+
+```
+python3 ~/Documents/Claude/autonomous/kit/session/render_registry.py > /tmp/session-board.html
+```
+
+then publish `/tmp/session-board.html` with the Artifact tool, passing the URL
+from `BOARD_URL` as `url` (that updates the existing board rather than
+creating a new artifact; keep the 🕐 favicon). No `BOARD_URL` file → skip
+silently; the board is optional bookkeeping and a session never blocks on it.

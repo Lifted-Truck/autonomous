@@ -54,3 +54,18 @@ bookkeeping.
 
 Registry row; REFLECTIONS.md prune edits; graduation targets the human
 confirmed. Nothing else. In particular `/wakeup` does not commit project work.
+
+## Last — republish the Session Board
+
+The registry only changes at session boundaries, so this command republishing
+the board is what keeps it current "at any given time" — event-driven, no
+polling. If `~/.claude/session-registry/BOARD_URL` exists:
+
+```
+python3 ~/Documents/Claude/autonomous/kit/session/render_registry.py > /tmp/session-board.html
+```
+
+then publish `/tmp/session-board.html` with the Artifact tool, passing the URL
+from `BOARD_URL` as `url` (that updates the existing board rather than
+creating a new artifact; keep the 🕐 favicon). No `BOARD_URL` file → skip
+silently; the board is optional bookkeeping and a session never blocks on it.
