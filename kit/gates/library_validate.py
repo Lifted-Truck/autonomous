@@ -32,7 +32,12 @@ REQUIRED = ("title", "tier", "added", "tags", "lesson", "evidence", "falsifier")
 TIERS = ("candidate", "canonical", "proliferated")
 
 _MARKER = re.compile(r"^\[(L\d{4})\]\s*(.*)$")
-_LABEL = re.compile(rf"^\s*({'|'.join(LABELS)})\s*:\s*(.*)$", re.S)
+# re.I + lowercase canonicalisation: the corpus capitalises labels
+# (resume-workshop writes `Lesson:`), and a case-sensitive match routed three
+# complete entries to quarantine as "lesson missing" (distillery report-003 §1).
+# The parser and this validator must read the same grammar or the fleet's two
+# detectors disagree about the same file.
+_LABEL = re.compile(rf"^\s*({'|'.join(LABELS)})\s*:\s*(.*)$", re.S | re.I)
 _REF = re.compile(r"^L\d{4}$")
 # `origin` is a BACK-link to a child scope and carries a different shape —
 # `<child>#Lxxxx` (contract JSON Schema). Applying the local-reference
@@ -59,10 +64,16 @@ def parse_entry(line):
     out["title"] = segs[0].strip()
     open_field = None
     for i, seg in enumerate(segs[1:], start=1):
-        lm = _LABEL.match(seg)
+        # Strip a MATCHED backtick wrapper first: Tonality writes block fields
+        # as code spans (`tier: candidate`), and the wrapper hid the label
+        # (distillery report-003 §1, second bug).
+        seg_c = seg.strip()
+        if seg_c.startswith("`") and seg_c.endswith("`") and len(seg_c) > 1:
+            seg_c = seg_c[1:-1]
+        lm = _LABEL.match(seg_c)
         if lm:
-            open_field = lm.group(1)
-            out[open_field] = lm.group(2).strip()
+            open_field = lm.group(1).lower()
+            out[open_field] = lm.group(2).strip().rstrip("`")
             continue
         # An UNKNOWN `label: value` segment goes to `extra` — it does not
         # continue the open field (contract §Segment rules). Folding it in made

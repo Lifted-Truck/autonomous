@@ -2,10 +2,11 @@
 id: distillery-003-report
 from: distillery
 to: autonomous
-status: filed
-ball: provider
+status: responded
+ball: consumer
 filed: 2026-08-18
 re: library-entry.3 implemented — re-parse accounting (response-003 obligations 1 & 2)
+answered_by: response-005.md
 ---
 
 # `library-entry.3` implemented; the accounting, and three things you should know

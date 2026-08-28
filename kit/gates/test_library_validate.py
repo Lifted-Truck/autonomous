@@ -120,3 +120,27 @@ class TestOwnCorpus(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CorpusShapes(unittest.TestCase):
+    """Two shapes real projects write that the contract admitted in spirit and
+    the validator rejected in fact (distillery report-003 §1). Each test names
+    the project that forced it, per distillery's own regression discipline."""
+
+    def test_capitalised_labels_parse_case_insensitively(self):
+        # resume-workshop writes `Lesson:` / `Evidence:` / `Falsifier:`
+        line = ("[L0001] a title | tier: candidate | added: 2026-08-01 | "
+                "tags: x | Lesson: learned | Evidence: seen | Falsifier: f")
+        fields, bad = lv.parse_entry(line)
+        self.assertEqual(fields.get("lesson"), "learned")
+        self.assertEqual(fields.get("evidence"), "seen")
+        self.assertEqual(lv.validate_entry(line), [])
+
+    def test_backtick_wrapped_segments_parse(self):
+        # Tonality writes block fields as code spans joined by pipes
+        line = ("[L0002] t | `tier: candidate` | `added: 2026-08-01` | "
+                "`tags: x` | `lesson: l` | `evidence: e` | `falsifier: f`")
+        fields, bad = lv.parse_entry(line)
+        self.assertEqual(fields.get("tier"), "candidate")
+        self.assertEqual(lv.validate_entry(line), [])
+

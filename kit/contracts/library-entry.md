@@ -171,6 +171,18 @@ distillery offered, without adding a marker to remember.
 
 ### Segment rules
 
+**Labels are case-insensitive on read, lowercase on write.** The corpus
+capitalises (`Lesson:`, `Evidence:`); a case-sensitive reader quarantined five
+complete entries as "lesson missing" (distillery report-003, forced by
+resume-workshop). Parsers match any case and canonicalise to the lowercase
+keys; writers emit lowercase.
+
+**A matched backtick wrapper around a segment is presentation, not content.**
+Block-form field lines may be written as code spans joined by pipes
+(`` `tier: candidate` | `added: …` `` — Tonality's shape, same report). Readers
+strip one matched pair of backticks per segment before label-matching; the
+leading pipe is not required.
+
 Split the entry on `|`, then:
 
 - **Segment 0** → `id` + `title`.
