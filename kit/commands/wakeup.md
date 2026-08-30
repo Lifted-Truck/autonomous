@@ -27,7 +27,8 @@ on. Same shape as `/reorient`.
 
 ## Step 4 — prune REFLECTIONS.md
 
-Each entry: **graduate** (to DECISIONS.md, ROADMAP.md, or an issue), **stay**
+Each entry: **graduate** (to DECISIONS.md, ROADMAP.md, LIBRARY.md — if it
+clears the evidence+falsifier gate — or an issue), **stay**
 with a note, or **drop**. Propose all three sets; the human confirms. Entries
 unaddressed for 14+ days are flagged by the state routine — those are
 graduate-or-drop, not stay, because a reflection log that only grows is a

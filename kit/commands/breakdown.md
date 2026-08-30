@@ -22,8 +22,13 @@ worth more than a tidy one that lies.
 - Untracked `.kit/`: `git add .kit` — an untracked vendored gate reaches no
   clone and no CI.
 - Orphaned traces, and TODOs left in code that belong in ROADMAP.
-- README/ROADMAP drift: does the README still describe this repo? A repo whose
-  README lies about it is a bug of the same severity as a failing test.
+- **README audit** (clarity standard — a README that lies about its repo is a
+  bug of the same severity as a failing test): does it still describe what the
+  repo IS and where it stands? Spot-check its checkable claims against the
+  tree — counts, versions, "built/not built" statuses, and the map of paths —
+  the way autonomous's own README rot went unnoticed for 61 commits until its
+  claims were diffed against reality. Update the dated *last verified* line
+  only if you actually verified; never freshen the date on an unread file.
 - Stray probe plants (`.kit-currency-plant-*`): delete them.
 
 Tie up what you can deterministically; **list what you cannot** rather than
@@ -38,6 +43,22 @@ leaving it silent.
 Everything else is derivable from the diff, the traces, and verify — so derive
 it instead of asking. The three-prompt cap is the whole design: a close that
 interrogates gets skipped, and a skipped close writes no SESSION.md.
+
+## Step 3b — library roundup (the knowledge loop's harvest moment)
+
+Walk the session for lessons that clear the write gate: something learned the
+hard way that a FUTURE session would otherwise re-derive wrong. For each
+candidate, draft a `library-entry.3` line — **lesson, evidence, falsifier, all
+three or it does not go in**. Prefer writing nothing over writing unverified;
+correcting an existing entry outranks adding a near-duplicate (check INDEX.md
+first). Propose the set; the human confirms — the anti-poisoning gate is the
+point, not a formality. Confirmed entries append to LIBRARY.md with a one-line
+INDEX.md pointer.
+
+Not every session yields one. Say "no library candidates" explicitly rather
+than skipping the step silently — an absent roundup should be a recorded
+answer, not an oversight. (`/closeout` deliberately has no version of this:
+harvesting judgment is exactly what a mechanical close cannot do.)
 
 ## Step 4 — write the artifacts
 
