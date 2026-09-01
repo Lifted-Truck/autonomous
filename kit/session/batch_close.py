@@ -56,9 +56,15 @@ def _dirty(repo):
 
 def triage(repo):
     """(category, facts). Pure read — decides nothing, writes nothing."""
-    head = (_git(repo, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
-            or "main").rsplit("/", 1)[-1]
     branch = _git(repo, "rev-parse", "--abbrev-ref", "HEAD")
+    # Without a remote there is NO canonical default branch to compare against,
+    # so do not guess one. The old code fell back to "main" and therefore
+    # triaged a perfectly clean repo on `master` as `mechanical` — it would
+    # have opened a session close on a repo with nothing to close. Invisible on
+    # this fleet (everything is `main`) and caught only by CI, whose runner
+    # inits at `master`: an environment assumption baked into a default.
+    origin_head = _git(repo, "symbolic-ref", "--quiet", "refs/remotes/origin/HEAD")
+    head = origin_head.rsplit("/", 1)[-1] if origin_head else branch
     dirty = _dirty(repo)
     theirs = [f for f in dirty if not f.startswith(KIT_OWNED)]
     n = _git(repo, "rev-list", "--count", "@{u}..HEAD", default="0")
