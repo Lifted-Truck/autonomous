@@ -15,6 +15,15 @@ import batch_close  # noqa: E402
 def _repo(files=("f.txt",)):
     d = tempfile.mkdtemp()
     subprocess.run(["git", "init", "-q", d], check=True, capture_output=True)
+    # A fixture must not borrow the developer's ambient git identity: a fresh
+    # CI runner has none, `git commit` fails with "Author identity unknown",
+    # and the close silently does nothing (its HEAD-moved guard reports FAILED
+    # honestly — but the TEST then fails for a reason that has nothing to do
+    # with what it is testing).
+    subprocess.run(["git", "-C", d, "config", "user.email", "fixture@test"],
+                   check=True, capture_output=True)
+    subprocess.run(["git", "-C", d, "config", "user.name", "fixture"],
+                   check=True, capture_output=True)
     for f in files:
         with open(os.path.join(d, f), "w") as fh:
             fh.write("x\n")
