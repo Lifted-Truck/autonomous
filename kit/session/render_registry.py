@@ -15,7 +15,7 @@ declared-vs-effective trap with a nicer font.
 
   render_registry.py > board.html
 """
-import datetime, html, os, sys
+import datetime, hashlib, html, os, re, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import registry  # noqa: E402
@@ -108,5 +108,54 @@ tr.stale td {{ background:var(--warn-bg); }}
 </div>"""
 
 
+def _significant(page):
+    """The page minus its own timestamp — what actually changed, if anything.
+
+    The rendered clock moves every second, so a naive byte-compare always says
+    CHANGED and the board republishes on every boundary a session hits. Three
+    identical republishes in four minutes (2026-08-31, mind-lathe) is the
+    symptom: noise that trains the reader to ignore the notification.
+    """
+    return re.sub(r"as of <b>[^<]+</b>", "", page)
+
+
+def changed(page, root=None):
+    """(bool, digest). Compares against the last render recorded beside the
+    registry — no state file, no board; absent marker means 'changed', which
+    is the safe direction for a bookkeeping page."""
+    import registry as _reg
+    root = root or _reg.root()
+    digest = hashlib.sha256(_significant(page).encode()).hexdigest()
+    if not root:
+        return True, digest
+    marker = os.path.join(root, ".board-render")
+    try:
+        with open(marker, encoding="utf-8") as fh:
+            was = fh.read().strip()
+    except OSError:
+        was = None
+    return digest != was, digest
+
+
+def record(digest, root=None):
+    import registry as _reg
+    root = root or _reg.root()
+    if not root:
+        return
+    try:
+        with open(os.path.join(root, ".board-render"), "w", encoding="utf-8") as fh:
+            fh.write(digest)
+    except OSError:
+        pass
+
+
 if __name__ == "__main__":
-    sys.stdout.write(render())
+    page = render()
+    if "--check-changed" in sys.argv:
+        is_new, digest = changed(page)
+        if is_new:
+            record(digest)
+        print("CHANGED" if is_new else "UNCHANGED", file=sys.stderr)
+        sys.stdout.write(page if is_new else "")
+        sys.exit(0)
+    sys.stdout.write(page)

@@ -13,7 +13,7 @@ human should understand every layer, protocol, and cycle from this file
 alone, without reading the implementation; deep links go to the canonical
 sources.
 
-*Last verified current: 2026-08-26.*
+*Last verified current: 2026-08-31.*
 
 ---
 

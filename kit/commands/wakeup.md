@@ -56,17 +56,20 @@ bookkeeping.
 Registry row; REFLECTIONS.md prune edits; graduation targets the human
 confirmed. Nothing else. In particular `/wakeup` does not commit project work.
 
-## Last — republish the Session Board
+## Last — republish the Session Board (only if it changed)
 
-The registry only changes at session boundaries, so this command republishing
-the board is what keeps it current "at any given time" — event-driven, no
-polling. If `~/.claude/session-registry/BOARD_URL` exists:
+The registry only changes at session boundaries, so republishing here is what
+keeps the board current — event-driven, no polling. If
+`~/.claude/session-registry/BOARD_URL` exists:
 
 ```
-python3 ~/Documents/Claude/autonomous/kit/session/render_registry.py > /tmp/session-board.html
+python3 ~/Documents/Claude/autonomous/kit/session/render_registry.py --check-changed > /tmp/session-board.html
 ```
 
-then publish `/tmp/session-board.html` with the Artifact tool, passing the URL
-from `BOARD_URL` as `url` (that updates the existing board rather than
-creating a new artifact; keep the 🕐 favicon). No `BOARD_URL` file → skip
-silently; the board is optional bookkeeping and a session never blocks on it.
+It prints `CHANGED` or `UNCHANGED` on stderr and writes the page only when the
+board's SUBSTANCE moved (its own clock is excluded from the comparison).
+**`UNCHANGED` → publish nothing** — three identical republishes in four minutes
+is noise that trains the reader to ignore the notification. On `CHANGED`,
+publish `/tmp/session-board.html` with the Artifact tool, passing the URL from
+`BOARD_URL` as `url` (updates the existing board; keep the 🕐 favicon). No
+`BOARD_URL` → skip silently; a session never blocks on bookkeeping.
