@@ -149,7 +149,30 @@ def record(digest, root=None):
         pass
 
 
+def is_publisher():
+    """Only a session running IN the standards repo publishes the boards.
+
+    Two sessions racing on one artifact means every boundary either hits is a
+    publish conflict, and clearing one costs a full re-read of the page. Three
+    in a row on 2026-09-02 (dispatch + autonomous both live) settled it: one
+    home per artifact, everyone else points at it — the same rule the rest of
+    the fleet already runs on. Other sessions still write the registry; the
+    board catches up at the publisher's next boundary.
+    """
+    import subprocess
+    try:
+        top = subprocess.run(["git", "rev-parse", "--show-toplevel"],
+                             capture_output=True, text=True, timeout=10).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    here = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+    return bool(top) and os.path.realpath(top) == here
+
+
 if __name__ == "__main__":
+    if "--check-changed" in sys.argv and not is_publisher():
+        print("NOT-PUBLISHER", file=sys.stderr)   # registry written; board waits
+        sys.exit(0)
     page = render()
     if "--check-changed" in sys.argv:
         is_new, digest = changed(page)

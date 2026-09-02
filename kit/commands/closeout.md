@@ -67,20 +67,27 @@ get answered and a genuine `SESSION.md` gets written.
 - Deregistering: if the session registry holds rows for closed repos, remove
   them with `registry.py close --session-id <id>` and report what remains open.
 
-## Last — republish the Session Board (only if it changed)
+## Last — republish the boards (the standards repo's session ONLY)
 
-The registry only changes at session boundaries, so republishing here is what
-keeps the board current — event-driven, no polling. If
-`~/.claude/session-registry/BOARD_URL` exists:
+Two boards, one publisher. **Only a session running in `autonomous` publishes**
+— two sessions racing on one artifact made every boundary a publish conflict,
+and clearing one costs a full page re-read (three in a row, 2026-09-02). Every
+other session still writes the registry and the mailbox; the boards catch up at
+the publisher's next boundary. The renderer enforces this: from any other repo
+it prints `NOT-PUBLISHER` and writes nothing, so there is nothing to remember.
 
 ```
 python3 ~/Documents/Claude/autonomous/kit/session/render_registry.py --check-changed > /tmp/session-board.html
+python3 ~/Documents/Claude/autonomous/kit/session/render_threads.py > /tmp/threads-board.html
 ```
 
-It prints `CHANGED` or `UNCHANGED` on stderr and writes the page only when the
-board's SUBSTANCE moved (its own clock is excluded from the comparison).
-**`UNCHANGED` → publish nothing** — three identical republishes in four minutes
-is noise that trains the reader to ignore the notification. On `CHANGED`,
-publish `/tmp/session-board.html` with the Artifact tool, passing the URL from
-`BOARD_URL` as `url` (updates the existing board; keep the 🕐 favicon). No
-`BOARD_URL` → skip silently; a session never blocks on bookkeeping.
+- Session Board: `CHANGED` → publish `/tmp/session-board.html` with the Artifact
+  tool, `url` from `~/.claude/session-registry/BOARD_URL`, 🕐. `UNCHANGED` or
+  `NOT-PUBLISHER` → publish nothing.
+- Threads Board: publish `/tmp/threads-board.html`, `url` from
+  `~/.claude/session-registry/THREADS_URL`, 📬. It is a SWEEP of every repo's
+  `integrations/` (overdue, owed, answered-but-unread), so it is re-rendered
+  every time — its "as of" stamp is the honest freshness.
+- If a publish is refused because the page moved underneath you, re-read and
+  publish once; do not force. No `*_URL` file → skip silently; boards are
+  optional bookkeeping and a session never blocks on them.

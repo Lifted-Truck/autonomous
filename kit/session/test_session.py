@@ -127,3 +127,29 @@ class Registry(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Boards(unittest.TestCase):
+    def test_only_the_standards_repo_publishes(self):
+        """Two sessions racing on one artifact turned every boundary into a
+        publish conflict (2026-09-02). The guard is in code so no session has to
+        remember it: from any other repo the renderer says NOT-PUBLISHER."""
+        import render_registry
+        here = os.getcwd()
+        foreign = tempfile.mkdtemp()
+        subprocess.run(["git", "init", "-q", foreign], check=True, capture_output=True)
+        try:
+            os.chdir(foreign)
+            self.assertFalse(render_registry.is_publisher())
+        finally:
+            os.chdir(here)
+            shutil.rmtree(foreign, ignore_errors=True)
+        self.assertTrue(render_registry.is_publisher())   # run from kit/session in autonomous
+
+    def test_threads_board_renders_every_section(self):
+        import render_threads
+        page = render_threads.render()
+        for label in ("overdue", "obligations open", "answered, unread"):
+            self.assertIn(label, page)
+        self.assertIn("as of", page)
+
