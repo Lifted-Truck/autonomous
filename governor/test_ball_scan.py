@@ -280,3 +280,39 @@ class TestFrontmatterLies(unittest.TestCase):
         _fm(self.box, "brief.md", id="z-4", ball="provider", status="filed",
             filed="2026-08-01", answered_by="nope.md")
         self.assertEqual(ball_scan.frontmatter_lies(self.tmp), [])
+
+
+class CitesMissing(unittest.TestCase):
+    """INTEGRATIONS: the resident affirms cites: at intake. A gate that cannot
+    fire reads exactly like one that passes (L0002), so the planted-bad case
+    comes first."""
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.mkdtemp()
+        self.box = os.path.join(self.tmp, "integrations", "peer")
+        os.makedirs(self.box)
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _w(self, name, fm):
+        with open(os.path.join(self.box, name), "w") as fh:
+            fh.write("---\n" + fm + "\n---\nbody\n")
+
+    def test_triaged_thread_without_cites_fires(self):
+        self._w("brief-001.md", "id: peer-001\nstatus: responded\nball: consumer")
+        self.assertEqual([b["id"] for b in ball_scan.cites_missing(self.tmp)], ["peer-001"])
+
+    def test_untriaged_brief_is_not_yet_a_duty(self):
+        self._w("brief-002.md", "id: peer-002\nstatus: filed\nball: provider")
+        self.assertEqual(ball_scan.cites_missing(self.tmp), [])
+
+    def test_cites_none_satisfies_the_gate_by_design(self):
+        self._w("brief-003.md", "id: peer-003\nstatus: responded\nball: consumer\ncites: none")
+        self.assertEqual(ball_scan.cites_missing(self.tmp), [])
+
+    def test_answers_are_not_intake(self):
+        self._w("response-004.md", "id: peer-004\nstatus: responded\nball: consumer")
+        self.assertEqual(ball_scan.cites_missing(self.tmp), [])
+

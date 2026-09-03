@@ -237,6 +237,28 @@ history; supersede with a new numbered entry.
     commit message that says the tip was rewritten; it was not, and this entry
     is the correction of record. Peers told the same thing have been corrected
     directly.
+67. **Three INTEGRATIONS amendments ratified: `cites:` affirmed by the resident
+    at intake, `seq:` per-thread, and closure is `status:`'s job, never
+    `ball:`'s** (2026-09-02, human ruling via poll; hypersaw-001 rounds 1–3 and
+    Tonality-ball-scan-none). The through-line is one move made three times:
+    put the duty on the party that CAN be gated, and make the record of an act
+    mechanical even where the act itself is judgment. `cites:` — the filer runs
+    none of our gates and is least motivated to widen its own thread; the
+    resident must read the brief to triage it, so recording what that reading
+    found is the half a gate can hold. Limit stated in the text: proves filled,
+    not filled correctly. `seq:` — mtime is not an ordering because a
+    maintenance edit flips it; per-thread integers need no allocator, and a
+    fleet-global counter would be heavier than the problem (HYPERSAW's
+    narrowing, better than my draft). Closure — `ball: none` says "nobody holds
+    this", true of closed threads and FYIs alike, so it can never close; a
+    closing reply writes a terminal status. Rejected: letting `ball: none`
+    close (re-opens the FOUNDATIONS masking case); a fleet-global `seq:`
+    (central issuer); `cites:` at ruling time (reproduces the late trigger the
+    whole thread was about). The `cites` gate ships REPORTING, not blocking:
+    every pre-ratification thread lacks the key, and a gate that reds the
+    whole mailbox on day one gets bypassed rather than honoured. Flip is a
+    ROADMAP item. The thread that argued for citation-time notice waited nine
+    days on its provider; that irony is recorded, not excused.
 65. **Kit MECHANISM is vendored and checksummed; kit SUBSTANCE stays a
     retrofit** (2026-08-18, the human's call after measurement). The human:
     "I keep realizing that other sessions are in the middle of tasks when I ask
