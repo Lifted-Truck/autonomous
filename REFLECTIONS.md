@@ -8,7 +8,7 @@ log that only grows is where thoughts go to die.
 
 Format: `- [YYYY-MM-DD] text`
 
-- [2026-08-31] The three INTEGRATIONS amendments are drafted and sitting at the
+- [2026-08-31] ~~GRADUATED 2026-09-02 → Decision 67.~~ The three INTEGRATIONS amendments are drafted and sitting at the
   S5 ratification gate: `cites:` affirmed by the RESIDENT at intake (not the
   filer, not at ruling time); `seq:` per-thread and strictly increasing, no
   fleet-global allocator; and a closing reply writes a terminal `status:`

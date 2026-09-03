@@ -72,6 +72,18 @@ fast() {
     echo "verify: COPYABLE GATE — an installing artifact defines gate code; it belongs in kit/vendor/:" >&2
     echo "$gatedefs" | sed 's/^/    /' >&2; ok=1
   fi
+  # cites: affirmed at intake (INTEGRATIONS, ratified 2026-09-02). Reported,
+  # not blocking, for now: every pre-ratification thread lacks the key, and a
+  # gate that reds the whole mailbox on day one gets bypassed rather than
+  # honoured. Flip to `ok=1` once the backlog is affirmed (tracked in ROADMAP).
+  python3 - <<'PYEOF3' || true
+import sys, os
+sys.path.insert(0, "governor")
+import ball_scan
+for b in ball_scan.cites_missing("."):
+    print(f"verify: CITES MISSING — {b['file']} is {b['status']} with no cites: "
+          f"(resident affirms at intake)", file=sys.stderr)
+PYEOF3
   # Exchange frontmatter must not lie about its own state (Decision 57).
   python3 - <<'PYEOF2' || ok=1
 import sys, os

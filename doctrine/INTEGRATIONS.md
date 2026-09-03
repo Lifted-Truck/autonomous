@@ -69,9 +69,9 @@ same-machine, a direct write to that path. Exchange files are the one
 artifact designed to cross the boundary.
 
 ### The ball: every exchange step has exactly one accountable side
-Exchange files carry frontmatter: `id`, `status`, `ball`, `respond-by`.
-The exchange is a state machine — at no state do both (or neither) sides own
-the next move:
+Exchange files carry frontmatter: `id`, `status`, `ball`, `respond-by`,
+`cites`, `seq`. The exchange is a state machine — at no state do both (or
+neither) sides own the next move:
 
 | State | Artifact | Ball |
 |---|---|---|
@@ -80,6 +80,38 @@ the next move:
 | Implementation | provider-side PR(s), contract version bump, tag | **provider** |
 | Notice | `notice.md` (shipped version, migration notes) | **consumer** (integrate, bump pin, verify) |
 | Closed | consumer confirms green in notice thread; both ROADMAPs updated | — |
+
+**`ball:` is possession; `status:` is lifecycle. Neither does the other's job**
+(ratified 2026-09-02, Tonality-ball-scan-none). `ball: none` means "nobody
+holds this" — true of a closed thread and of a mid-thread FYI alike — so it can
+never CLOSE a thread; making it a closure signal would let an informational
+note filed seconds after a live ask silently close the ask (the FOUNDATIONS
+masking case). **A reply that ends an exchange writes a terminal `status:`**
+(`closed`, `ratified`, `shipped`, `withdrawn`, `declined`, `superseded`), never
+`responded` + `ball: none`. `responded` is non-terminal on purpose — most
+responses hand the ball onward — and the ambiguous middle ("responded, nobody
+holds it, nothing owed") reads as open forever.
+
+**`cites:` is affirmed by the RESIDENT at intake, not by the filer** (ratified
+2026-09-02, hypersaw-001 round 3). Before a thread leaves `filed`, the resident
+sets `cites: <projects>` or `cites: none`. The filer's own `cites:` is a hint
+that saves the resident work when present and costs nothing when absent — a
+visitor runs none of our gates, so a duty placed on it is unenforceable at the
+moment it matters, and the filer is the party least motivated to widen its own
+thread. The resident must read the brief to triage it at all; recording what
+that reading found is the half a gate can hold. A thread past `filed` with no
+`cites:` key is a gate failure (`ball_scan.cites_missing`). *Stated limit:* the
+gate proves the field was filled, never that it was filled correctly — a
+careless `cites: none` is a visible, attributable act rather than silence.
+Strictly better; not a guarantee.
+
+**`seq:` is per-thread and strictly increasing** (ratified 2026-09-02, same
+thread). Whoever files the next artifact in a thread gives it the next integer.
+The only question ordering ever answers is "which artifact in this exchange
+came later", and mtime cannot answer it — an ordering that a maintenance edit
+can flip is not an ordering. Per-thread needs no allocator and no coordination
+between repos; a fleet-global counter would be a heavier thing than the
+problem. Readers prefer `seq:` when present and fall back to dates.
 
 ### Cross-repo change = two linked PRs, never one
 - **Provider lands first:** implements, versions the contract (semver), tags,

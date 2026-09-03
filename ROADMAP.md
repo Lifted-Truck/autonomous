@@ -310,6 +310,9 @@ before the mechanisms exist is a frame written about nothing.
   it uniform. Gate check in `./verify`: every `intake/*/` has a
   `PROVENANCE.md`. *Gate:* one repo runs it end-to-end (drop → promote →
   cite) before it ships in the kit.
+- **T4 — flip `cites_missing` from reporting to blocking** once every open
+  thread's opening file carries `cites:` (Decision 67). Read-only count:
+  `python3 -c 'import sys;sys.path.insert(0,"governor");import ball_scan;print(len(ball_scan.cites_missing(".")))'`.
 - **K3 — Session-boundary commands** — *core BUILT 2026-08-18* (shared routine
   `kit/session/state.py`, registry `kit/session/registry.py`, and all three
   commands installed; 9 tests in `./verify fast`). Remaining before the gate

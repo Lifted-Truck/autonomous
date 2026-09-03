@@ -298,3 +298,33 @@ def frontmatter_lies(path):
                 out.append({"id": tid, "file": os.path.relpath(f, path),
                             "says": m["ball"], "status": m["status"]})
     return out
+
+
+def cites_missing(path):
+    """Threads that have moved past `filed` with no `cites:` key on the OPENING
+    file — the resident-affirmed-at-intake rule (INTEGRATIONS §The ball,
+    ratified 2026-09-02). Proves the field was filled, never that it was filled
+    correctly: `cites: none` passes, and that is the stated limit of the gate.
+
+    Only the opening brief/report is checked — `cites:` is an intake act, and
+    responses/notices are answers to a thread that was already triaged. Only
+    threads whose opening file is NOT still `filed` are checked, so a brief
+    nobody has touched yet is not a failure: intake has not happened.
+    """
+    bad = []
+    for f in glob.glob(os.path.join(path, "integrations", "*", "*.md")):
+        p = _parse(f)
+        if not p:
+            continue
+        base = os.path.basename(f)
+        if _ROLE_ANSWERER.match(base):
+            continue                                # answers are not intake
+        if (p["status"] or "filed") == "filed":
+            continue                                # not triaged yet — no duty yet
+        with open(f, encoding="utf-8", errors="ignore") as fh:
+            head = fh.read(4000)
+        if not re.search(r"^cites:\s*\S", head, re.M):
+            bad.append({"file": os.path.relpath(f, path), "id": p["id"],
+                        "status": p["status"]})
+    return bad
+
