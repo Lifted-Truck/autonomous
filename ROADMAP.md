@@ -339,7 +339,10 @@ before the mechanisms exist is a frame written about nothing.
   no-oracle-no-swarm rule: a repo without `./verify` cannot be gated on the
   thing being installed. *Gate:* the currency report + a batch plan the
   human ratifies.
-- **K5 — Routines: daily/weekly fleet coordination.** The pieces exist
+- **K5 — Routines: daily/weekly fleet coordination.** *Next after the rename
+  (Decision 68).* Concrete first target: the Threads Board and Session Board
+  republished on a cadence and on merge-touched-`integrations/`, not only at
+  the resident's boundaries. The pieces exist
   (monitor, ball_scan, s4_scan, algedonic, session brief); K5 is the
   *cadence* and the *rendering*. Daily: the sweep + T0 human-TODO (Decision
   50) rendered into the session brief and, via dispatch, the digest.
