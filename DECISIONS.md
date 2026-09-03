@@ -237,6 +237,24 @@ history; supersede with a new numbered entry.
     commit message that says the tip was rewritten; it was not, and this entry
     is the correction of record. Peers told the same thing have been corrected
     directly.
+68. **Kit releases are batched weekly; the never-retrofitted repos are a
+    standing queue at the human's pace; next burst is the rename, then K5**
+    (2026-09-03, human ruling via poll). **Cadence:** fleet-affecting kit
+    changes accumulate and ship at most once a week, announced; tool-only
+    fixes still flow freely because they cost repos nothing. Reason: the
+    2.3.0 "freeze" did not hold — nine versions in one day, four of them
+    requiring repo action — and even with computed currency bounding the
+    churn, a fleet cannot follow a kit that moves hourly. **Backlog:** the 32
+    repos with no `./verify` are the original K4 backlog, not churn; one
+    `/retrofit` each whenever that repo is opened, the ledger keeps the list,
+    nothing nags. Rejected: batching the light ones (a mechanical pass on
+    repos with no oracle violates no-oracle-no-swarm) and declaring most
+    dormant (a declaration to make a number smaller is the thing this
+    fortnight spent removing). **Order:** rename first because it is the one
+    item that gets harder with every new reference; then K5, because it turns
+    the boards and sweeps from things the resident runs into things that run
+    — the Threads Board being wrong until the human noticed is the cost K5
+    exists to remove.
 67. **Three INTEGRATIONS amendments ratified: `cites:` affirmed by the resident
     at intake, `seq:` per-thread, and closure is `status:`'s job, never
     `ball:`'s** (2026-09-02, human ruling via poll; hypersaw-001 rounds 1–3 and
